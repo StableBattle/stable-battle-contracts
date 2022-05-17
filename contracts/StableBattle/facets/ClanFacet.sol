@@ -9,8 +9,10 @@ contract ClanFacet {
     event MemberAdded(uint clan_id, uint character_id);
     event CharacterAskedToLeave(uint clan_id, uint chracter_id);
     event MemberLeft(address something);
-    // character_id => bool
-    mapping(uint => bool) Clan_owners;
+    // clan_id => character
+    mapping(uint => uint) Clan_owners;
+    //character_id => clan_id
+    mapping(uint => uint) Owns_a_clan;
     // clan_id => character_id
     mapping(uint => uint[]) Clan_members;
     //clan_id => number
@@ -23,8 +25,9 @@ contract ClanFacet {
     function Create(uint charater_id) external returns (uint clan_id) {
       require(IERC1155.balanceOf(msg.sender, charater_id) == 1,
              "Only knights can create a clan");
-      require(Clan_owners[charater_id] > 0, "Only one clan per character")
-      Clan_owners[charater_id] = clan_id;
+      require(Owns_a_clan[charater_id] > 0, "Only one clan per character")
+      Owns_a_clan[charater_id] = clan_id;
+      Clan_owners[clan_id] = character_id;
       Clan_members[clan_id] = [charater_id];
       Total_members[clan_id]++;
       clan_id++;
@@ -32,8 +35,8 @@ contract ClanFacet {
     }
 
     function Dissolve(uint character_id, uint clan_id) external {
-      require(Clan_owners[character_id], "This character doesn't lead a clan");
-      Clan_owners[charater_id] = 0;
+      require(Owns_a_clan[character_id], "This character doesn't lead a clan");
+      Owns_a_clan[charater_id] = 0;
       delete Clan_members[clan_id];
       Total_members[clan_id] = 0;
       emit ClanDissloved(clan_id, character_id)
