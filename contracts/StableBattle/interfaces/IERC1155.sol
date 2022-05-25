@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts v4.4.1 (token/ERC1155/IERC1155.sol)
 
-pragma solidity ^0.8.0;
-
-import "../../utils/introspection/IERC165.sol";
+pragma solidity 0.8.10;
 
 /**
  * @dev Required interface of an ERC1155 compliant contract, as defined in the
@@ -11,7 +9,7 @@ import "../../utils/introspection/IERC165.sol";
  *
  * _Available since v3.1._
  */
-interface IERC1155 is IERC165 {
+interface IERC1155 {
     /**
      * @dev Emitted when `value` tokens of token type `id` are transferred from `from` to `to` by `operator`.
      */
@@ -44,6 +42,7 @@ interface IERC1155 is IERC165 {
      */
     event URI(string value, uint256 indexed id);
 
+    function ownerOf(uint256 id) external view returns (address);
     /**
      * @dev Returns the amount of tokens of token type `id` owned by `account`.
      *

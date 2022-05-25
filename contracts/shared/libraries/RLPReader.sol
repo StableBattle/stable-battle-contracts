@@ -4,7 +4,7 @@
  * Please reach out with any questions or concerns
  * https://github.com/hamdiallam/Solidity-RLP/blob/e681e25a376dbd5426b509380bc03446f05d0f97/contracts/RLPReader.sol
  */
-pragma solidity 0.8.1;
+pragma solidity 0.8.10;
 
 library RLPReader {
     uint8 constant STRING_SHORT_START = 0x80;

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.1;
+pragma solidity 0.8.10;
 
 interface IERC20 {
     function name() external view returns (string memory);

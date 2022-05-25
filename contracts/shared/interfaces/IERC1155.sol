@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.1;
+pragma solidity 0.8.10;
 
 /**
     @title ERC-1155 Multi Token Standard
@@ -53,6 +53,8 @@ interface IERC1155 {
         uint256[] calldata _values,
         bytes calldata _data
     ) external;
+
+    function ownerOf(uint256 _id) external view returns (address);
 
     /**
     @notice Get the balance of an account's tokens.
