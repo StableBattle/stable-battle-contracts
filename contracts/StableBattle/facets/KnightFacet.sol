@@ -1,12 +1,25 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity 0.8.10;
-import { ERC1155 } from "./ERC1155Facet.sol";
-import {Knight} from "../libraries/LibAppStorage.sol";
 
-abstract contract KnightFacet is ERC1155 {
+import { Knight, knightType, AppStorage } from "../libraries/LibAppStorage.sol";
+import { IKnight } from "../../shared/interfaces/IKnight.sol";
 
-  // Mint NFT for 1000 USDT
-  function mint_knight() public {
+contract KnightFacet is IKnight {
+
+  AppStorage internal s;
+
+  function randomKnightId() private view returns (uint256 item_id) {
+    uint salt;
+    do {
+      salt++;
+      item_id = uint(keccak256(abi.encodePacked(block.timestamp, tx.origin, salt)));    
+      if (item_id < s.knight_offset) {
+        item_id += s.knight_offset;
+      }
+    } while (s._totalSupply[item_id] != 0);
+  }
+
+  function mint_AAVE_knight() external {
     // Check if user gave its approval for 1000 USDT
     require(s.USDT.allowance(msg.sender, address(this)) >= 1e9, 
       "User allocated insufficient amount of funds");
@@ -20,27 +33,37 @@ abstract contract KnightFacet is ERC1155 {
     s.USDT.approve(address(s.AAVE), 1e9);
     s.AAVE.supply(address(s.USDT), 1e9, address(this), 0);
     // Mint NFT for the user
-    _mint(msg.sender, s.item_id, 1, '');
-    s.knight[s.item_id] = Knight(0, 0, 0);
-    s.item_id++;
+    uint256 id = randomKnightId();
+    s.Items.mint(msg.sender, id, 1);
+    s.knight[id] = Knight(0, 0, 0, knightType.AAVE);
 
-    emit KnightMinted (s.item_id, msg.sender);
+    emit KnightMinted(id, msg.sender, knightType.AAVE);
   }
 
-// Burn NFT and repay 1000 USDT back
-  function burn_knight (uint256 item_id) public {
+  function mint_OTHER_knight() external {
+    // Mint NFT for the user
+    uint256 id = randomKnightId();
+    s.Items.mint(msg.sender, id, 1);
+    s.knight[id] = Knight(0, 0, 0, knightType.OTHER);
+
+    emit KnightMinted(id, msg.sender, knightType.OTHER);
+  }
+
+  function burn_knight (uint256 id) external {
     //Check if item is knight
-    require (item_id < s.item_offset, "Item is not a knight");
+    require (id > s.knight_offset, "Item is not a knight");
     //Check if user owns NFT
-    require (balanceOf(msg.sender, item_id) == 1, "User doesn't own this character");
+    require (s._balances[id][msg.sender] == 1, "User doesn't own this character");
     // Burn NFT
-    _burn(msg.sender, item_id, 1);
+    s.Items.burn(msg.sender, id, 1);
     // Withraw 1000 USDT from AAVE to the user
-    s.AAVE.withdraw(address(s.USDT), 1e9, msg.sender);
+    if(s.knight[id].kt == knightType.AAVE) {
+      s.AAVE.withdraw(address(s.USDT), 1e9, msg.sender);
+      emit KnightBurned(id, msg.sender, knightType.AAVE);
+    } else {
+      emit KnightBurned(id, msg.sender, knightType.OTHER);
+    }
 
-    emit KnightBurned (item_id, msg.sender);
+    
   }
-
-  event KnightMinted (uint charater_id, address user);
-  event KnightBurned (uint character_id, address user);
 }
