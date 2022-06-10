@@ -26,7 +26,7 @@ module.exports = {
   networks: {
     hardhat: {
       forking: {
-        url: "https://polygon-mumbai.g.alchemy.com/v2/AZkuJVZ21kvBgCwV9tFiV83sxHgtqFmR",
+        url: process.env.ALCHEMY_URL || "",
         blockNumber: 26681409,
       },
     },
