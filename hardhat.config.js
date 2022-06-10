@@ -34,6 +34,7 @@ module.exports = {
       url: process.env.MUMBAI_URL || "",
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+      gas: 3000000, //Doesn't work with ether, lol
     },
   },
   gasReporter: {

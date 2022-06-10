@@ -11,7 +11,7 @@ async function initSBT (SBT_address, Clan_address, Treasury_address) {
   // SBInit provides a function that is called when the diamond is upgraded to initialize state variables
   // Read about how the diamondCut function works here: https://eips.ethereum.org/EIPS/eip-2535#addingreplacingremoving-functions
   const SBTInit = await ethers.getContractFactory('SBTInit')
-  const diamondInit = await SBTInit.deploy()
+  const diamondInit = await SBTInit.deploy({gasLimit: 3000000})
   await diamondInit.deployed()
   console.log('SBInit deployed:', diamondInit.address)
 
@@ -26,7 +26,7 @@ async function initSBT (SBT_address, Clan_address, Treasury_address) {
   const cut = []
   for (const FacetName of FacetNames) {
     const Facet = await ethers.getContractFactory(FacetName)
-    const facet = await Facet.deploy()
+    const facet = await Facet.deploy({gasLimit: 3000000})
     await facet.deployed()
     console.log(`${FacetName} deployed: ${facet.address}`)
     cut.push({
