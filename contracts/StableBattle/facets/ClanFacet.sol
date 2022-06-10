@@ -72,6 +72,10 @@ contract ClanFacet is IClan {
     }
   }
 
+  function clanLevelOf(uint clan_id) external view returns(uint) {
+    return s.clan[clan_id].level;
+  }
+
   function join(uint char_id, uint clan_id) external {
     uint256 old_clan_id = s.knight[char_id].inClan;
     require(char_id > s.knight_offset, "ClanFacet: Item is not a knight");

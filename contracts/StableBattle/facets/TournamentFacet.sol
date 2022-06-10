@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity 0.8.10;
 
-import {AppStorage} from "../libraries/LibAppStorage.sol";
+import { AppStorage } from "../libraries/LibAppStorage.sol";
 
-contract Treasury {
+contract TournamentFacet {
 
   AppStorage internal s;
 

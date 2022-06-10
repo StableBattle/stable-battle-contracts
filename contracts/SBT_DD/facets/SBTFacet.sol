@@ -4,7 +4,7 @@ pragma solidity 0.8.10;
 import "./ERC20.sol";
 import "../../shared/interfaces/ISBT.sol";
 
-contract SBT is ERC20, ISBT {
+contract SBTFacet is ERC20, ISBT {
 
   function stake(uint clan_id, uint256 amount) external {
     ERC20._transfer(msg.sender, address(s.ClanFacet), amount);
@@ -13,7 +13,7 @@ contract SBT is ERC20, ISBT {
   }
 
   function withdraw(uint clan_id, uint256 amount) external {
-    require (s.ClanFacet.stakeOf(msg.sender, clan_id) >= amount, "SBT: withdrawal amount exceeds stake");
+    require(s.ClanFacet.stakeOf(msg.sender, clan_id) >= amount, "SBT: withdrawal amount exceeds stake");
     ERC20._transfer(address(s.ClanFacet), msg.sender, amount);
     s.ClanFacet.onWithdraw(msg.sender, clan_id, amount);
     emit Withdraw(msg.sender, clan_id, amount);
@@ -24,7 +24,7 @@ contract SBT is ERC20, ISBT {
   }
 
   function mintBatch (address[] memory to, uint256[] memory amount) external onlyMinters {
-    require(to.length == amount.length, "Array sizes doesn't match");
+    require(to.length == amount.length, "SBT: Array sizes doesn't match");
     for (uint256 i; i < to.length; i++) {
       ERC20._mint(to[i], amount[i]);
     }
@@ -35,7 +35,7 @@ contract SBT is ERC20, ISBT {
   }
 
   function burnBatch (address[] memory to, uint256[] memory amount) external onlyBurners {
-    require(to.length == amount.length, "Array sizes doesn't match");
+    require(to.length == amount.length, "SBT: Array sizes doesn't match");
     for (uint256 i; i < to.length; i++) {
       ERC20._burn(to[i], amount[i]);
     }
@@ -49,7 +49,7 @@ contract SBT is ERC20, ISBT {
         break;
       }
     }
-    require (sentByMinter, "Only adresses with minter priveleges can use this function");
+    require(sentByMinter, "SBT: Only adresses with minter priveleges can use this function");
     _;
   }
 
@@ -61,7 +61,7 @@ contract SBT is ERC20, ISBT {
         break;
       }
     }
-    require (sentByBurner, "Only adresses with burner priveleges can use this function");
+    require(sentByBurner, "SBT: Only adresses with burner priveleges can use this function");
     _;
   }
 }

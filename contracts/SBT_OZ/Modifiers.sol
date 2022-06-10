@@ -36,9 +36,9 @@ contract Modifiers {
     _;
   }
 
-  constructor (address[] memory _minters, address[] memory _burners) {
-    minters = _minters;
-    burners = _burners;
-    owner = msg.sender;
+  constructor (address[] memory minters_, address[] memory burners_, address owner_) {
+    minters = minters_;
+    burners = burners_;
+    owner = owner_;
   }
 }

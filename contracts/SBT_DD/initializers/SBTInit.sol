@@ -1,34 +1,47 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity 0.8.10;
 
+import { LibDiamond } from "../../shared/libraries/LibDiamond.sol";
+import { IERC165 } from "../../shared/interfaces/IERC165.sol";
+import { IERC173 } from "../../shared/interfaces/IERC173.sol";
+import { IDiamondCut } from "../../shared/interfaces/IDiamondCut.sol";
+import { IDiamondLoupe } from "../../shared/interfaces/IDiamondLoupe.sol";
+
 import { AppStorage } from "../libraries/LibAppStorage.sol";
 import { IClan } from "../../shared/interfaces/IClan.sol";
-
+import { IERC20 } from "../../shared/interfaces/IERC20.sol";
+import { ISBT } from "../../shared/interfaces/ISBT.sol";
 
 contract SBTInit {   
 
   AppStorage internal s;
 
   struct Args {
-    string name;
-    string symbol;
-    uint8 decimals;
+    address ClanFacetAddress;
     address[] minters;
     address[] burners;
-    address ClanFacetAddress;
     //premint data
       address[] premint_beneficiaries;
       uint256[] beneficiaries_balances;
       uint256 totalSupplyPremint;
   }
 
-  function SB_init(Args memory _args) external {
-    s._name = _args.name;
-    s._symbol = _args.symbol;
-    s._decimals = _args.decimals;
+  function SBT_init(Args memory _args) external {
+
+    //Assign supported interfaces
+    LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
+    ds.supportedInterfaces[type(IERC165).interfaceId] = true;
+    ds.supportedInterfaces[type(IERC173).interfaceId] = true;
+    ds.supportedInterfaces[type(IERC20).interfaceId] = true;
+    ds.supportedInterfaces[type(ISBT).interfaceId] = true;
+
+    //Assign inital facet args
+    s._name = "Stable Battle Token";
+    s._symbol = "SBT";
+    s._decimals = 18;
     s._totalSupply = _args.totalSupplyPremint;
     require(_args.beneficiaries_balances.length == _args.premint_beneficiaries.length,
-            "SBAppStorageInit: array sizes are not equal");
+            "SBT_init: array sizes are not equal");
     for (uint i = 0; i < _args.beneficiaries_balances.length; i++) {
       s._balances[_args.premint_beneficiaries[i]] = _args.beneficiaries_balances[i];
     }

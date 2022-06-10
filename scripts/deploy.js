@@ -1,9 +1,12 @@
 /* global ethers */
 /* eslint prefer-const: "off" */
 
-const { getSelectors, FacetCutAction } = require('./libraries/diamond.js')
+const { initSBD } = require('./initSBD.js')
+const { initSBT } = require('./initSBT.js')
+const { initSBV } = require('./initSBV.js')
 
-async function deployDiamond () {
+async function deployStableBattle () {
+  
   const accounts = await ethers.getSigners()
   const contractOwner = accounts[0]
 
@@ -13,62 +16,36 @@ async function deployDiamond () {
   await diamondCutFacet.deployed()
   console.log('DiamondCutFacet deployed:', diamondCutFacet.address)
 
-  // deploy Diamond
-  const Diamond = await ethers.getContractFactory('Diamond')
-  const diamond = await Diamond.deploy(contractOwner.address, diamondCutFacet.address)
-  await diamond.deployed()
-  console.log('Diamond deployed:', diamond.address)
+  // deploy StableBattleDiamond
+  const StableBattleDiamond = await ethers.getContractFactory('Diamond')
+  const SBD = await StableBattleDiamond.deploy(contractOwner.address, diamondCutFacet.address)
+  await SBD.deployed()
+  console.log('StableBattleDiamond deployed:', SBD.address)
 
-  // deploy DiamondInit
-  // DiamondInit provides a function that is called when the diamond is upgraded to initialize state variables
-  // Read about how the diamondCut function works here: https://eips.ethereum.org/EIPS/eip-2535#addingreplacingremoving-functions
-  const DiamondInit = await ethers.getContractFactory('DiamondInit')
-  const diamondInit = await DiamondInit.deploy()
-  await diamondInit.deployed()
-  console.log('DiamondInit deployed:', diamondInit.address)
+  // deploy StableBattleToken
+  const StableBattleToken = await ethers.getContractFactory('Diamond')
+  const SBT = await StableBattleToken.deploy(contractOwner.address, diamondCutFacet.address)
+  await SBT.deployed()
+  console.log('StableBattleDiamond deployed:', SBT.address)
 
-  // deploy facets
-  console.log('')
-  console.log('Deploying facets')
-  const FacetNames = [
-    'DiamondLoupeFacet',
-    'OwnershipFacet'
-  ]
-  const cut = []
-  for (const FacetName of FacetNames) {
-    const Facet = await ethers.getContractFactory(FacetName)
-    const facet = await Facet.deploy()
-    await facet.deployed()
-    console.log(`${FacetName} deployed: ${facet.address}`)
-    cut.push({
-      facetAddress: facet.address,
-      action: FacetCutAction.Add,
-      functionSelectors: getSelectors(facet)
-    })
-  }
+  // deploy StableBattleVillages
+  const StableBattleVillages = await ethers.getContractFactory('Diamond')
+  const SBV = await StableBattleVillages.deploy(contractOwner.address, diamondCutFacet.address)
+  await SBV.deployed()
+  console.log('StableBattleDiamond deployed:', SBV.address)
 
-  // upgrade diamond with facets
-  console.log('')
-  console.log('Diamond Cut:', cut)
-  const diamondCut = await ethers.getContractAt('IDiamondCut', diamond.address)
-  let tx
-  let receipt
-  // call to init function
-  let functionCall = diamondInit.interface.encodeFunctionData('init')
-  tx = await diamondCut.diamondCut(cut, diamondInit.address, functionCall)
-  console.log('Diamond cut tx: ', tx.hash)
-  receipt = await tx.wait()
-  if (!receipt.status) {
-    throw Error(`Diamond upgrade failed: ${tx.hash}`)
-  }
-  console.log('Completed diamond cut')
-  return diamond.address
+  const [Clan_address,
+         Treasury_address] = await initSBD(SBD.address, SBT.address, SBV.address)
+  await initSBT(SBT.address, Clan_address, Treasury_address)
+  await initSBV(SBV.address)
+  console.log('StableBattle deployed!')
+  return[SBD.address, SBT.address, SBV.address]
 }
 
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
 if (require.main === module) {
-  deployDiamond()
+  deployStableBattle()
     .then(() => process.exit(0))
     .catch(error => {
       console.error(error)
@@ -76,4 +53,4 @@ if (require.main === module) {
     })
 }
 
-exports.deployDiamond = deployDiamond
+exports.deployStableBattle = deployStableBattle

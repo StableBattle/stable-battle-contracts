@@ -19,7 +19,7 @@ contract KnightFacet is IKnight {
     } while (s._totalSupply[item_id] != 0);
   }
 
-  function mint_AAVE_knight() external {
+  function mint_AAVE_knight() external returns(uint256 id) {
     // Check if user gave its approval for 1000 USDT
     require(s.USDT.allowance(msg.sender, address(this)) >= 1e9, 
       "User allocated insufficient amount of funds");
@@ -33,7 +33,7 @@ contract KnightFacet is IKnight {
     s.USDT.approve(address(s.AAVE), 1e9);
     s.AAVE.supply(address(s.USDT), 1e9, address(this), 0);
     // Mint NFT for the user
-    uint256 id = randomKnightId();
+    id = randomKnightId();
     s.Items.mint(msg.sender, id, 1);
     s.knight[id] = Knight(0, 0, 0, knightType.AAVE);
 

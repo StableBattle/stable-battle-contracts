@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity 0.8.10;
 
-import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { IERC20 } from "../../shared/interfaces/IERC20.sol";
 import { IPool } from "@aave/core-v3/contracts/interfaces/IPool.sol";
 import { ISBT } from "../../shared/interfaces/ISBT.sol";
 import { IERC721Enumerable } from "../../shared/interfaces/IERC721Enumerable.sol";

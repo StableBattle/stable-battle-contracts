@@ -5,7 +5,7 @@ import { knightType } from "../../StableBattle/libraries/LibAppStorage.sol";
 
 interface IKnight {
 
-  function mint_AAVE_knight() external;
+  function mint_AAVE_knight() external returns(uint256);
 
   function mint_OTHER_knight() external;
 

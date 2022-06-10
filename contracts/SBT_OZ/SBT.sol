@@ -3,21 +3,22 @@ pragma solidity 0.8.10;
 
 import "./ERC20.sol";
 import "./Modifiers.sol";
-import "../shared/interfaces/ISBT.sol";
+import { ISBT } from "../shared/interfaces/ISBT.sol";
 import { IClan } from "../shared/interfaces/IClan.sol";
 
 contract SBT is ERC20, Modifiers, ISBT {
 
   IClan ClanFacet;
 
-  constructor (IClan ClanFacet_, 
+  constructor (address ClanFacet_address, 
               address[] memory minters_, 
               address[] memory burners_,
+              address owner_,
               address[] memory beneficiaries,
               uint256[] memory amounts)
     ERC20("Stable Battle Token", "SBT")
-    Modifiers(minters_, burners_) {
-      ClanFacet = ClanFacet_;
+    Modifiers(minters_, burners_, owner_) {
+      ClanFacet = IClan(ClanFacet_address);
       //Premint
       require (beneficiaries.length == amounts.length, "SBT premint: Array sizes doesn't match");
       for (uint i = 0; i < beneficiaries.length; i++) {
@@ -52,7 +53,7 @@ contract SBT is ERC20, Modifiers, ISBT {
   }
 
   function mintBatch (address[] memory to, uint256[] memory amount) external onlyMinters {
-    require(to.length == amount.length, "Array sizes doesn't match");
+    require(to.length == amount.length, "SBT: Array sizes doesn't match");
     for (uint256 i; i < to.length; i++) {
       ERC20._mint(to[i], amount[i]);
     }
@@ -63,7 +64,7 @@ contract SBT is ERC20, Modifiers, ISBT {
   }
 
   function burnBatch (address[] memory to, uint256[] memory amount) external onlyBurners {
-    require(to.length == amount.length, "Array sizes doesn't match");
+    require(to.length == amount.length, "SBT: Array sizes doesn't match");
     for (uint256 i; i < to.length; i++) {
       ERC20._burn(to[i], amount[i]);
     }

@@ -15,6 +15,8 @@ interface IClan {
 
   function onWithdraw(address benefactor, uint clan_id, uint amount) external;
 
+  function clanLevelOf(uint clan_id) external view returns(uint);
+
   function join(uint char_id, uint clan_id) external;
 
   function accept_join(uint256 char_id, uint256 clan_id) external;

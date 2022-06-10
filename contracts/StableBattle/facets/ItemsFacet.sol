@@ -5,7 +5,7 @@ import { ERC1155Supply } from "./ERC1155Supply.sol";
 import { IItems } from "../../shared/interfaces/IItems.sol";
 import { Knight } from "../libraries/LibAppStorage.sol";
 
-contract Items is ERC1155Supply, IItems {
+contract ItemsFacet is ERC1155Supply, IItems {
 
   modifier onlyItemForges() {
     bool sentByItemForge;
