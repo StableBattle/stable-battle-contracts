@@ -1,5 +1,6 @@
-/* global ethers */
+/* global ethers fs */
 /* eslint prefer-const: "off" */
+const fs = require('fs')
 
 const { initSBD } = require('./initSBD.js')
 const { initSBT } = require('./initSBT.js')
@@ -33,12 +34,32 @@ async function deployStableBattle () {
   const SBV = await StableBattleVillages.deploy(contractOwner.address, diamondCutFacet.address, {gasLimit: 3000000})
   await SBV.deployed()
   console.log('StableBattleVillages deployed:', SBV.address)
-
+  
+  if (fs.existsSync("./scripts/dep_args/facet_addresses.txt")) {
+    fs.unlinkSync("./scripts/dep_args/facet_addresses.txt")
+  }
   const [Clan_address,
          Treasury_address] = await initSBD(SBD.address, SBT.address, SBV.address)
   await initSBT(SBT.address, Clan_address, Treasury_address)
   await initSBV(SBV.address)
   console.log('StableBattle deployed!')
+  
+  if (fs.existsSync("./scripts/dep_args/diamond_addresses.txt")) {
+    fs.unlinkSync("./scripts/dep_args/diamond_addresses.txt")
+  }  
+  if (fs.existsSync("./scripts/dep_args/DiamondCutFacet_address.txt")) {
+    fs.unlinkSync("./scripts/dep_args/DiamondCutFacet_address.txt")
+  }
+
+  fs.writeFileSync(
+    "./scripts/dep_args/diamond_addresses.txt",
+    SBD.address + "\n" +
+    SBT.address + "\n" +
+    SBV.address,
+    {flag: "a"})
+  fs.writeFileSync("./scripts/dep_args/DiamondCutFacet_address.txt",
+                   diamondCutFacet.address,
+                   {flag: "a"})
   return[SBD.address, SBT.address, SBV.address]
 }
 

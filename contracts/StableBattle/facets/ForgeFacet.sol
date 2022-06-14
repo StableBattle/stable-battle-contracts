@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Unlicensed
-pragma solidity 0.8.10;
+pragma solidity ^0.8.0;
 
 import { AppStorage } from "../libraries/LibAppStorage.sol";
 

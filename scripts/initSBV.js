@@ -1,5 +1,6 @@
-/* global ethers */
+/* global ethers fs */
 /* eslint prefer-const: "off" */
+const fs = require('fs')
 
 const { getSelectors, FacetCutAction } = require('./libraries/diamond.js')
 
@@ -34,6 +35,7 @@ async function initSBV (SBV_address) {
       action: FacetCutAction.Add,
       functionSelectors: getSelectors(facet)
     })
+    fs.writeFileSync("./scripts/dep_args/facet_addresses.txt", facet.address + "\n", {flag: "a"})
   }
 
   // upgrade SBV with facets

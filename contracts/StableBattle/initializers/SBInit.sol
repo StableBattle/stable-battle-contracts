@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Unlicensed
-pragma solidity 0.8.10;
+pragma solidity ^0.8.0;
 
 import { IERC165 } from "../../shared/interfaces/IERC165.sol";
 import { IERC173 } from "../../shared/interfaces/IERC173.sol";

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Unlicensed
-pragma solidity 0.8.10;
+pragma solidity ^0.8.0;
 
 import { Knight, knightType, AppStorage } from "../libraries/LibAppStorage.sol";
 import { IKnight } from "../../shared/interfaces/IKnight.sol";
@@ -17,6 +17,14 @@ contract KnightFacet is IKnight {
         item_id += s.knight_offset;
       }
     } while (s._totalSupply[item_id] != 0);
+  }
+
+  function knightPrice() external pure returns(uint256 price) {
+    //if (kt == knightType.AAVE) {
+      price = 1e9;
+    //} else if (kt == knightType.OTHER) {
+    //  price = 0;
+    //}
   }
 
   function mint_AAVE_knight() external returns(uint256 id) {
@@ -40,9 +48,9 @@ contract KnightFacet is IKnight {
     emit KnightMinted(id, msg.sender, knightType.AAVE);
   }
 
-  function mint_OTHER_knight() external {
+  function mint_OTHER_knight() external returns(uint256 id) {
     // Mint NFT for the user
-    uint256 id = randomKnightId();
+    id = randomKnightId();
     s.Items.mint(msg.sender, id, 1);
     s.knight[id] = Knight(0, 0, 0, knightType.OTHER);
 

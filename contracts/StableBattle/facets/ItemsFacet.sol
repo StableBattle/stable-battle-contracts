@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Unlicensed
-pragma solidity 0.8.10;
+pragma solidity ^0.8.0;
 
 import { ERC1155Supply } from "./ERC1155Supply.sol";
 import { IItems } from "../../shared/interfaces/IItems.sol";

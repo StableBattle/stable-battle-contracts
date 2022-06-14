@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Unlicensed
-pragma solidity 0.8.10;
+pragma solidity ^0.8.0;
 
 import { LibDiamond } from "../../shared/libraries/LibDiamond.sol";
 import { IERC165 } from "../../shared/interfaces/IERC165.sol";

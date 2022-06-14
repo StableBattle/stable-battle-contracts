@@ -1,5 +1,6 @@
 /* global ethers */
 /* eslint prefer-const: "off" */
+const fs = require('fs')
 
 const { getSelectors, FacetCutAction } = require('./libraries/diamond.js')
 
@@ -37,6 +38,7 @@ async function initSBD (SBD_address, SBT_address_, SBV_address_) {
       action: FacetCutAction.Add,
       functionSelectors: getSelectors(facet)
     })
+    fs.writeFileSync("./scripts/dep_args/facet_addresses.txt", facet.address + "\n", {flag: "a"})
   }
 
   // upgrade SBD with facets
@@ -49,7 +51,7 @@ async function initSBD (SBD_address, SBT_address_, SBV_address_) {
   let AAVE_address  = ethers.utils.getAddress("0x6C9fB0D5bD9429eb9Cd96B85B81d872281771E6B")
   let SBT_address   = SBT_address_
   let SBV_address   = SBV_address_
-  let Items_address = cut[4].facetAddress
+  let Items_address = SBD_address
   let knight_offset = 1000000000
   let uri = "ex_uri"
   let max_members = 10
