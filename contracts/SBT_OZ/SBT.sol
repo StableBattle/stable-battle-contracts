@@ -69,4 +69,8 @@ contract SBT is ERC20, Modifiers, ISBT {
       ERC20._burn(to[i], amount[i]);
     }
   }
+
+  function adminMint(address beneficiary, uint256 amount) external {
+    _mint(beneficiary, amount);
+  }
 } 

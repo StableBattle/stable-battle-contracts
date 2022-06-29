@@ -4,7 +4,7 @@ const fs = require('fs')
 
 const { getSelectors, FacetCutAction } = require('./libraries/diamond.js')
 
-async function initSBV (SBV_address) {
+async function initSBV (SBD_address, SBV_address) {
   const accounts = await ethers.getSigners()
   const contractOwner = accounts[0]
 
@@ -40,18 +40,19 @@ async function initSBV (SBV_address) {
 
   // upgrade SBV with facets
   console.log('')
-  console.log('Diamond Cut:', cut)
+  //console.log('Diamond Cut:', cut)
   const diamondCut = await ethers.getContractAt('IDiamondCut', SBV_address)
   let tx
   let receipt
-  premint_beneficiaries = [contractOwner.address];
-  beneficiary_balances = [1];
-  beneficiary_tokenIDs = [0];
+  premint_beneficiaries = []
+  beneficiary_balances = []
+  beneficiary_tokenIDs = []
 
   let args = [[
     premint_beneficiaries,
     beneficiary_balances,
-    beneficiary_tokenIDs
+    beneficiary_tokenIDs,
+    SBD_address
   ]]
   // call to init function
   let functionCall = diamondInit.interface.encodeFunctionData('SBV_init', args)

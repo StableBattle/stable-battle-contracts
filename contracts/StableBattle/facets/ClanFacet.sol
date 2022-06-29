@@ -1,153 +1,185 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import { AppStorage, Clan } from "../libraries/LibAppStorage.sol";
+import { ClanStorage as Cs, Clan} from "../storage/ClanStorage.sol";
+import { ERC1155Storage as ERC1155s} from "../storage/ERC1155Storage.sol";
+import { KnightStorage as Ks} from "../storage/KnightStorage.sol";
 import { IClan } from "../../shared/interfaces/IClan.sol";
 
 contract ClanFacet is IClan {
+  using Cs for Cs.Layout;
+  using Ks for Ks.Layout;
+  using ERC1155s for ERC1155s.Layout;
 
-  AppStorage internal s;
+  function randomClanId() private view returns (uint clanId) {
+    uint salt;
+    do {
+      salt++;
+      clanId = uint(keccak256(abi.encodePacked(block.timestamp, tx.origin, salt)));
+    } while (Cs.layout().clan[clanId].owner != 0);
+  }
   
-  function Create(uint char_id) external returns (uint clan_id) {
-    uint256 old_clan_id = s.knight[char_id].inClan;
-    require(char_id > s.knight_offset, "ClanFacet: Item is not a knight");
-    require(s._balances[char_id][msg.sender] == 1,
-            "ClanFacet: Only knights can create a clan");
-    require(s.clan[old_clan_id].owner == 0,
+  function create(uint charId) external returns (uint clanId) {
+    uint256 oldClanId = Ks.layout().knight[charId].inClan;
+    require(charId > Ks.layout().knightOffset, "ClanFacet: Item is not a knight");
+    require(ERC1155s.layout()._balances[charId][msg.sender] == 1,
+            "ClanFacet: You don't own this knight");
+    require(Cs.layout().clan[oldClanId].owner == 0,
             "ClanFacet: Leave a clan before creating your own");
-    require(s.knight[char_id].ownsClan == 0, "ClanFacet: Only one clan per knight");
-    s.clan[clan_id] = Clan(char_id, 1, 0, 0);
-    s.knight[char_id].inClan = clan_id;
-    s.knight[char_id].ownsClan = clan_id;
-    clan_id++;
-    emit ClanCreated(clan_id, char_id);
+    require(Ks.layout().knight[charId].ownsClan == 0, "ClanFacet: Only one clan per knight");
+    clanId = randomClanId();
+    Cs.layout().clan[clanId] = Clan(charId, 1, 0, 0);
+    Ks.layout().knight[charId].inClan = clanId;
+    Ks.layout().knight[charId].ownsClan = clanId;
+    emit ClanCreated(clanId, charId);
   }
 
-  function Dissolve(uint clan_id) external {
-    uint char_id = s.clan[clan_id].owner;
-    require(s._balances[char_id][msg.sender] == 1,
+  function dissolve(uint clanId) external {
+    uint charId = Cs.layout().clan[clanId].owner;
+    require(ERC1155s.layout()._balances[charId][msg.sender] == 1,
             "ClanFacet: A knight owning this clan doesn't belong to you");
-    s.knight[char_id].ownsClan = 0;
-    s.clan[s.knight[char_id].inClan].owner = 0;
-    emit ClanDissloved(clan_id);
+    Ks.layout().knight[charId].ownsClan = 0;
+    Ks.layout().knight[charId].inClan = 0;
+    Cs.layout().clan[clanId].owner = 0;
+    emit ClanDissloved(clanId, charId);
   }
 
-  function stakeOf(address benefactor, uint clan_id) public view returns(uint256) {
-    return (s.stake[benefactor][clan_id]);
+  function clanCheck(uint clanId) external view returns(Clan memory) {
+    return Cs.layout().clan[clanId];
   }
 
-  function onStake(address benefactor, uint clan_id, uint amount) external {
-    require(s.clan[clan_id].owner != 0, "ClanFacet: This clan doesn't exist");
-
-    s.stake[benefactor][clan_id] += amount;
-    s.clan[clan_id].stake += amount;
-    leveling(clan_id);
-
-    emit StakedAdded (benefactor, clan_id, amount);
+  function clanOwner(uint clanId) external view returns(uint256) {
+    return Cs.layout().clan[clanId].owner;
   }
 
-  function onWithdraw(address benefactor, uint clan_id, uint amount) external {
-    require(stakeOf(benefactor, clan_id) >= amount, "ClanFacet: Not enough SBT staked");
+  function clanTotalMembers(uint clanId) external view returns(uint) {
+    return Cs.layout().clan[clanId].totalMembers;
+  }
+  
+  function clanStake(uint clanId) external view returns(uint) {
+    return Cs.layout().clan[clanId].stake;
+  }
+
+  function clanLevel(uint clanId) external view returns(uint) {
+    return Cs.layout().clan[clanId].level;
+  }
+
+  function stakeOf(address benefactor, uint clanId) public view returns(uint256) {
+    return (Cs.layout().stake[benefactor][clanId]);
+  }
+
+  function onStake(address benefactor, uint clanId, uint amount) external {
+    require(Cs.layout().clan[clanId].owner != 0, "ClanFacet: This clan doesn't exist");
+
+    Cs.layout().stake[benefactor][clanId] += amount;
+    Cs.layout().clan[clanId].stake += amount;
+    leveling(clanId);
+
+    emit StakeAdded(benefactor, clanId, amount);
+  }
+
+  function onWithdraw(address benefactor, uint clanId, uint amount) external {
+    require(stakeOf(benefactor, clanId) >= amount, "ClanFacet: Not enough SBT staked");
     
-    s.stake[benefactor][clan_id] -= amount;
-    s.clan[clan_id].stake -= amount;
-    leveling(clan_id);
+    Cs.layout().stake[benefactor][clanId] -= amount;
+    Cs.layout().clan[clanId].stake -= amount;
+    leveling(clanId);
 
-    emit StakedWithdrawn (benefactor, clan_id, amount);
+    emit StakeWithdrawn(benefactor, clanId, amount);
   }
 
   //Calculate clan level based on stake
-  function leveling(uint clan_id) private {
-    uint new_level = 0;
-    while (s.clan[clan_id].stake > s.levelThresholds[new_level] &&
-           new_level < s.levelThresholds.length) {
-      new_level++;
+  function leveling(uint clanId) private {
+    uint newLevel = 0;
+    while (Cs.layout().clan[clanId].stake > Cs.layout().levelThresholds[newLevel] &&
+           newLevel < Cs.layout().levelThresholds.length) {
+      newLevel++;
     }
-    if (s.clan[clan_id].level < new_level) {
-      s.clan[clan_id].level = new_level;
-      emit ClanLeveledUp (clan_id, new_level);
-    } else if (s.clan[clan_id].level > new_level) {
-      s.clan[clan_id].level = new_level;
-      emit ClanLeveledDown (clan_id, new_level);
+    if (Cs.layout().clan[clanId].level < newLevel) {
+      Cs.layout().clan[clanId].level = newLevel;
+      emit ClanLeveledUp (clanId, newLevel);
+    } else if (Cs.layout().clan[clanId].level > newLevel) {
+      Cs.layout().clan[clanId].level = newLevel;
+      emit ClanLeveledDown (clanId, newLevel);
     }
   }
 
-  function clanLevelOf(uint clan_id) external view returns(uint) {
-    return s.clan[clan_id].level;
-  }
-
-  function join(uint char_id, uint clan_id) external {
-    uint256 old_clan_id = s.knight[char_id].inClan;
-    require(char_id > s.knight_offset, "ClanFacet: Item is not a knight");
-    require(s._balances[char_id][msg.sender] == 1,
-            "ClanFacet: Only knights can join a clan");
-    require(s.clan[old_clan_id].owner == 0,
-            "ClanFacet: Leave your old clan before joining a new one");
+  function join(uint charId, uint clanId) external {
+    uint256 oldClanId = Ks.layout().knight[charId].inClan;
+    require(charId > Ks.layout().knightOffset,
+      "ClanFacet: Item is not a knight");
+    require(ERC1155s.layout()._balances[charId][msg.sender] == 1,
+      "ClanFacet: You don't own this knight");
+    require(Cs.layout().clan[oldClanId].owner == 0,
+      "ClanFacet: Leave your old clan before joining a new one");
     
-    s.join_proposal[char_id] = clan_id;
-    emit KnightAskedToJoin(clan_id, char_id);
+    Cs.layout().joinProposal[charId] = clanId;
+    emit KnightAskedToJoin(clanId, charId);
   }
 
-  function accept_join(uint256 char_id, uint256 clan_id) external {
-    uint256 owner_id = s.clan[clan_id].owner;
-    require(s._balances[owner_id][msg.sender] == 1,
+  function acceptJoin(uint256 charId, uint256 clanId) external {
+    uint256 ownerId = Cs.layout().clan[clanId].owner;
+    require(ERC1155s.layout()._balances[ownerId][msg.sender] == 1,
             "ClanFacet: A knight owning this clan doesn't belong to you");
-    require(s.join_proposal[char_id] == clan_id,
+    require(Cs.layout().joinProposal[charId] == clanId,
             "ClanFacet: This knight didn't offer to join your clan");
 
-    s.clan[clan_id].total_members++;
-    s.knight[char_id].inClan = clan_id;
-    s.join_proposal[char_id] = 0;
+    Cs.layout().clan[clanId].totalMembers++;
+    Ks.layout().knight[charId].inClan = clanId;
+    Cs.layout().joinProposal[charId] = 0;
 
-    emit KnightJoinedClan(clan_id, char_id);
+    emit KnightJoinedClan(clanId, charId);
   }
 
-  function refusejoin(uint256 char_id, uint256 clan_id) external {
-    uint256 owner_id = s.clan[clan_id].owner;
-    require(s._balances[owner_id][msg.sender] == 1,
+  function refuseJoin(uint256 charId, uint256 clanId) external {
+    uint256 ownerId = Cs.layout().clan[clanId].owner;
+    require(ERC1155s.layout()._balances[ownerId][msg.sender] == 1,
             "ClanFacet: A knight owning this clan doesn't belong to you");
-    require(s.join_proposal[char_id] == clan_id,
+    require(Cs.layout().joinProposal[charId] == clanId,
             "ClanFacet: This knight didn't offer to join your clan");
     
-    s.join_proposal[char_id] = 0;
+    Cs.layout().joinProposal[charId] = 0;
 
-    emit JoinProposalRefused(clan_id, char_id);
+    emit JoinProposalRefused(clanId, charId);
   }
 
-  function leave(uint256 char_id, uint256 clan_id) external {
-    uint256 old_clan_id = s.knight[char_id].inClan;
-    require(s._balances[char_id][msg.sender] == 1,
-            "ClanFacet: This knight doesn't belong to you");
-    require(old_clan_id == clan_id, "ClanFacet: Your knight doesn't belong to this clan");
+  function leave(uint256 charId, uint256 clanId) external {
+    uint256 oldClanId = Ks.layout().knight[charId].inClan;
+    require(ERC1155s.layout()._balances[charId][msg.sender] == 1,
+      "ClanFacet: This knight doesn't belong to you");
+    require(oldClanId == clanId, 
+      "ClanFacet: Your knight doesn't belong to this clan");
+    require(Cs.layout().clan[clanId].owner != charId,
+      "ClanFacet: You can't leave your own clan");
 
-    s.leave_proposal[char_id] = clan_id;
+    Cs.layout().leaveProposal[charId] = clanId;
     
-    emit KnightAskedToLeave(clan_id, char_id);
+    emit KnightAskedToLeave(clanId, charId);
   }
 
-  function acceptleave(uint256 char_id, uint256 clan_id) external {
-    uint256 owner_id = s.clan[clan_id].owner;
-    require(s._balances[owner_id][msg.sender] == 1,
+  function acceptLeave(uint256 charId, uint256 clanId) external {
+    uint256 ownerId = Cs.layout().clan[clanId].owner;
+    require(ERC1155s.layout()._balances[ownerId][msg.sender] == 1,
             "ClanFacet: A knight owning this clan doesn't belong to you");
-    require(s.leave_proposal[char_id] == clan_id,
+    require(Cs.layout().leaveProposal[charId] == clanId,
             "ClanFacet: This knight didn't offer to leave your clan");
 
-    s.clan[clan_id].total_members--;
-    s.knight[char_id].inClan = 0;
-    s.leave_proposal[char_id] = 0;
+    Cs.layout().clan[clanId].totalMembers--;
+    Ks.layout().knight[charId].inClan = 0;
+    Cs.layout().leaveProposal[charId] = 0;
 
-    emit KnightLeavedClan(clan_id, char_id);
+    emit KnightLeavedClan(clanId, charId);
   }
 
-  function refuseleave(uint256 char_id, uint256 clan_id) external {
-    uint256 owner_id = s.clan[clan_id].owner;
-    require(s._balances[owner_id][msg.sender] == 1,
+  function refuseLeave(uint256 charId, uint256 clanId) external {
+    uint256 ownerId = Cs.layout().clan[clanId].owner;
+    require(ERC1155s.layout()._balances[ownerId][msg.sender] == 1,
             "ClanFacet: A knight owning this clan doesn't belong to you");
-    require(s.join_proposal[char_id] == clan_id,
+    require(Cs.layout().leaveProposal[charId] == clanId,
             "ClanFacet: This knight didn't offer to leave your clan");
     
-    s.leave_proposal[char_id] = 0;
+    Cs.layout().leaveProposal[charId] = 0;
 
-    emit LeaveProposalRefused(clan_id, char_id);
+    emit LeaveProposalRefused(clanId, charId);
   }
 }

@@ -1,44 +1,52 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import { Clan } from "../../StableBattle/libraries/LibAppStorage.sol";
+import { Clan } from "../../StableBattle/storage/ClanStorage.sol";
 
 interface IClan {
   
-  function Create(uint char_id) external returns (uint clan_id);
+  function create(uint charId) external returns (uint clanId);
 
-  function Dissolve(uint clan_id) external;
+  function dissolve(uint clanId) external;
 
-  function stakeOf(address benefactor, uint clan_id) external view returns(uint256);
+  function clanCheck(uint clanId) external view returns(Clan memory);
 
-  function onStake(address benefactor, uint clan_id, uint amount) external;
+  function clanOwner(uint clanId) external view returns(uint256);
 
-  function onWithdraw(address benefactor, uint clan_id, uint amount) external;
+  function clanTotalMembers(uint clanId) external view returns(uint);
+  
+  function clanStake(uint clanId) external view returns(uint);
 
-  function clanLevelOf(uint clan_id) external view returns(uint);
+  function clanLevel(uint clanId) external view returns(uint);
 
-  function join(uint char_id, uint clan_id) external;
+  function stakeOf(address benefactor, uint clanId) external view returns(uint256);
 
-  function accept_join(uint256 char_id, uint256 clan_id) external;
+  function onStake(address benefactor, uint clanId, uint amount) external;
 
-  function refusejoin(uint256 char_id, uint256 clan_id) external;
+  function onWithdraw(address benefactor, uint clanId, uint amount) external;
 
-  function leave(uint256 char_id, uint256 clan_id) external;
+  function join(uint charId, uint clanId) external;
 
-  function acceptleave(uint256 char_id, uint256 clan_id) external;
+  function acceptJoin(uint256 charId, uint256 clanId) external;
 
-  function refuseleave(uint256 char_id, uint256 clan_id) external;
+  function refuseJoin(uint256 charId, uint256 clanId) external;
 
-  event ClanCreated(uint clan_id, uint char_id);
-  event ClanDissloved(uint clan_id);
-  event StakedAdded(address benefactor, uint clan_id, uint amount);
-  event StakedWithdrawn(address benefactor, uint clan_id, uint amount);
-  event ClanLeveledUp(uint clan_id, uint new_level);
-  event ClanLeveledDown(uint clan_id, uint new_level);
-  event KnightAskedToJoin(uint clan_id, uint char_id);
-  event KnightJoinedClan(uint clan_id, uint char_id);
-  event JoinProposalRefused(uint clan_id, uint char_id);
-  event KnightAskedToLeave(uint clan_id, uint char_id);
-  event KnightLeavedClan(uint clan_id, uint char_id);
-  event LeaveProposalRefused(uint clan_id, uint char_id);
+  function leave(uint256 charId, uint256 clanId) external;
+
+  function acceptLeave(uint256 charId, uint256 clanId) external;
+
+  function refuseLeave(uint256 charId, uint256 clanId) external;
+
+  event ClanCreated(uint clanId, uint charId);
+  event ClanDissloved(uint clanId, uint charId);
+  event StakeAdded(address benefactor, uint clanId, uint amount);
+  event StakeWithdrawn(address benefactor, uint clanId, uint amount);
+  event ClanLeveledUp(uint clanId, uint newLevel);
+  event ClanLeveledDown(uint clanId, uint newLevel);
+  event KnightAskedToJoin(uint clanId, uint charId);
+  event KnightJoinedClan(uint clanId, uint charId);
+  event JoinProposalRefused(uint clanId, uint charId);
+  event KnightAskedToLeave(uint clanId, uint charId);
+  event KnightLeavedClan(uint clanId, uint charId);
+  event LeaveProposalRefused(uint clanId, uint charId);
 }

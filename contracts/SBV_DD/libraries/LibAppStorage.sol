@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import { IClan } from "../../shared/interfaces/IClan.sol";
+import "../../shared/interfaces/ISBVHook.sol";
 
 struct AppStorage {
   // Token name
@@ -33,4 +33,6 @@ struct AppStorage {
 
   // Mapping from token id to position in the allTokens array
   mapping(uint256 => uint256) _allTokensIndex;
+
+  ISBVHook SBHook;
 }

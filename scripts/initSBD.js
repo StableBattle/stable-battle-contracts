@@ -20,30 +20,51 @@ async function initSBD (SBD_address, SBT_address_, SBV_address_) {
   const FacetNames = [
     'DiamondLoupeFacet',
     'OwnershipFacet',
+    //Deploy ItemsFacet first since it's inherited to mint knights and items
+    'ItemsFacet',
     'ClanFacet',
     'ForgeFacet',
-    'ItemsFacet',
     'KnightFacet',
+    'SBVHookFacet',
     'TournamentFacet',
     'TreasuryFacet'
   ]
   const cut = []
+  //let ItemsSelectors = [
+  //  '0x00fdd58e', '0x4e1273f4', '0x4f558e79', '0xe985e9c5', '0x3a711341',
+  //  '0x2eb2c2d6', '0xf242432a', '0xa22cb465', '0xbd85b039', '0x0e89341c']
   for (const FacetName of FacetNames) {
     const Facet = await ethers.getContractFactory(FacetName)
-    const facet = await Facet.deploy({gasLimit: 3000000})
+    const facet = await Facet.deploy({gasLimit: 30000000})
     await facet.deployed()
     console.log(`${FacetName} deployed: ${facet.address}`)
-    cut.push({
-      facetAddress: facet.address,
-      action: FacetCutAction.Add,
-      functionSelectors: getSelectors(facet)
-    })
+    if (FacetName == "ItemsFacet") {
+      ItemsSelectors = getSelectors(facet)
+      //console.log("ItemsSelectors: ", ItemsSelectors)
+      cut.push({
+        facetAddress: facet.address,
+        action: FacetCutAction.Add,
+        functionSelectors: ItemsSelectors
+      })
+    } else if (FacetName == "ForgeFacet" || FacetName == "KnightFacet") {
+      cut.push({
+        facetAddress: facet.address,
+        action: FacetCutAction.Add,
+        functionSelectors: getSelectors(facet).remove(ItemsSelectors)
+      })
+    } else {
+      cut.push({
+        facetAddress: facet.address,
+        action: FacetCutAction.Add,
+        functionSelectors: getSelectors(facet)
+      })
+    }
     fs.writeFileSync("./scripts/dep_args/facet_addresses.txt", facet.address + "\n", {flag: "a"})
   }
 
   // upgrade SBD with facets
   console.log('')
-  console.log('Diamond Cut:', cut)
+  //console.log('Diamond Cut:', cut)
   const diamondCut = await ethers.getContractAt('IDiamondCut', SBD_address)
   let tx
   let receipt
@@ -51,7 +72,6 @@ async function initSBD (SBD_address, SBT_address_, SBV_address_) {
   let AAVE_address  = ethers.utils.getAddress("0x6C9fB0D5bD9429eb9Cd96B85B81d872281771E6B")
   let SBT_address   = SBT_address_
   let SBV_address   = SBV_address_
-  let Items_address = SBD_address
   let knight_offset = 1000000000
   let uri = "ex_uri"
   let max_members = 10
@@ -62,7 +82,6 @@ async function initSBD (SBD_address, SBT_address_, SBV_address_) {
     AAVE_address,
     SBT_address,
     SBV_address,
-    Items_address,
     knight_offset,
     uri,
     max_members,
@@ -78,8 +97,6 @@ async function initSBD (SBD_address, SBT_address_, SBV_address_) {
     throw Error(`SBD upgrade failed: ${tx.hash}`)
   }
   console.log('Completed SB diamond cut')
-  return [cut[2].facetAddress,//clan 
-          cut[7].facetAddress] //treasury
 }
 
 exports.initSBD = initSBD

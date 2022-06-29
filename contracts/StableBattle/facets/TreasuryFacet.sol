@@ -1,29 +1,73 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import { AppStorage } from "../libraries/LibAppStorage.sol";
+import { MetaStorage as Ms} from "../storage/MetaStorage.sol";
+import { TreasuryStorage as Ts} from "../storage/TreasuryStorage.sol";
+import { ItemsStorage as Is } from "../storage/ItemsStorage.sol";
+import { ClanStorage as Cs} from "../storage/ClanStorage.sol";
+import { TournamentStorage as TMNTs} from "../storage/TournamentStorage.sol";
+import "hardhat/console.sol";
 
 contract TreasuryFacet {
+  using Ts for Ts.Layout;
+  using Ms for Ms.Layout;
+  using Is for Is.Layout;
+  using Cs for Cs.Layout;
+  using TMNTs for TMNTs.Layout;
 
-  AppStorage internal s;
+  function CastleHolder() private view returns(address) {
+    //Find owner of castle holding clan
+      //Find the castle holding clan
+    uint CastleHoldingClan = TMNTs.layout().CastleHolder;
+      //Find the knight that leads said clan
+    uint CastleHoldingClanLeader = Cs.layout().clan[CastleHoldingClan].owner;
+      //Find the owner of said knight
+    return Is.layout()._knightOwners[CastleHoldingClanLeader];
+  }
 
-  function claim_rewards() public {
-    uint payment_cycles = block.number - s.last_block;
+  function claimRewards() public {
+    uint lastBlock = Ts.layout().lastBlock;
+    uint villageAmount = Ms.layout().villageAmount;
+
+    //Calculate reward
+    uint paymentCycles = block.number - lastBlock;
+    console.log("realpaymentCycles: ", paymentCycles);
+    uint reward = getRewardPerBlock() * paymentCycles;
     //Assign rewards to village owners
-    uint villageAmount = s.SBV.totalSupply();
     address[] memory owners = new address[](villageAmount + 1);
     uint256[] memory rewards = new uint256[](villageAmount + 1);
     for (uint v = 0; v < villageAmount; v++){
-      owners[v] = s.SBV.ownerOf(v);
-      rewards[v] = s.reward_per_block * payment_cycles * s.castle_tax;
+      owners[v] = Ms.layout().villageOwner[v];
+      rewards[v] = reward * getTax();
     }
     //Assign reward to castle holder clan leader
-    owners[villageAmount] = s.Items.ownerOfKnight(s.clan[s.CastleHolder].owner);
-    rewards[villageAmount] = s.reward_per_block * payment_cycles * (100 - s.castle_tax);
+    owners[villageAmount] = CastleHolder();
+    rewards[villageAmount] = reward * (100 - getTax());
     //Mint reward tokens
-    s.SBT.mintBatch(owners, rewards);
-    s.last_block = block.number;
+    Ms.layout().SBT.mintBatch(owners, rewards);
+    Ts.layout().lastBlock = block.number;
   }
 
-  event beneficiaryUpdated (uint village, address beneficiary);
+  function getRewardPerBlock() public view returns(uint) {
+    return Ts.layout().rewardPerBlock;
+  }
+
+  function getTax() public view returns(uint) {
+    return Ts.layout().castleTax;
+  }
+
+  function setTax(uint tax) external onlyCastleHolder {
+    require(tax <= 90, "Can set a tax above 90%");
+    Ts.layout().castleTax = tax;
+    emit NewTaxSet(tax);
+  }
+
+  modifier onlyCastleHolder() {
+    require(msg.sender == CastleHolder(),
+      "TreasuryFacet: Only CastleHolder can use this function");
+    _;
+  }
+
+  event BeneficiaryUpdated (uint village, address beneficiary);
+  event NewTaxSet(uint tax);
 }

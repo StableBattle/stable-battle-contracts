@@ -4,7 +4,7 @@ const fs = require('fs')
 
 const { getSelectors, FacetCutAction } = require('./libraries/diamond.js')
 
-async function initSBT (SBT_address, Clan_address, Treasury_address) {
+async function initSBT (SBD_address, SBT_address) {
   const accounts = await ethers.getSigners()
   const contractOwner = accounts[0]
 
@@ -40,23 +40,17 @@ async function initSBT (SBT_address, Clan_address, Treasury_address) {
 
   // upgrade SBT with facets
   console.log('')
-  console.log('Diamond Cut:', cut)
+  //console.log('Diamond Cut:', cut)
   const diamondCut = await ethers.getContractAt('IDiamondCut', SBT_address)
   let tx
   let receipt
-
-  let ClanFacetAddress = Clan_address
-  let minters = [Treasury_address]
-  let burners = []
-    //premint data
+  //premint data
   let premint_beneficiaries = [contractOwner.address];
   let beneficiaries_balances = [10000];
   let totalSupplyPremint = 10000;
 
   let args = [[
-    ClanFacetAddress,
-    minters,
-    burners,
+    SBD_address,
     premint_beneficiaries,
     beneficiaries_balances,
     totalSupplyPremint

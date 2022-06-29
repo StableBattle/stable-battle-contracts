@@ -8,6 +8,7 @@ import { IDiamondCut } from "../../shared/interfaces/IDiamondCut.sol";
 import { IDiamondLoupe } from "../../shared/interfaces/IDiamondLoupe.sol";
 
 import { AppStorage } from "../libraries/LibAppStorage.sol";
+import { ISBVHook } from "../../shared/interfaces/ISBVHook.sol";
 import { IERC721 } from "../../shared/interfaces/IERC721.sol";
 import { IERC721Enumerable } from "@openzeppelin/contracts/interfaces/IERC721Enumerable.sol";
 
@@ -21,6 +22,7 @@ contract SBVInit {
       address[] premint_beneficiaries;
       uint256[] beneficiary_balances;
       uint256[] beneficiary_tokenIDs;
+      address SB_address;
   }
 
   function SBV_init(Args memory _args) external {
@@ -42,5 +44,8 @@ contract SBVInit {
       s._owners[_args.beneficiary_tokenIDs[i]] = _args.premint_beneficiaries[i];
       //add _ownedTokens & _ownedTokensIndex & _allTokens & _allTokensIndex
     }
+
+    //Assign StableBattle address
+    s.SBHook = ISBVHook(_args.SB_address);
   }
 }

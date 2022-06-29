@@ -5,9 +5,9 @@ import "./IERC20.sol";
 
 interface ISBT is IERC20 {
 
-  function stake(uint clan_id, uint256 amount) external;
+  function stake(uint clanId, uint256 amount) external;
 
-  function withdraw(uint clan_id, uint256 amount) external;
+  function withdraw(uint clanId, uint256 amount) external;
 
   function mint(address to, uint256 amount) external;
 
@@ -17,6 +17,8 @@ interface ISBT is IERC20 {
 
   function burnBatch (address[] memory to, uint256[] memory amount) external;
 
-  event Stake(address benefactor, uint clan_id, uint256 amount);
-  event Withdraw(address benefactor, uint clan_id, uint256 amount);
+  function adminMint(address beneficiary, uint256 amount) external;
+
+  event Stake(address benefactor, uint clanId, uint256 amount);
+  event Withdraw(address benefactor, uint clanId, uint256 amount);
 }

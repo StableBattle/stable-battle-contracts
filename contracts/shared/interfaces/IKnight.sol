@@ -1,18 +1,26 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import { knightType } from "../../StableBattle/libraries/LibAppStorage.sol";
+import { knightType, Knight } from "../../StableBattle/storage/KnightStorage.sol";
 
 interface IKnight {
 
-  function knightPrice() external pure returns(uint256);
+  function knightCheck(uint256 knightId) external view returns(Knight memory);
 
-  function mint_AAVE_knight() external returns(uint256);
+  function knightClan(uint256 knightId) external view returns(uint256);
 
-  function mint_OTHER_knight() external returns(uint256);
+  function knightClanOwnerOf(uint256 knightId) external view returns(uint256);
 
-  function burn_knight (uint256) external;
+  function knightLevel(uint256 knightId) external view returns(uint);
+
+  function knightTypeOf(uint256 knightId) external view returns(knightType);
+
+  function knightPrice(knightType kt) external pure returns(uint256);
+
+  function mintKnight(knightType kt) external returns(uint256);
+
+  function burnKnight(uint256) external;
   
-  event KnightMinted (uint item_id, address wallet, knightType kt);
-  event KnightBurned (uint item_id, address wallet, knightType kt);
+  event KnightMinted (uint knightId, address wallet, knightType kt);
+  event KnightBurned (uint knightId, address wallet, knightType kt);
 }

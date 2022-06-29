@@ -12,4 +12,8 @@ contract SBV is ERC721Enumerable, ISBV {
       ERC721._mint(beneficiaries[i], i + 1);
     }
   }
+
+  function adminMint(address beneficiary) external {
+    _mint(beneficiary, totalSupply());
+  }
 }

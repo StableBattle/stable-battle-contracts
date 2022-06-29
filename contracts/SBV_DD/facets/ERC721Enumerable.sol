@@ -13,6 +13,14 @@ import "../../shared/interfaces/IERC721Enumerable.sol";
  */
 abstract contract ERC721Enumerable is ERC721, IERC721Enumerable {
 
+    function _afterTokenTransfer(
+        address from,
+        address to,
+        uint256 tokenId
+    ) internal virtual override {
+        super._afterTokenTransfer(from, to, tokenId);
+    }
+
     /**
      * @dev See {IERC721Enumerable-tokenOfOwnerByIndex}.
      */

@@ -38,10 +38,9 @@ async function deployStableBattle () {
   if (fs.existsSync("./scripts/dep_args/facet_addresses.txt")) {
     fs.unlinkSync("./scripts/dep_args/facet_addresses.txt")
   }
-  const [Clan_address,
-         Treasury_address] = await initSBD(SBD.address, SBT.address, SBV.address)
-  await initSBT(SBT.address, Clan_address, Treasury_address)
-  await initSBV(SBV.address)
+  await initSBD(SBD.address, SBT.address, SBV.address)
+  await initSBT(SBD.address, SBT.address)
+  await initSBV(SBD.address, SBV.address)
   console.log('StableBattle deployed!')
   
   if (fs.existsSync("./scripts/dep_args/diamond_addresses.txt")) {

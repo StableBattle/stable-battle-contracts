@@ -15,8 +15,7 @@ struct AppStorage {
 
     uint256 _totalSupply;
   //SBT Facet
-    address[] minters;
-    address[] burners;
+    address SBD;
 
     IClan ClanFacet;
 }

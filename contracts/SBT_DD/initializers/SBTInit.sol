@@ -17,9 +17,7 @@ contract SBTInit {
   AppStorage internal s;
 
   struct Args {
-    address ClanFacetAddress;
-    address[] minters;
-    address[] burners;
+    address SBD_address;
     //premint data
       address[] premint_beneficiaries;
       uint256[] beneficiaries_balances;
@@ -45,9 +43,7 @@ contract SBTInit {
     for (uint i = 0; i < _args.beneficiaries_balances.length; i++) {
       s._balances[_args.premint_beneficiaries[i]] = _args.beneficiaries_balances[i];
     }
-    s.minters = _args.minters;
-    s.burners = _args.burners;
-
-    s.ClanFacet = IClan(_args.ClanFacetAddress);
+    s.SBD = _args.SBD_address;
+    s.ClanFacet = IClan(s.SBD);
   }
 }

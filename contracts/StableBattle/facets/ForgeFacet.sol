@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import { AppStorage } from "../libraries/LibAppStorage.sol";
+import { ItemsFacet } from "./ItemsFacet.sol";
+import "../../shared/interfaces/IForge.sol";
 
-contract ForgeFacet {
+contract ForgeFacet is ItemsFacet, IForge {
 
-  AppStorage internal s;
-
-  function mintItem (uint item_id, uint amount) public {
-    s.Items.mint(msg.sender, item_id, amount);
+  function mintItem (uint id, uint amount) public {
+    super._mint(msg.sender, id, amount, "");
   }
 
-  function burnItem (uint item_id, uint amount) public {
-    require (s.Items.balanceOf(msg.sender, item_id) >= amount, "Insufficient amount of items to burn");
-    s.Items.burn(msg.sender, item_id, amount);
+  function burnItem (uint id, uint amount) public {
+    require (super.balanceOf(msg.sender, id) >= amount, 
+      "Insufficient amount of items to burn");
+    super._burn(msg.sender, id, amount);
   }
 }

@@ -8,7 +8,14 @@ import { IDiamondCut } from "../../shared/interfaces/IDiamondCut.sol";
 import { IDiamondLoupe } from "../../shared/interfaces/IDiamondLoupe.sol";
 import { IERC1155 } from "../../shared/interfaces/IERC1155.sol";
 
-import { AppStorage, Knight, Clan } from "../libraries/LibAppStorage.sol";
+import { ClanStorage, Clan } from "../storage/ClanStorage.sol";
+import { KnightStorage, Knight} from "../storage/KnightStorage.sol";
+import { ItemsStorage } from "../storage/ItemsStorage.sol";
+import { MetaStorage } from "../storage/MetaStorage.sol";
+import { TournamentStorage } from "../storage/TournamentStorage.sol";
+import { TreasuryStorage } from "../storage/TreasuryStorage.sol";
+import { ERC1155Storage } from "../storage/ERC1155Storage.sol";
+
 import { IERC20 } from "../../shared/interfaces/IERC20.sol";
 import { ISBV } from "../../shared/interfaces/ISBV.sol";
 import { IPool } from "@aave/core-v3/contracts/interfaces/IPool.sol";
@@ -16,15 +23,19 @@ import { ISBT } from "../../shared/interfaces/ISBT.sol";
 import { IItems } from "../../shared/interfaces/IItems.sol";
 
 contract SBInit {
-
-  AppStorage internal s;
+  using ClanStorage for ClanStorage.Layout;
+  using KnightStorage for KnightStorage.Layout;
+  using ItemsStorage for ItemsStorage.Layout;
+  using MetaStorage for MetaStorage.Layout;
+  using TournamentStorage for TournamentStorage.Layout;
+  using TreasuryStorage for TreasuryStorage.Layout;
+  using ERC1155Storage for ERC1155Storage.Layout;
 
   struct Args {
     address USDT_address;
     address AAVE_address;
     address SBT_address;
     address SBV_address;
-    address Items_address;
 
     uint256 knight_offset;
     
@@ -45,26 +56,25 @@ contract SBInit {
       ds.supportedInterfaces[type(IDiamondLoupe).interfaceId] = true;
       ds.supportedInterfaces[type(IERC1155).interfaceId] = true;
 
-    //Various contract addresses
-      s.USDT = IERC20(_args.USDT_address);
-      s.AAVE = IPool(_args.AAVE_address);
-      s.SBT = ISBT(_args.SBT_address);
-      s.SBV = ISBV(_args.SBV_address);
+    //Assign StableBattle Storage
+      MetaStorage.layout().USDT = IERC20(_args.USDT_address);
+      MetaStorage.layout().AAVE = IPool(_args.AAVE_address);
+      MetaStorage.layout().SBT = ISBT(_args.SBT_address);
+      MetaStorage.layout().SBV = ISBV(_args.SBV_address);
 
     //Knight facet
-      s.knight_offset = _args.knight_offset;
+      KnightStorage.layout().knightOffset = _args.knight_offset;
 
     //ERC1155 Facet
-      s._uri = _args.uri;
+      ERC1155Storage.layout()._uri = _args.uri;
 
     //Clan Facet
-      s.MAX_CLAN_MEMBERS = _args.MAX_CLAN_MEMBERS;
-      s.levelThresholds = _args.levelThresholds;
+      ClanStorage.layout().MAX_CLAN_MEMBERS = _args.MAX_CLAN_MEMBERS;
+      ClanStorage.layout().levelThresholds = _args.levelThresholds;
 
     //Treasury Facet
-      s.castle_tax = 37;
-      s.last_block = block.number;
-      s.reward_per_block = 100;
-      s.reward_per_block = _args.reward_per_block;
+      TreasuryStorage.layout().castleTax = 37;
+      TreasuryStorage.layout().lastBlock = block.number;
+      TreasuryStorage.layout().rewardPerBlock = _args.reward_per_block;
   }
 }
