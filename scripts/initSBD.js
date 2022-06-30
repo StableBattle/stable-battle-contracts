@@ -97,6 +97,7 @@ async function initSBD (SBD_address, SBT_address_, SBV_address_) {
     throw Error(`SBD upgrade failed: ${tx.hash}`)
   }
   console.log('Completed SB diamond cut')
+  return await hre.ethers.provider.getBlock("latest")
 }
 
 exports.initSBD = initSBD

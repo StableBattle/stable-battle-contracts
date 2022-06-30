@@ -38,7 +38,8 @@ describe('TreasuryFacetTest', async function () {
     USDT = await ethers.getContractAt('IERC20Mintable', USDT_address)
     AAVE = await ethers.getContractAt('IPool', AAVE_address)
     predeployBlock = await hre.ethers.provider.getBlock("latest")
-    const [SBDAddress, SBTAddress, SBVAddress] = await deployStableBattle()
+    const [SBDAddress, SBTAddress, SBVAddress, pb] = await deployStableBattle()
+    predeployBlock = pb
     SBD = {
       Address: SBDAddress,
       CutFacet: await ethers.getContractAt('DiamondCutFacet', SBDAddress),
@@ -69,10 +70,10 @@ describe('TreasuryFacetTest', async function () {
       SBVFacet: await ethers.getContractAt('SBVFacet', SBVAddress),
       addresses: []
     }
-    await USDT.mint(knightPrice.AAVE * 10)
-    await USDT.approve(SBD.Address, knightPrice.AAVE)
-    await SBD.KnightFacet.mintKnight(0)
-
+    //await USDT.mint(knightPrice.AAVE * 10)
+    //await USDT.approve(SBD.Address, knightPrice.AAVE)
+    //await SBD.KnightFacet.mintKnight(0)
+    await SBD.KnightFacet.mintKnight(1)
     let eventsKnightMinted = await SBD.KnightFacet.queryFilter('KnightMinted')
     knightId = eventsKnightMinted[0].args.knightId
 
@@ -116,18 +117,22 @@ describe('TreasuryFacetTest', async function () {
     let rewardPerBlock = await SBD.TreasuryFacet.getRewardPerBlock()
     let user1BalanceBefore = await SBT.SBTFacet.balanceOf(user1.address)
     let ownerBalanceBefore = await SBT.SBTFacet.balanceOf(owner.address)
-
     await SBD.TreasuryFacet.claimRewards()
     let user1BalanceAfter = await SBT.SBTFacet.balanceOf(user1.address)
     let ownerBalanceAfter = await SBT.SBTFacet.balanceOf(owner.address)
-    console.log("realVillageReward: ", user1BalanceAfter - user1BalanceBefore)
-    console.log("realCastleReward: ", ownerBalanceAfter - ownerBalanceBefore)
+    let realVillageReward = user1BalanceAfter - user1BalanceBefore
+    let realCastleReward = ownerBalanceAfter - ownerBalanceBefore
+  //console.log("realVillageReward: ", realVillageReward)
+  //console.log("realCastleReward: ", realCastleReward)
     const lastBlock = await hre.ethers.provider.getBlock("latest")
     let paymentCycles = lastBlock.number - predeployBlock.number
-    console.log("calcpaymentCycles: ", paymentCycles)
+  //console.log("calcpaymentCycles: ", paymentCycles)
     let calcVillageReward = paymentCycles * rewardPerBlock * (100 - tax)
-    console.log("calcVillageReward: ", calcVillageReward)
-    let calcCastleReward = paymentCycles * rewardPerBlock * (tax)
-    console.log("calcCastleReward: ", calcCastleReward)
+  //console.log("calcVillageReward: ", calcVillageReward)
+    let calcCastleReward = paymentCycles * rewardPerBlock * tax
+  //console.log("calcCastleReward: ", calcCastleReward)
+    expect(realCastleReward).to.equal(calcCastleReward)
+    expect(realVillageReward).to.equal(calcVillageReward)
   })
+
 })

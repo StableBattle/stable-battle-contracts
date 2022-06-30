@@ -6,7 +6,6 @@ import { TreasuryStorage as Ts} from "../storage/TreasuryStorage.sol";
 import { ItemsStorage as Is } from "../storage/ItemsStorage.sol";
 import { ClanStorage as Cs} from "../storage/ClanStorage.sol";
 import { TournamentStorage as TMNTs} from "../storage/TournamentStorage.sol";
-import "hardhat/console.sol";
 
 contract TreasuryFacet {
   using Ts for Ts.Layout;
@@ -31,18 +30,17 @@ contract TreasuryFacet {
 
     //Calculate reward
     uint paymentCycles = block.number - lastBlock;
-    console.log("realpaymentCycles: ", paymentCycles);
     uint reward = getRewardPerBlock() * paymentCycles;
     //Assign rewards to village owners
     address[] memory owners = new address[](villageAmount + 1);
     uint256[] memory rewards = new uint256[](villageAmount + 1);
     for (uint v = 0; v < villageAmount; v++){
       owners[v] = Ms.layout().villageOwner[v];
-      rewards[v] = reward * getTax();
+      rewards[v] = reward * (100 - getTax());
     }
     //Assign reward to castle holder clan leader
     owners[villageAmount] = CastleHolder();
-    rewards[villageAmount] = reward * (100 - getTax());
+    rewards[villageAmount] = reward * getTax();
     //Mint reward tokens
     Ms.layout().SBT.mintBatch(owners, rewards);
     Ts.layout().lastBlock = block.number;
@@ -57,7 +55,7 @@ contract TreasuryFacet {
   }
 
   function setTax(uint tax) external onlyCastleHolder {
-    require(tax <= 90, "Can set a tax above 90%");
+    require(tax <= 90, "TreasuryFacet: Can't set a tax above 90%");
     Ts.layout().castleTax = tax;
     emit NewTaxSet(tax);
   }

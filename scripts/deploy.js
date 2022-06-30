@@ -38,7 +38,7 @@ async function deployStableBattle () {
   if (fs.existsSync("./scripts/dep_args/facet_addresses.txt")) {
     fs.unlinkSync("./scripts/dep_args/facet_addresses.txt")
   }
-  await initSBD(SBD.address, SBT.address, SBV.address)
+  const predeployBlock = await initSBD(SBD.address, SBT.address, SBV.address)
   await initSBT(SBD.address, SBT.address)
   await initSBV(SBD.address, SBV.address)
   console.log('StableBattle deployed!')
@@ -59,7 +59,7 @@ async function deployStableBattle () {
   fs.writeFileSync("./scripts/dep_args/DiamondCutFacet_address.txt",
                    diamondCutFacet.address,
                    {flag: "a"})
-  return[SBD.address, SBT.address, SBV.address]
+  return[SBD.address, SBT.address, SBV.address, predeployBlock]
 }
 
 // We recommend this pattern to be able to use async/await everywhere
