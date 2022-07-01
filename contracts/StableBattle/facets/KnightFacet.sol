@@ -8,7 +8,7 @@ import { KnightStorage as KNHT, knightType, Knight} from "../storage/KnightStora
 import { MetaStorage as META} from "../storage/MetaStorage.sol";
 import { ItemsStorage as ITEM } from "../storage/ItemsStorage.sol";
 
-contract KnightFacet is ITEMFacet, IKnight {
+contract KnightFacet is ItemsFacet, IKnight {
   using KNHT for KNHT.Layout;
   using META for META.Layout;
   using ITEM for ITEM.Layout;
@@ -34,7 +34,7 @@ contract KnightFacet is ITEMFacet, IKnight {
   }
 
   function knightOwner(uint256 knightId) public view returns(address) {
-    return KNHT.layout().kngiht[knightId].owner;
+    return KNHT.layout().knight[knightId].owner;
   }
 
   function randomKnightId() private view returns (uint256 knightId) {

@@ -88,7 +88,7 @@ describe('KnightFacetTest', async function () {
     let eventsKnightMinted = await SBD.KnightFacet.queryFilter('KnightMinted')
     let [knightId, knightOwner, knightType] = eventsKnightMinted[0].args
     expect(knightOwner).to.equal(owner.address)
-    let knightOwnerFromCall = await SBD.ItemsFacet.ownerOfKnight(knightId)
+    let knightOwnerFromCall = await SBD.KnightFacet.knightOwner(knightId)
     expect(knightOwner).to.equal(knightOwnerFromCall)
     expect(knightType).to.equal(0)
   })
@@ -105,7 +105,7 @@ describe('KnightFacetTest', async function () {
     expect(knightId).to.equal(knightId2)
     expect(knightOwner).to.equal(knightOwner2)
     expect(knightType).to.equal(knightType2)
-    knightOwnerFromCall = await SBD.ItemsFacet.ownerOfKnight(knightId)
+    knightOwnerFromCall = await SBD.KnightFacet.knightOwner(knightId)
     expect(knightOwnerFromCall).to.equal(ethers.constants.AddressZero)
     expect(balance_after - balance_before).to.equal(knightPrice.AAVE)
   })
