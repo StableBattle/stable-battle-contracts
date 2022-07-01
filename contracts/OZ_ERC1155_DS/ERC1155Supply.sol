@@ -4,8 +4,8 @@
 pragma solidity ^0.8.0;
 
 import "./ERC1155.sol";
-import "../../shared/interfaces/IERC1155Supply.sol";
-import "../storage/ERC1155SupplyStorage.sol";
+import "../shared/interfaces/IERC1155Supply.sol";
+import { ItemsStorage } from "../StableBattle/storage/ItemsStorage.sol";
 
 /**
  * @dev Extension of ERC1155 that adds tracking of total supply per id.
@@ -16,7 +16,7 @@ import "../storage/ERC1155SupplyStorage.sol";
  * same id are not going to be minted.
  */
 abstract contract ERC1155Supply is ERC1155, IERC1155Supply {
-    using ERC1155SupplyStorage for ERC1155SupplyStorage.Layout;
+    using ItemsStorage for ItemsStorage.Layout;
     
     function _mint(address to, uint256 id, uint256 amount, bytes memory data) internal virtual override {
         super._mint(to, id, amount, data);
@@ -30,7 +30,7 @@ abstract contract ERC1155Supply is ERC1155, IERC1155Supply {
      * @dev Total amount of tokens in with a given id.
      */
     function totalSupply(uint256 id) public view virtual returns (uint256) {
-        return ERC1155SupplyStorage.layout()._totalSupply[id];
+        return ItemsStorage.layout()._totalSupply[id];
     }
 
     /**
@@ -55,7 +55,7 @@ abstract contract ERC1155Supply is ERC1155, IERC1155Supply {
 
         if (from == address(0)) {
             for (uint256 i = 0; i < ids.length; ++i) {
-                ERC1155SupplyStorage.layout()._totalSupply[ids[i]] += amounts[i];
+                ItemsStorage.layout()._totalSupply[ids[i]] += amounts[i];
             }
         }
 
@@ -63,10 +63,10 @@ abstract contract ERC1155Supply is ERC1155, IERC1155Supply {
             for (uint256 i = 0; i < ids.length; ++i) {
                 uint256 id = ids[i];
                 uint256 amount = amounts[i];
-                uint256 supply = ERC1155SupplyStorage.layout()._totalSupply[id];
+                uint256 supply = ItemsStorage.layout()._totalSupply[id];
                 require(supply >= amount, "ERC1155: burn amount exceeds totalSupply");
                 unchecked {
-                    ERC1155SupplyStorage.layout()._totalSupply[id] = supply - amount;
+                    ItemsStorage.layout()._totalSupply[id] = supply - amount;
                 }
             }
         }

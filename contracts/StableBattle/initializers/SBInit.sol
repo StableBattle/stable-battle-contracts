@@ -14,7 +14,6 @@ import { ItemsStorage } from "../storage/ItemsStorage.sol";
 import { MetaStorage } from "../storage/MetaStorage.sol";
 import { TournamentStorage } from "../storage/TournamentStorage.sol";
 import { TreasuryStorage } from "../storage/TreasuryStorage.sol";
-import { ERC1155Storage } from "../storage/ERC1155Storage.sol";
 
 import { IERC20 } from "../../shared/interfaces/IERC20.sol";
 import { ISBV } from "../../shared/interfaces/ISBV.sol";
@@ -29,7 +28,6 @@ contract SBInit {
   using MetaStorage for MetaStorage.Layout;
   using TournamentStorage for TournamentStorage.Layout;
   using TreasuryStorage for TreasuryStorage.Layout;
-  using ERC1155Storage for ERC1155Storage.Layout;
 
   struct Args {
     address USDT_address;
@@ -65,8 +63,8 @@ contract SBInit {
     //Knight facet
       KnightStorage.layout().knightOffset = _args.knight_offset;
 
-    //ERC1155 Facet
-      ERC1155Storage.layout()._uri = _args.uri;
+    //Items & ERC1155 Facet
+      ItemsStorage.layout()._uri = _args.uri;
 
     //Clan Facet
       ClanStorage.layout().MAX_CLAN_MEMBERS = _args.MAX_CLAN_MEMBERS;

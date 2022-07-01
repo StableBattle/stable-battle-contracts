@@ -12,6 +12,7 @@ struct Knight {
   uint256 ownsClan;
   uint level;
   knightType kt;
+	address owner;
 }
 
 library KnightStorage {

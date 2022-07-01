@@ -4,12 +4,12 @@
 
 pragma solidity ^0.8.0;
 
-import "../../shared/interfaces/IERC1155.sol";
-import "../../shared/interfaces/IERC1155Receiver.sol";
-import "../../shared/interfaces/IERC1155MetadataURI.sol";
-import "../../shared/utils/Address.sol";
-import "../../shared/utils/Context.sol";
-import { ERC1155Storage} from "../storage/ERC1155Storage.sol";
+import "../shared/interfaces/IERC1155.sol";
+import "../shared/interfaces/IERC1155Receiver.sol";
+import "../shared/interfaces/IERC1155MetadataURI.sol";
+import "../shared/utils/Address.sol";
+import "../shared/utils/Context.sol";
+import { ItemsStorage } from "../StableBattle/storage/ItemsStorage.sol";
 
 /**
  * @dev Implementation of the basic standard multi-token.
@@ -19,7 +19,7 @@ import { ERC1155Storage} from "../storage/ERC1155Storage.sol";
  * _Available since v3.1._
  */
 contract ERC1155 is Context, IERC1155, IERC1155MetadataURI {
-    using ERC1155Storage for ERC1155Storage.Layout;
+    using ItemsStorage for ItemsStorage.Layout;
     using Address for address;
 
     /**
@@ -33,7 +33,7 @@ contract ERC1155 is Context, IERC1155, IERC1155MetadataURI {
      * actual token type ID.
      */
     function uri(uint256) public view virtual override returns (string memory) {
-        return ERC1155Storage.layout()._uri;
+        return ItemsStorage.layout()._uri;
     }
 
     /**
@@ -45,7 +45,7 @@ contract ERC1155 is Context, IERC1155, IERC1155MetadataURI {
      */
     function balanceOf(address account, uint256 id) public view virtual override returns (uint256) {
         require(account != address(0), "ERC1155: address zero is not a valid owner");
-        return ERC1155Storage.layout()._balances[id][account];
+        return ItemsStorage.layout()._balances[id][account];
     }
 
     /**
@@ -84,7 +84,7 @@ contract ERC1155 is Context, IERC1155, IERC1155MetadataURI {
      * @dev See {IERC1155-isApprovedForAll}.
      */
     function isApprovedForAll(address account, address operator) public view virtual override returns (bool) {
-        return ERC1155Storage.layout()._operatorApprovals[account][operator];
+        return ItemsStorage.layout()._operatorApprovals[account][operator];
     }
 
     /**
@@ -148,12 +148,12 @@ contract ERC1155 is Context, IERC1155, IERC1155MetadataURI {
 
         _beforeTokenTransfer(operator, from, to, ids, amounts, data);
 
-        uint256 fromBalance = ERC1155Storage.layout()._balances[id][from];
+        uint256 fromBalance = ItemsStorage.layout()._balances[id][from];
         require(fromBalance >= amount, "ERC1155: insufficient balance for transfer");
         unchecked {
-            ERC1155Storage.layout()._balances[id][from] = fromBalance - amount;
+            ItemsStorage.layout()._balances[id][from] = fromBalance - amount;
         }
-        ERC1155Storage.layout()._balances[id][to] += amount;
+        ItemsStorage.layout()._balances[id][to] += amount;
 
         emit TransferSingle(operator, from, to, id, amount);
 
@@ -190,12 +190,12 @@ contract ERC1155 is Context, IERC1155, IERC1155MetadataURI {
             uint256 id = ids[i];
             uint256 amount = amounts[i];
 
-            uint256 fromBalance = ERC1155Storage.layout()._balances[id][from];
+            uint256 fromBalance = ItemsStorage.layout()._balances[id][from];
             require(fromBalance >= amount, "ERC1155: insufficient balance for transfer");
             unchecked {
-                ERC1155Storage.layout()._balances[id][from] = fromBalance - amount;
+                ItemsStorage.layout()._balances[id][from] = fromBalance - amount;
             }
-            ERC1155Storage.layout()._balances[id][to] += amount;
+            ItemsStorage.layout()._balances[id][to] += amount;
         }
 
         emit TransferBatch(operator, from, to, ids, amounts);
@@ -225,7 +225,7 @@ contract ERC1155 is Context, IERC1155, IERC1155MetadataURI {
      * this function emits no events.
      */
     function _setURI(string memory newuri) internal virtual {
-        ERC1155Storage.layout()._uri = newuri;
+        ItemsStorage.layout()._uri = newuri;
     }
 
     /**
@@ -253,7 +253,7 @@ contract ERC1155 is Context, IERC1155, IERC1155MetadataURI {
 
         _beforeTokenTransfer(operator, address(0), to, ids, amounts, data);
 
-        ERC1155Storage.layout()._balances[id][to] += amount;
+        ItemsStorage.layout()._balances[id][to] += amount;
         emit TransferSingle(operator, address(0), to, id, amount);
 
         _afterTokenTransfer(operator, address(0), to, ids, amounts, data);
@@ -286,7 +286,7 @@ contract ERC1155 is Context, IERC1155, IERC1155MetadataURI {
         _beforeTokenTransfer(operator, address(0), to, ids, amounts, data);
 
         for (uint256 i = 0; i < ids.length; i++) {
-            ERC1155Storage.layout()._balances[ids[i]][to] += amounts[i];
+            ItemsStorage.layout()._balances[ids[i]][to] += amounts[i];
         }
 
         emit TransferBatch(operator, address(0), to, ids, amounts);
@@ -319,10 +319,10 @@ contract ERC1155 is Context, IERC1155, IERC1155MetadataURI {
 
         _beforeTokenTransfer(operator, from, address(0), ids, amounts, "");
 
-        uint256 fromBalance = ERC1155Storage.layout()._balances[id][from];
+        uint256 fromBalance = ItemsStorage.layout()._balances[id][from];
         require(fromBalance >= amount, "ERC1155: burn amount exceeds balance");
         unchecked {
-            ERC1155Storage.layout()._balances[id][from] = fromBalance - amount;
+            ItemsStorage.layout()._balances[id][from] = fromBalance - amount;
         }
 
         emit TransferSingle(operator, from, address(0), id, amount);
@@ -355,10 +355,10 @@ contract ERC1155 is Context, IERC1155, IERC1155MetadataURI {
             uint256 id = ids[i];
             uint256 amount = amounts[i];
 
-            uint256 fromBalance = ERC1155Storage.layout()._balances[id][from];
+            uint256 fromBalance = ItemsStorage.layout()._balances[id][from];
             require(fromBalance >= amount, "ERC1155: burn amount exceeds balance");
             unchecked {
-                ERC1155Storage.layout()._balances[id][from] = fromBalance - amount;
+                ItemsStorage.layout()._balances[id][from] = fromBalance - amount;
             }
         }
 
@@ -378,7 +378,7 @@ contract ERC1155 is Context, IERC1155, IERC1155MetadataURI {
         bool approved
     ) internal virtual {
         require(owner != operator, "ERC1155: setting approval status for self");
-        ERC1155Storage.layout()._operatorApprovals[owner][operator] = approved;
+        ItemsStorage.layout()._operatorApprovals[owner][operator] = approved;
         emit ApprovalForAll(owner, operator, approved);
     }
 

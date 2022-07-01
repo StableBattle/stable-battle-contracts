@@ -1,19 +1,19 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import { TournamentStorage as TMNTs } from "../storage/TournamentStorage.sol";
+import { TournamentStorage as TMNT } from "../storage/TournamentStorage.sol";
 import { LibDiamond } from "../../shared/libraries/LibDiamond.sol";
 
 contract TournamentFacet {
-  using TMNTs for TMNTs.Layout;
+  using TMNT for TMNT.Layout;
 
   function updateCastleOwnership(uint clanId) external onlyOwner {
-    TMNTs.layout().CastleHolder = clanId;
+    TMNT.layout().CastleHolder = clanId;
     emit CastleHolderChanged(clanId);
   }
 
   function castleHolder() external view returns(uint) {
-    return TMNTs.layout().CastleHolder;
+    return TMNT.layout().CastleHolder;
   }
 
   modifier onlyOwner() {

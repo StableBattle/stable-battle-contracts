@@ -134,5 +134,4 @@ describe('TreasuryFacetTest', async function () {
     expect(realCastleReward).to.equal(calcCastleReward)
     expect(realVillageReward).to.equal(calcVillageReward)
   })
-
 })
