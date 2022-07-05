@@ -27,7 +27,8 @@ async function initSBD (SBD_address, SBT_address_, SBV_address_) {
     'KnightFacet',
     'SBVHookFacet',
     'TournamentFacet',
-    'TreasuryFacet'
+    'TreasuryFacet',
+    'EtherscanFacet'
   ]
   const cut = []
   //let ItemsSelectors = [
@@ -35,7 +36,7 @@ async function initSBD (SBD_address, SBT_address_, SBV_address_) {
   //  '0x2eb2c2d6', '0xf242432a', '0xa22cb465', '0xbd85b039', '0x0e89341c']
   for (const FacetName of FacetNames) {
     const Facet = await ethers.getContractFactory(FacetName)
-    const facet = await Facet.deploy({gasLimit: 30000000})
+    const facet = await Facet.deploy({gasLimit: 5000000})
     await facet.deployed()
     console.log(`${FacetName} deployed: ${facet.address}`)
     if (FacetName == "ItemsFacet") {

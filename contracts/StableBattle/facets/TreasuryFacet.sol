@@ -6,8 +6,9 @@ import { TreasuryStorage as TRSR } from "../storage/TreasuryStorage.sol";
 import { KnightStorage as KNHT } from "../storage/KnightStorage.sol";
 import { ClanStorage as CLAN } from "../storage/ClanStorage.sol";
 import { TournamentStorage as TMNT } from "../storage/TournamentStorage.sol";
+import { ITreasury } from "../../shared/interfaces/ITreasury.sol";
 
-contract TreasuryFacet {
+contract TreasuryFacet is ITreasury {
   using TRSR for TRSR.Layout;
   using META for META.Layout;
   using KNHT for KNHT.Layout;
@@ -65,7 +66,4 @@ contract TreasuryFacet {
       "TreasuryFacet: Only CastleHolder can use this function");
     _;
   }
-
-  event BeneficiaryUpdated (uint village, address beneficiary);
-  event NewTaxSet(uint tax);
 }
