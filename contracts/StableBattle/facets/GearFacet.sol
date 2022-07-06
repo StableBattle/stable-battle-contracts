@@ -24,7 +24,7 @@ contract GearFacet is IGear {
     return GEAR.layout().knightSlotItem[knightId][slot]; 
   } 
 
-  function equipItem(uint256 knightId, uint256 itemId) private {
+  function equipItem(uint256 knightId, uint256 itemId) private notKnight(itemId) isKnight(knightId) {
     require(ITEM.layout()._balances[itemId][msg.sender] > 0, 
       "GearFacet: You don't own this item");
     require(getGearEquipable(itemId),
@@ -33,9 +33,7 @@ contract GearFacet is IGear {
     emit GearEquipped(knightId, getGearSlot(itemId), itemId);
   }
 
-  function updateGear(uint256 knightId, uint256[] memory items) external {
-    require(knightId >= KNHT.layout().knightOffset, 
-      "GearFacet: Item being equipped is not a knight");
+  function updateGear(uint256 knightId, uint256[] memory items) external isKnight(knightId) {
     require(ITEM.layout()._balances[knightId][msg.sender] > 0, 
       "GearFacet: You don't own this knight");
     for (uint i = 0; i < items.length; i++) {
@@ -46,6 +44,12 @@ contract GearFacet is IGear {
   modifier notKnight(uint256 itemId) {
     require(itemId < KNHT.layout().knightOffset, 
       "GearFacet: Knight is not an equipment");
+    _;
+  }
+
+  modifier isKnight(uint256 knightId) {
+    require(knightId >= KNHT.layout().knightOffset, 
+      "GearFacet: Equipment is not a knight");
     _;
   }
 }

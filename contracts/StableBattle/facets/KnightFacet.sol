@@ -60,7 +60,7 @@ contract KnightFacet is ItemsFacet, IKnight {
     if (kt == knightType.AAVE) {
       // Check if user gave its approval for 1000 USDT
       require(META.layout().USDT.allowance(msg.sender, address(this)) >= 1e9, 
-        "User allocated insufficient amount of funds");
+        "KnightFacet: User allocated insufficient amount of funds");
       // Transfer 1000 USDT from user to contract
       META.layout().USDT.transferFrom(msg.sender, address(this), 1e9);
       // Supply 1000 USDT to AAVE
@@ -69,7 +69,7 @@ contract KnightFacet is ItemsFacet, IKnight {
     }
     // Mint NFT for the user
     id = randomKnightId();
-    super._mint(msg.sender, id, 1, "");
+    _mint(msg.sender, id, 1, "");
     KNHT.layout().knight[id] = Knight(0, 0, 0, kt, msg.sender);
 
     emit KnightMinted(id, msg.sender, kt);
@@ -77,17 +77,16 @@ contract KnightFacet is ItemsFacet, IKnight {
 
   function burnKnight (uint256 id) external {
     //Check if item is knight
-    require (id > KNHT.layout().knightOffset, "Item is not a knight");
+    require (id >= KNHT.layout().knightOffset, "KnightFacet: Item is not a knight");
     //Check if user owns NFT
-    require (ITEM.layout()._balances[id][msg.sender] == 1, "User doesn't own this character");
+    require (ITEM.layout()._balances[id][msg.sender] == 1, "KnightFacet: User doesn't own this character");
     // Burn NFT
-    super._burn(msg.sender, id, 1);
+    _burn(msg.sender, id, 1);
     // Withraw 1000 USDT from AAVE to the user
-    if(KNHT.layout().knight[id].kt == knightType.AAVE) {
+    knightType kt = KNHT.layout().knight[id].kt;
+    if(kt == knightType.AAVE) {
       META.layout().AAVE.withdraw(address(META.layout().USDT), 1e9, msg.sender);
-      emit KnightBurned(id, msg.sender, knightType.AAVE);
-    } else {
-      emit KnightBurned(id, msg.sender, knightType.OTHER);
-    }    
+    }
+    emit KnightBurned(id, msg.sender, kt);
   }
 }

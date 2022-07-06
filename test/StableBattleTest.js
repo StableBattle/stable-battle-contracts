@@ -70,7 +70,7 @@ describe('StableBattleTest', async function () {
     for (const address of await SBT.LoupeFacet.facetAddresses()){ SBT.addresses.push(address) }
     for (const address of await SBV.LoupeFacet.facetAddresses()){ SBV.addresses.push(address) }
 
-    assert.equal(SBD.addresses.length, 11)
+    assert.equal(SBD.addresses.length, 12)
     assert.equal(SBT.addresses.length, 4)
     assert.equal(SBV.addresses.length, 4)
   })
