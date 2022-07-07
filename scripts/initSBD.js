@@ -74,7 +74,6 @@ async function initSBD (SBD_address, SBT_address_, SBV_address_) {
   let AAVE_address  = ethers.utils.getAddress("0x6C9fB0D5bD9429eb9Cd96B85B81d872281771E6B")
   let SBT_address   = SBT_address_
   let SBV_address   = SBV_address_
-  let knight_offset = 1000000000
   let uri = "ex_uri"
   let max_members = 10
   let levelThresholds = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900]
@@ -84,7 +83,6 @@ async function initSBD (SBD_address, SBT_address_, SBV_address_) {
     AAVE_address,
     SBT_address,
     SBV_address,
-    knight_offset,
     uri,
     max_members,
     levelThresholds,

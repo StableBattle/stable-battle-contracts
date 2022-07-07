@@ -9,9 +9,11 @@ contract GearFacetDummy is IGear {
 
   function getGearSlot(uint256 itemId) public view returns(gearSlot) {}
 
-  function getGearEquipable(uint256 itemId) public view returns(bool) {}
+  function getGearName(uint256 itemId) public view returns(string memory) {}
 
-  function getEquipmentInSlot(uint256 knightId, gearSlot slot) public view returns(uint256) {} 
+  function getGearEquipable(uint256 itemId, address account) public view returns(uint256) {}
 
-  function updateGear(uint256 knightId, uint256[] memory items) external {}
+  function getEquipmentInSlot(uint256 knightId, gearSlot slot) public view returns(uint256) {}
+
+  function updateKnightGear(uint256 knightId, uint256[] memory items) external {}
 }

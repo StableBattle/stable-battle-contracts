@@ -2,10 +2,16 @@
 
 pragma solidity ^0.8.0;
 
-import "./IItems.sol";
+import { gearSlot } from "../../StableBattle/storage/GearStorage.sol";
 
-interface IForge is IItems {
-  function mintItem(uint id, uint amount) external;
+interface IForge {
+  function createGear(uint id, gearSlot slot, string memory name) external;
 
-  function burnItem(uint id, uint amount) external;
+  function mintGear(uint id, uint amount, address to) external;
+
+  function mintGear(uint id, uint amount) external;
+
+  function burnGear(uint id, uint amount, address from) external;
+
+  function burnGear(uint id, uint amount) external;
 }

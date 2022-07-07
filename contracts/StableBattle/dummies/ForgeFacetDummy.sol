@@ -3,10 +3,16 @@ pragma solidity ^0.8.0;
 
 import { IForge } from "../../shared/interfaces/IForge.sol";
 import { ItemsFacetDummy } from "./ItemsFacetDummy.sol";
+import { gearSlot } from "../../StableBattle/storage/GearStorage.sol";
 
-contract ForgeFacetDummy is ItemsFacetDummy, IForge {
+contract ForgeFacetDummy is IForge, ItemsFacetDummy {
+  function createGear(uint id, gearSlot slot, string memory name) public {}
 
-  function mintItem (uint id, uint amount) public {}
+  function mintGear(uint id, uint amount, address to) public {}
 
-  function burnItem (uint id, uint amount) public {}
+  function mintGear(uint id, uint amount) public {}
+
+  function burnGear(uint id, uint amount, address from) public {}
+
+  function burnGear(uint id, uint amount) public {}
 }

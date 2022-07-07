@@ -14,6 +14,7 @@ import { ItemsStorage } from "../storage/ItemsStorage.sol";
 import { MetaStorage } from "../storage/MetaStorage.sol";
 import { TournamentStorage } from "../storage/TournamentStorage.sol";
 import { TreasuryStorage } from "../storage/TreasuryStorage.sol";
+import { GearStorage, gearSlot } from "../storage/GearStorage.sol";
 
 import { IERC20 } from "../../shared/interfaces/IERC20.sol";
 import { ISBV } from "../../shared/interfaces/ISBV.sol";
@@ -28,14 +29,13 @@ contract SBInit {
   using MetaStorage for MetaStorage.Layout;
   using TournamentStorage for TournamentStorage.Layout;
   using TreasuryStorage for TreasuryStorage.Layout;
+  using GearStorage for GearStorage.Layout;
 
   struct Args {
     address USDT_address;
     address AAVE_address;
     address SBT_address;
     address SBV_address;
-
-    uint256 knight_offset;
     
     string uri;
 
@@ -61,7 +61,19 @@ contract SBInit {
       MetaStorage.layout().SBV = ISBV(_args.SBV_address);
 
     //Knight facet
-      KnightStorage.layout().knightOffset = _args.knight_offset;
+      //all items in [10e12, inf) are knights
+      KnightStorage.layout().knightOffset = 1e13;
+
+    //Gear Facet
+      //all items in [1, 1e12) are gear
+      GearStorage.layout().gearRangeLeft = 1;
+      GearStorage.layout().gearRangeRight = 1e12;
+    
+    //Totem Facet
+      //all items in [1e12, 2e12) are totems
+      //TotemStorage.layout().totemRangeLeft = 1e12;
+      //TotemStorage.layout().totemRangeRight = 2e12;
+
 
     //Items & ERC1155 Facet
       ItemsStorage.layout()._uri = _args.uri;
@@ -74,5 +86,6 @@ contract SBInit {
       TreasuryStorage.layout().castleTax = 37;
       TreasuryStorage.layout().lastBlock = block.number;
       TreasuryStorage.layout().rewardPerBlock = _args.reward_per_block;
+
   }
 }
