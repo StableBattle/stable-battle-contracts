@@ -66,7 +66,7 @@ contract SBInit {
 
     //Gear Facet
       //all items in [256, 1e12) are gear
-      GearStorage.layout().gearRangeLeft = type(uint8).max + 1; //See unequipGear in GearFacet
+      GearStorage.layout().gearRangeLeft = 256; //type(uint8).max + 1 See unequipGear in GearFacet
       GearStorage.layout().gearRangeRight = 1e12;
     
     //Totem Facet
