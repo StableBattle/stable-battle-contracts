@@ -16,7 +16,6 @@ struct Knight {
 }
 
 library KnightStorage {
-
 	struct Layout {
     uint256 knightOffset;
     mapping(uint256 => Knight) knight;

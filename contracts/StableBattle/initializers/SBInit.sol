@@ -65,15 +65,14 @@ contract SBInit {
       KnightStorage.layout().knightOffset = 1e13;
 
     //Gear Facet
-      //all items in [1, 1e12) are gear
-      GearStorage.layout().gearRangeLeft = 1;
+      //all items in [256, 1e12) are gear
+      GearStorage.layout().gearRangeLeft = type(uint8).max + 1; //See unequipGear in GearFacet
       GearStorage.layout().gearRangeRight = 1e12;
     
     //Totem Facet
       //all items in [1e12, 2e12) are totems
       //TotemStorage.layout().totemRangeLeft = 1e12;
       //TotemStorage.layout().totemRangeRight = 2e12;
-
 
     //Items & ERC1155 Facet
       ItemsStorage.layout()._uri = _args.uri;

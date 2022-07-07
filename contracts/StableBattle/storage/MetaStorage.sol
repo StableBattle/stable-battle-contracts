@@ -8,7 +8,6 @@ import { ISBT } from "../../shared/interfaces/ISBT.sol";
 import { ISBV } from "../../shared/interfaces/ISBV.sol";
 
 library MetaStorage {
-
 	struct Layout {
 		// StableBattle EIP20 Token address
 		ISBT SBT;

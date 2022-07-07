@@ -13,20 +13,14 @@ contract ForgeFacet is ItemsFacet, IForge {
   using ITEM for ITEM.Layout;
   using KNHT for KNHT.Layout;
 
-  function createGear(uint id, gearSlot slot, string memory name) public isGear(id) {
-    require(GEAR.layout().gearSlot[id] == gearSlot.EMPTY,
-      "ForgeFacet: This type of gear already exists, use mintGear instead");
-    GEAR.layout().gearSlot[id] = slot;
-    GEAR.layout().gearName[id] = name;
-  }
-
   function mintGear(uint id, uint amount, address to) public isGear(id) {
     require(GEAR.layout().gearSlot[id] != gearSlot.EMPTY,
       "ForgeFacet: This type of gear not yet exists, use createGear instead");
     _mint(to, id, amount, "");
+    emit GearMinted(id, amount, to);
   }
 
-  function mintGear(uint id, uint amount) public {
+  function mintGear(uint id, uint amount) external {
     mintGear(id, amount, msg.sender);
   }
 
@@ -34,9 +28,10 @@ contract ForgeFacet is ItemsFacet, IForge {
     require(balanceOf(from, id) >= amount,
       "ForgeFacet: Insufficient amount of gear items to burn");
     _burn(from, id, amount);
+    emit GearBurned(id, amount, from);
   }
 
-  function burnGear(uint id, uint amount) public {
+  function burnGear(uint id, uint amount) external {
     burnGear(id, amount, msg.sender);
   }
 

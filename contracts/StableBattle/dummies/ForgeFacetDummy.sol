@@ -6,8 +6,6 @@ import { ItemsFacetDummy } from "./ItemsFacetDummy.sol";
 import { gearSlot } from "../../StableBattle/storage/GearStorage.sol";
 
 contract ForgeFacetDummy is IForge, ItemsFacetDummy {
-  function createGear(uint id, gearSlot slot, string memory name) public {}
-
   function mintGear(uint id, uint amount, address to) public {}
 
   function mintGear(uint id, uint amount) public {}
