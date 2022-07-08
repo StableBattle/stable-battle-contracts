@@ -9,7 +9,7 @@ import { IDiamondLoupe } from "../../shared/interfaces/IDiamondLoupe.sol";
 import { IERC1155 } from "../../shared/interfaces/IERC1155.sol";
 
 import { ClanStorage, Clan } from "../storage/ClanStorage.sol";
-import { KnightStorage, Knight} from "../storage/KnightStorage.sol";
+import { KnightStorage, Knight, knightType} from "../storage/KnightStorage.sol";
 import { ItemsStorage } from "../storage/ItemsStorage.sol";
 import { MetaStorage } from "../storage/MetaStorage.sol";
 import { TournamentStorage } from "../storage/TournamentStorage.sol";
@@ -63,6 +63,8 @@ contract SBInit {
     //Knight facet
       //all items in [10e12, inf) are knights
       KnightStorage.layout().knightOffset = 1e13;
+      KnightStorage.layout().knightPrice[knightType.AAVE] = 1e9;
+      KnightStorage.layout().knightPrice[knightType.OTHER] = 0;
 
     //Gear Facet
       //all items in [256, 1e12) are gear

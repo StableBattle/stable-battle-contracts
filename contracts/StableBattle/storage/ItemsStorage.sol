@@ -21,6 +21,8 @@ library ItemsStorage {
 	//Items Facet Addition
 		// Mapping from token ID to its owner
 		mapping (uint256 => address) _knightOwners;
+
+		uint256 totalKnightSupply;
 	}
 
 	bytes32 internal constant STORAGE_SLOT = keccak256("Items.storage");
@@ -39,5 +41,9 @@ library ItemsStorage {
 
 	function totalSupply(uint256 id) internal view returns (uint256) {
 			return layout()._totalSupply[id];
+	}
+
+	function totalKnightSupply() internal view returns (uint256) {
+		return layout().totalKnightSupply;
 	}
 }

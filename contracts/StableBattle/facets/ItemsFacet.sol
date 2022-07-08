@@ -31,6 +31,8 @@ contract ItemsFacet is ERC1155Supply, IItems {
     for (uint i = 0; i < ids.length; i++) {
       if (ids[i] >= KNHT.knightOffset()) {
         KNHT.layout().knight[ids[i]].owner = to;
+        if (from == address(0)) { ITEM.layout().totalKnightSupply++; }
+        else if (to == address(0)) { ITEM.layout().totalKnightSupply--; }
       }
     }
   }

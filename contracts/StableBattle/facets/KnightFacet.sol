@@ -56,12 +56,8 @@ contract KnightFacet is ItemsFacet, IKnight {
     } while (ITEM.totalSupply(knightId) != 0);
   }
 
-  function knightPrice(knightType kt) public pure returns(uint256 price) {
-    if (kt == knightType.AAVE) {
-      price = 1e9;
-    } else if (kt == knightType.OTHER) {
-      price = 0;
-    }
+  function knightPrice(knightType kt) public view returns(uint256) {
+    return KNHT.knightPrice(kt);
   }
 
   function knightCheck(uint256 knightId) public view returns(Knight memory) {

@@ -19,6 +19,7 @@ library KnightStorage {
 	struct Layout {
     uint256 knightOffset;
     mapping(uint256 => Knight) knight;
+    mapping(knightType => uint256) knightPrice;
 	}
 
 	bytes32 internal constant STORAGE_SLOT = keccak256("Knight.storage");
@@ -57,18 +58,22 @@ library KnightStorage {
   function knightOffset() internal view returns (uint256) {
     return layout().knightOffset;
   }
+
+  function knightPrice(knightType kt) internal view returns (uint256) {
+    return layout().knightPrice[kt];
+  }
 }
 
 contract KnightModifiers {
   modifier notKnight(uint256 itemId) {
     require(itemId < KnightStorage.layout().knightOffset, 
-      "GearFacet: Knight is not an equipment");
+      "KnightModifiers: Wrong id for something other than knight");
     _;
   }
 
   modifier isKnight(uint256 knightId) {
     require(knightId >= KnightStorage.layout().knightOffset, 
-      "GearFacet: Equipment is not a knight");
+      "KnightModifiers: Wrong id for knight");
     _;
   }
 }
