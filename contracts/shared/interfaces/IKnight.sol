@@ -21,7 +21,7 @@ interface IKnight {
 
   function knightOwner(uint256 knightId)  external view returns(address);
 
-  function knightPrice(knightType kt) external pure returns(uint256 price);
+  function knightPrice(knightType kt) external view returns(uint256 price);
   
   event KnightMinted (uint knightId, address wallet, knightType kt);
   event KnightBurned (uint knightId, address wallet, knightType kt);
