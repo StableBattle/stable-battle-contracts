@@ -31,6 +31,10 @@ library MetaStorage {
 		}
 	}
 
+	function SBDAddress() internal view returns (address){
+		return address(this);
+	}
+
 	function SBT() internal view returns (ISBT) {
 		return layout().SBT;
 	}

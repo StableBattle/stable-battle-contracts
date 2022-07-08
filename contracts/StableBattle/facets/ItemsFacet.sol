@@ -29,7 +29,7 @@ contract ItemsFacet is ERC1155Supply, IItems {
   ) internal virtual override {
     super._afterTokenTransfer(operator, from, to, ids, amounts, data);
     for (uint i = 0; i < ids.length; i++) {
-      if (ids[i] >= KNHT.layout().knightOffset) {
+      if (ids[i] >= KNHT.knightOffset()) {
         KNHT.layout().knight[ids[i]].owner = to;
       }
     }
