@@ -4,17 +4,12 @@ pragma solidity ^0.8.0;
 import { ItemsFacet } from "./ItemsFacet.sol";
 import { IForge } from "../../shared/interfaces/IForge.sol";
 
-import { GearStorage as GEAR, gearSlot } from "../storage/GearStorage.sol";
-import { ItemsStorage as ITEM } from "../storage/ItemsStorage.sol";
-import { KnightStorage as KNHT } from "../storage/KnightStorage.sol";
+import { GearStorage as GEAR, gearSlot, GearModifiers } from "../storage/GearStorage.sol";
 
-contract ForgeFacet is ItemsFacet, IForge {
-  using GEAR for GEAR.Layout;
-  using ITEM for ITEM.Layout;
-  using KNHT for KNHT.Layout;
+contract ForgeFacet is ItemsFacet, IForge, GearModifiers {
 
   function mintGear(uint id, uint amount, address to) public isGear(id) {
-    require(GEAR.layout().gearSlot[id] != gearSlot.EMPTY,
+    require(GEAR.getGearSlot(id) != gearSlot.NONE,
       "ForgeFacet: This type of gear not yet exists, use createGear instead");
     _mint(to, id, amount, "");
     emit GearMinted(id, amount, to);
@@ -33,12 +28,5 @@ contract ForgeFacet is ItemsFacet, IForge {
 
   function burnGear(uint id, uint amount) external {
     burnGear(id, amount, msg.sender);
-  }
-
-  modifier isGear(uint256 id) {
-    require(id >= GEAR.layout().gearRangeLeft && 
-            id <  GEAR.layout().gearRangeRight,
-            "ForgeFacet: Wrong id range for gear item");
-    _;
   }
 }

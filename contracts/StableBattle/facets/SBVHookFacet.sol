@@ -7,17 +7,15 @@ import { MetaStorage as META } from "../storage/MetaStorage.sol";
 contract SBVHookFacet is ISBVHook {
   using META for META.Layout;
 
-  modifier onlySBV {
-    require(address(META.layout().SBV) == msg.sender,
-      "SBVHookFacet: can only be called by SBV");
-    _;
-  }
-
   function SBV_hook(uint id, address newOwner, bool mint) external onlySBV {
     META.layout().villageOwner[id] = newOwner;
     if (mint == true) { META.layout().villageAmount++; }
-    emit VillageInfoUpdated(id, newOwner, META.layout().villageAmount);
+    emit VillageInfoUpdated(id, newOwner, META.villageAmount());
   }
 
-  event VillageInfoUpdated(uint id, address newOwner, uint villageAmount);
+  modifier onlySBV {
+    require(address(META.SBV()) == msg.sender,
+      "SBVHookFacet: can only be called by SBV");
+    _;
+  }
 }

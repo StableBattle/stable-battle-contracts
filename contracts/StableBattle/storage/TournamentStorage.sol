@@ -5,7 +5,7 @@ pragma solidity ^0.8.0;
 library TournamentStorage {
   struct Layout {
     //clan that holds the castle
-    uint CastleHolder;
+    uint256 castleHolder;
   }
 
   bytes32 internal constant STORAGE_SLOT = keccak256("Tournament.storage");
@@ -15,5 +15,9 @@ library TournamentStorage {
     assembly {
       l.slot := slot
     }
+  }
+
+  function castleHolder() internal view returns (uint256) {
+    return layout().castleHolder;
   }
 }

@@ -16,11 +16,11 @@ library ClanStorage {
     // clan_id => clan
     mapping(uint => Clan) clan;
     // character_id => clan_id
-    mapping (uint => uint) joinProposal;
+    mapping (uint256 => uint) joinProposal;
     // character_id => clan_id
-    mapping (uint => uint) leaveProposal;
+    mapping (uint256 => uint) leaveProposal;
     // address => clan_id => amount
-    mapping (address => mapping (uint => uint)) stake;
+    mapping (address => mapping (uint => uint256)) stake;
 	}
 
 	bytes32 internal constant STORAGE_SLOT = keccak256("Clan.storage");
@@ -31,4 +31,44 @@ library ClanStorage {
 			l.slot := slot
 		}
 	}
+
+  function clanCheck(uint clanId) internal view returns(Clan memory) {
+    return layout().clan[clanId];
+  }
+
+  function clanOwner(uint clanId) internal view returns(uint256) {
+    return layout().clan[clanId].owner;
+  }
+
+  function clanTotalMembers(uint clanId) internal view returns(uint) {
+    return layout().clan[clanId].totalMembers;
+  }
+  
+  function clanStake(uint clanId) internal view returns(uint256) {
+    return layout().clan[clanId].stake;
+  }
+
+  function clanLevel(uint clanId) internal view returns(uint) {
+    return layout().clan[clanId].level;
+  }
+
+  function stakeOf(address benefactor, uint clanId) internal view returns(uint256) {
+    return layout().stake[benefactor][clanId];
+  }
+
+  function clanLevelThresholds(uint newLevel) internal view returns (uint) {
+    return layout().levelThresholds[newLevel];
+  }
+
+  function clanMaxLevel() internal view returns (uint) {
+    return layout().levelThresholds.length;
+  }
+
+  function joinProposal(uint256 knightId) internal view returns (uint) {
+    return layout().joinProposal[knightId];
+  }
+
+  function leaveProposal(uint256 knightId) internal view returns (uint) {
+    return layout().leaveProposal[knightId];
+  }
 }

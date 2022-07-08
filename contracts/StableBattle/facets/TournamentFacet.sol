@@ -9,12 +9,12 @@ contract TournamentFacet is ITournament {
   using TMNT for TMNT.Layout;
 
   function updateCastleOwnership(uint clanId) external onlyOwner {
-    TMNT.layout().CastleHolder = clanId;
+    TMNT.layout().castleHolder = clanId;
     emit CastleHolderChanged(clanId);
   }
 
   function castleHolder() external view returns(uint) {
-    return TMNT.layout().CastleHolder;
+    return TMNT.castleHolder();
   }
 
   modifier onlyOwner() {

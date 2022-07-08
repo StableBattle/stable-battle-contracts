@@ -9,9 +9,9 @@ interface IGear {
 
   function getGearName(uint256 itemId) external view returns(string memory);
 
-  function getGearEquipable(address account, uint256 itemId) external returns(uint256);
-
   function getEquipmentInSlot(uint256 knightId, gearSlot slot) external returns(uint256);
+
+  function getGearEquipable(address account, uint256 itemId) external returns(uint256);
 
   function createGear(uint id, gearSlot slot, string memory name) external;
 

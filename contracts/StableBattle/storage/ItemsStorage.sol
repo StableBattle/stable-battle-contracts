@@ -31,4 +31,13 @@ library ItemsStorage {
 			l.slot := slot
 		}
 	}
+
+	function balanceOf(address account, uint256 id) internal view returns (uint256) {
+		require(account != address(0), "ERC1155: address zero is not a valid owner");
+		return layout()._balances[id][account];
+	}
+
+	function totalSupply(uint256 id) internal view returns (uint256) {
+			return layout()._totalSupply[id];
+	}
 }

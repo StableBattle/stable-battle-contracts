@@ -3,7 +3,7 @@
 pragma solidity ^0.8.0;
 
 enum gearSlot {
-  EMPTY,
+  NONE,
   WEAPON,
   SHIELD,
   HELMET,
@@ -43,4 +43,29 @@ library GearStorage {
 			l.slot := slot
 		}
 	}
+
+  function getGearSlot(uint256 itemId) internal view returns(gearSlot) {
+    return layout().gearSlot[itemId];
+  }
+
+  function getGearName(uint256 itemId) internal view returns(string memory) {
+    return layout().gearName[itemId];
+  }
+
+  function getEquipmentInSlot(uint256 knightId, gearSlot slot) internal view returns(uint256) {
+    return layout().knightSlotItem[knightId][slot];
+  }
+
+  function notEquippable(address account, uint256 itemId) internal view returns(uint256) {
+    return layout().notEquippable[account][itemId];
+  }
+}
+
+contract GearModifiers {
+  modifier isGear(uint256 id) {
+    require(id >= GearStorage.layout().gearRangeLeft && 
+            id <  GearStorage.layout().gearRangeRight,
+            "GearFacet: Wrong id range for gear item");
+    _;
+  }
 }

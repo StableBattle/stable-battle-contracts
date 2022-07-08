@@ -29,4 +29,46 @@ library KnightStorage {
 			l.slot := slot
 		}
 	}
+  
+  function knightCheck(uint256 kinghtId) internal view returns(Knight memory) {
+    return layout().knight[kinghtId];
+  }
+
+  function knightClan(uint256 kinghtId) internal view returns(uint256) {
+    return layout().knight[kinghtId].inClan;
+  }
+
+  function knightClanOwnerOf(uint256 kinghtId) internal view returns(uint256) {
+    return layout().knight[kinghtId].ownsClan;
+  }
+
+  function knightLevel(uint256 kinghtId) internal view returns(uint) {
+    return layout().knight[kinghtId].level;
+  }
+
+  function knightTypeOf(uint256 kinghtId) internal view returns(knightType) {
+    return layout().knight[kinghtId].kt;
+  }
+
+  function knightOwner(uint256 knightId) internal view returns(address) {
+    return layout().knight[knightId].owner;
+  }
+
+  function knightOffset() internal view returns (uint256) {
+    return layout().knightOffset;
+  }
+}
+
+contract KnightModifiers {
+  modifier notKnight(uint256 itemId) {
+    require(itemId < KnightStorage.layout().knightOffset, 
+      "GearFacet: Knight is not an equipment");
+    _;
+  }
+
+  modifier isKnight(uint256 knightId) {
+    require(knightId >= KnightStorage.layout().knightOffset, 
+      "GearFacet: Equipment is not a knight");
+    _;
+  }
 }

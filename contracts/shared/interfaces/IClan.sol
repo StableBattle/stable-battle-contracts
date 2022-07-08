@@ -9,18 +9,6 @@ interface IClan {
 
   function dissolve(uint clanId) external;
 
-  function clanCheck(uint clanId) external view returns(Clan memory);
-
-  function clanOwner(uint clanId) external view returns(uint256);
-
-  function clanTotalMembers(uint clanId) external view returns(uint);
-  
-  function clanStake(uint clanId) external view returns(uint);
-
-  function clanLevel(uint clanId) external view returns(uint);
-
-  function stakeOf(address benefactor, uint clanId) external view returns(uint256);
-
   function onStake(address benefactor, uint clanId, uint amount) external;
 
   function onWithdraw(address benefactor, uint clanId, uint amount) external;
@@ -36,6 +24,26 @@ interface IClan {
   function acceptLeave(uint256 charId, uint256 clanId) external;
 
   function refuseLeave(uint256 charId, uint256 clanId) external;
+
+  function clanCheck(uint clanId) external view returns(Clan memory);
+
+  function clanOwner(uint clanId) external view returns(uint256);
+
+  function clanTotalMembers(uint clanId) external view returns(uint);
+  
+  function clanStake(uint clanId) external view returns(uint);
+
+  function clanLevel(uint clanId) external view returns(uint);
+
+  function stakeOf(address benefactor, uint clanId) external view returns(uint256);
+
+  function clanLevelThresholds(uint newLevel) external view returns (uint);
+
+  function clanMaxLevel() external view returns (uint);
+
+  function joinProposal(uint256 knightId) external view returns (uint);
+
+  function leaveProposal(uint256 knightId) external view returns (uint);
 
   event ClanCreated(uint clanId, uint charId);
   event ClanDissloved(uint clanId, uint charId);

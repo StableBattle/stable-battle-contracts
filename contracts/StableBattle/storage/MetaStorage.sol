@@ -18,8 +18,8 @@ library MetaStorage {
 		IPool AAVE;
 
 		//Villages information (to reduce calls from Treasury)
-    uint villageAmount;
-    mapping (uint => address) villageOwner;
+    uint256 villageAmount;
+    mapping (uint256 => address) villageOwner;
 	}
 
 	bytes32 internal constant STORAGE_SLOT = keccak256("Meta.storage");
@@ -29,5 +29,29 @@ library MetaStorage {
 		assembly {
 			l.slot := slot
 		}
+	}
+
+	function SBT() internal view returns (ISBT) {
+		return layout().SBT;
+	}
+
+	function SBV() internal view returns (ISBV) {
+		return layout().SBV;
+	}
+
+	function USDT() internal view returns (IERC20) {
+		return layout().USDT;
+	}
+
+	function AAVE() internal view returns (IPool) {
+		return layout().AAVE;
+	}
+
+	function villageAmount() internal view returns(uint256) {
+		return layout().villageAmount;
+	}
+	
+	function villageOwner(uint256 id) internal view returns(address) {
+		return layout().villageOwner[id];
 	}
 }

@@ -3,37 +3,18 @@ pragma solidity ^0.8.0;
 
 import { IGear } from "../../shared/interfaces/IGear.sol";
 
-import { GearStorage as GEAR, gearSlot } from "../storage/GearStorage.sol";
+import { GearStorage as GEAR, gearSlot, GearModifiers } from "../storage/GearStorage.sol";
 import { ItemsStorage as ITEM } from "../storage/ItemsStorage.sol";
-import { KnightStorage as KNHT } from "../storage/KnightStorage.sol";
+import { KnightModifiers } from "../storage/KnightStorage.sol";
 
-contract GearFacet is IGear {
+contract GearFacet is IGear, KnightModifiers, GearModifiers {
   using GEAR for GEAR.Layout;
   using ITEM for ITEM.Layout;
-  using KNHT for KNHT.Layout;
-
-  function getGearSlot(uint256 itemId) public view notKnight(itemId) returns(gearSlot) {
-    return GEAR.layout().gearSlot[itemId];
-  }
-
-  function getGearName(uint256 itemId) public view notKnight(itemId) returns(string memory) {
-    return GEAR.layout().gearName[itemId];
-  }
-
-  function getGearEquipable(address account, uint256 itemId) public view notKnight(itemId) returns(uint256) {
-    uint256 itemBalance = noCallBalanceOf(account, itemId);
-    uint256 equippedOrLended = GEAR.layout().notEquippable[account][itemId];
-    return itemBalance - equippedOrLended;
-  }
-
-  function getEquipmentInSlot(uint256 knightId, gearSlot slot) public view returns(uint256) {
-    return GEAR.layout().knightSlotItem[knightId][slot];
-  }
 
   function createGear(uint id, gearSlot slot, string memory name) public isGear(id) {
-    require(GEAR.layout().gearSlot[id] == gearSlot.EMPTY,
+    require(GEAR.getGearSlot(id) == gearSlot.NONE,
       "ForgeFacet: This type of gear already exists, use mintGear instead");
-    require(slot != gearSlot.EMPTY,
+    require(slot != gearSlot.NONE,
       "ForgeFacet: Can't create gear of type EMPTY");
     GEAR.layout().gearSlot[id] = slot;
     GEAR.layout().gearName[id] = name;
@@ -41,7 +22,7 @@ contract GearFacet is IGear {
   }
 
   function equipItem(uint256 knightId, uint256 itemId) private notKnight(itemId) {
-    require(noCallBalanceOf(msg.sender, itemId) > 0, 
+    require(ITEM.balanceOf(msg.sender, itemId) > 0, 
       "GearFacet: You don't own this item");
     uint256 oldItemId = getEquipmentInSlot(knightId, getGearSlot(itemId));
     if (oldItemId != itemId) {
@@ -69,7 +50,7 @@ contract GearFacet is IGear {
   }
 
   function updateKnightGear(uint256 knightId, uint256[] memory items) external isKnight(knightId) {
-    require(noCallBalanceOf(msg.sender, knightId)> 0, 
+    require(ITEM.balanceOf(msg.sender, knightId)> 0, 
       "GearFacet: You don't own this knight");
     for (uint i = 0; i < items.length; i++) {
       if (items[i] > type(uint8).max) {
@@ -80,27 +61,25 @@ contract GearFacet is IGear {
     }
   }
 
-  function noCallBalanceOf(address account, uint256 id) private view returns (uint256) {
-    require(account != address(0), "ERC1155: address zero is not a valid owner");
-    return ITEM.layout()._balances[id][account];
+  function getGearSlot(uint256 itemId) public view notKnight(itemId) returns(gearSlot) {
+    return GEAR.getGearSlot(itemId);
   }
 
-  modifier notKnight(uint256 itemId) {
-    require(itemId < KNHT.layout().knightOffset, 
-      "GearFacet: Knight is not an equipment");
-    _;
+  function getGearName(uint256 itemId) public view notKnight(itemId) returns(string memory) {
+    return GEAR.getGearName(itemId);
   }
 
-  modifier isKnight(uint256 knightId) {
-    require(knightId >= KNHT.layout().knightOffset, 
-      "GearFacet: Equipment is not a knight");
-    _;
+  function getEquipmentInSlot(uint256 knightId, gearSlot slot) public view returns(uint256) {
+    return GEAR.getEquipmentInSlot(knightId, slot);
   }
 
-  modifier isGear(uint256 id) {
-    require(id >= GEAR.layout().gearRangeLeft && 
-            id <  GEAR.layout().gearRangeRight,
-            "GearFacet: Wrong id range for gear item");
-    _;
+  function notEquippable(address account, uint256 itemId) internal view returns(uint256) {
+    return GEAR.notEquippable(account, itemId);
+  }
+
+  function getGearEquipable(address account, uint256 itemId) public view notKnight(itemId) returns(uint256) {
+    uint256 itemBalance = ITEM.balanceOf(account, itemId);
+    uint256 equippedOrLended = notEquippable(account, itemId);
+    return itemBalance - equippedOrLended;
   }
 }
