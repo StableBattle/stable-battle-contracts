@@ -12,24 +12,24 @@ struct Knight {
   uint256 ownsClan;
   uint level;
   knightType kt;
-	address owner;
+  address owner;
 }
 
 library KnightStorage {
-	struct Layout {
+  struct Layout {
     uint256 knightOffset;
     mapping(uint256 => Knight) knight;
     mapping(knightType => uint256) knightPrice;
-	}
+  }
 
-	bytes32 internal constant STORAGE_SLOT = keccak256("Knight.storage");
+  bytes32 internal constant STORAGE_SLOT = keccak256("Knight.storage");
 
-	function layout() internal pure returns (Layout storage l) {
-		bytes32 slot = STORAGE_SLOT;
-		assembly {
-			l.slot := slot
-		}
-	}
+  function layout() internal pure returns (Layout storage l) {
+    bytes32 slot = STORAGE_SLOT;
+    assembly {
+      l.slot := slot
+    }
+  }
   
   function knightCheck(uint256 kinghtId) internal view returns(Knight memory) {
     return layout().knight[kinghtId];

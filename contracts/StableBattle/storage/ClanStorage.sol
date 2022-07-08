@@ -10,7 +10,7 @@ struct Clan {
 }
 
 library ClanStorage {
-	struct Layout {
+  struct Layout {
     uint MAX_CLAN_MEMBERS;
     uint[] levelThresholds;
     // clan_id => clan
@@ -21,16 +21,16 @@ library ClanStorage {
     mapping (uint256 => uint) leaveProposal;
     // address => clan_id => amount
     mapping (address => mapping (uint => uint256)) stake;
-	}
+  }
 
-	bytes32 internal constant STORAGE_SLOT = keccak256("Clan.storage");
+  bytes32 internal constant STORAGE_SLOT = keccak256("Clan.storage");
 
-	function layout() internal pure returns (Layout storage l) {
-		bytes32 slot = STORAGE_SLOT;
-		assembly {
-			l.slot := slot
-		}
-	}
+  function layout() internal pure returns (Layout storage l) {
+    bytes32 slot = STORAGE_SLOT;
+    assembly {
+      l.slot := slot
+    }
+  }
 
   function clanCheck(uint clanId) internal view returns(Clan memory) {
     return layout().clan[clanId];

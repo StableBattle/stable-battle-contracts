@@ -8,54 +8,54 @@ import { ISBT } from "../../shared/interfaces/ISBT.sol";
 import { ISBV } from "../../shared/interfaces/ISBV.sol";
 
 library MetaStorage {
-	struct Layout {
-		// StableBattle EIP20 Token address
-		ISBT SBT;
-		// StableBattle EIP721 Village address
-		ISBV SBV;
+  struct Layout {
+    // StableBattle EIP20 Token address
+    ISBT SBT;
+    // StableBattle EIP721 Village address
+    ISBV SBV;
 
-		IERC20 USDT;
-		IPool AAVE;
+    IERC20 USDT;
+    IPool AAVE;
 
-		//Villages information (to reduce calls from Treasury)
+    //Villages information (to reduce calls from Treasury)
     uint256 villageAmount;
     mapping (uint256 => address) villageOwner;
-	}
+  }
 
-	bytes32 internal constant STORAGE_SLOT = keccak256("Meta.storage");
+  bytes32 internal constant STORAGE_SLOT = keccak256("Meta.storage");
 
-	function layout() internal pure returns (Layout storage l) {
-		bytes32 slot = STORAGE_SLOT;
-		assembly {
-			l.slot := slot
-		}
-	}
+  function layout() internal pure returns (Layout storage l) {
+    bytes32 slot = STORAGE_SLOT;
+    assembly {
+      l.slot := slot
+    }
+  }
 
-	function SBDAddress() internal view returns (address){
-		return address(this);
-	}
+  function SBDAddress() internal view returns (address){
+    return address(this);
+  }
 
-	function SBT() internal view returns (ISBT) {
-		return layout().SBT;
-	}
+  function SBT() internal view returns (ISBT) {
+    return layout().SBT;
+  }
 
-	function SBV() internal view returns (ISBV) {
-		return layout().SBV;
-	}
+  function SBV() internal view returns (ISBV) {
+    return layout().SBV;
+  }
 
-	function USDT() internal view returns (IERC20) {
-		return layout().USDT;
-	}
+  function USDT() internal view returns (IERC20) {
+    return layout().USDT;
+  }
 
-	function AAVE() internal view returns (IPool) {
-		return layout().AAVE;
-	}
+  function AAVE() internal view returns (IPool) {
+    return layout().AAVE;
+  }
 
-	function villageAmount() internal view returns(uint256) {
-		return layout().villageAmount;
-	}
-	
-	function villageOwner(uint256 id) internal view returns(address) {
-		return layout().villageOwner[id];
-	}
+  function villageAmount() internal view returns(uint256) {
+    return layout().villageAmount;
+  }
+  
+  function villageOwner(uint256 id) internal view returns(address) {
+    return layout().villageOwner[id];
+  }
 }

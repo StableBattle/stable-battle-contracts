@@ -17,7 +17,7 @@ enum gearSlot {
 }
 
 library GearStorage {
-	struct Layout {
+  struct Layout {
     uint256 gearRangeLeft;
     uint256 gearRangeRight;
     //knightId => gearSlot => itemId
@@ -33,16 +33,16 @@ library GearStorage {
     //Returns amount of nonequippable (either already equipped or lended or in pending sell order)
       //items per itemId for a particular wallet
     mapping(address => mapping(uint256 => uint256)) notEquippable;
-	}
+  }
 
-	bytes32 internal constant STORAGE_SLOT = keccak256("Gear.storage");
+  bytes32 internal constant STORAGE_SLOT = keccak256("Gear.storage");
 
-	function layout() internal pure returns (Layout storage l) {
-		bytes32 slot = STORAGE_SLOT;
-		assembly {
-			l.slot := slot
-		}
-	}
+  function layout() internal pure returns (Layout storage l) {
+    bytes32 slot = STORAGE_SLOT;
+    assembly {
+      l.slot := slot
+    }
+  }
 
   function getGearSlot(uint256 itemId) internal view returns(gearSlot) {
     return layout().gearSlot[itemId];
