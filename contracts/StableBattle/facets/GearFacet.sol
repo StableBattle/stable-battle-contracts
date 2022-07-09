@@ -8,16 +8,16 @@ import { ItemsStorage as ITEM } from "../storage/ItemsStorage.sol";
 import { KnightModifiers } from "../storage/KnightStorage.sol";
 
 contract GearFacet is IGear, KnightModifiers, GearModifiers {
-  using GEAR for GEAR.Layout;
-  using ITEM for ITEM.Layout;
+  using GEAR for GEAR.State;
+  using ITEM for ITEM.State;
 
   function createGear(uint id, gearSlot slot, string memory name) public isGear(id) {
     require(GEAR.getGearSlot(id) == gearSlot.NONE,
       "ForgeFacet: This type of gear already exists, use mintGear instead");
     require(slot != gearSlot.NONE,
       "ForgeFacet: Can't create gear of type EMPTY");
-    GEAR.layout().gearSlot[id] = slot;
-    GEAR.layout().gearName[id] = name;
+    GEAR.state().gearSlot[id] = slot;
+    GEAR.state().gearName[id] = name;
     emit GearCreated(id, slot, name);
   }
 
@@ -29,11 +29,11 @@ contract GearFacet is IGear, KnightModifiers, GearModifiers {
       require(getGearEquipable(msg.sender, itemId) > 0,
         "GearFacet: This item is not equipable (either equipped on other character or part of ongoing lending or sell order)");
       //Equip new gear
-      GEAR.layout().knightSlotItem[knightId][getGearSlot(itemId)] = itemId;
-      GEAR.layout().notEquippable[msg.sender][itemId]++;
+      GEAR.state().knightSlotItem[knightId][getGearSlot(itemId)] = itemId;
+      GEAR.state().notEquippable[msg.sender][itemId]++;
       //Unequip old gear
       if (oldItemId != 0) {
-        GEAR.layout().notEquippable[msg.sender][oldItemId]--;
+        GEAR.state().notEquippable[msg.sender][oldItemId]--;
       }
       emit GearEquipped(knightId, getGearSlot(itemId), itemId);
     }
@@ -42,10 +42,10 @@ contract GearFacet is IGear, KnightModifiers, GearModifiers {
   function unequipItem(uint256 knightId, gearSlot slot) private {
     uint256 oldItemId = getEquipmentInSlot(knightId, slot);
     //Uneqip slot
-    GEAR.layout().knightSlotItem[knightId][slot] = 0;
+    GEAR.state().knightSlotItem[knightId][slot] = 0;
     //Unequip item
     if (oldItemId != 0) {
-      GEAR.layout().notEquippable[msg.sender][oldItemId]--;
+      GEAR.state().notEquippable[msg.sender][oldItemId]--;
     }
   }
 

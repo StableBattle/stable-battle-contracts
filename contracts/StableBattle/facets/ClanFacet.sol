@@ -7,8 +7,8 @@ import { KnightStorage as KNHT } from "../storage/KnightStorage.sol";
 import { IClan } from "../../shared/interfaces/IClan.sol";
 
 contract ClanFacet is IClan {
-  using CLAN for CLAN.Layout;
-  using KNHT for KNHT.Layout;
+  using CLAN for CLAN.State;
+  using KNHT for KNHT.State;
 
   function randomClanId() private view returns (uint clanId) {
     uint salt;
@@ -26,9 +26,9 @@ contract ClanFacet is IClan {
             "ClanFacet: Leave a clan before creating your own");
     require(KNHT.knightClanOwnerOf(knightId) == 0, "ClanFacet: Only one clan per knight");
     clanId = randomClanId();
-    CLAN.layout().clan[clanId] = Clan(knightId, 1, 0, 0);
-    KNHT.layout().knight[knightId].inClan = clanId;
-    KNHT.layout().knight[knightId].ownsClan = clanId;
+    CLAN.state().clan[clanId] = Clan(knightId, 1, 0, 0);
+    KNHT.state().knight[knightId].inClan = clanId;
+    KNHT.state().knight[knightId].ownsClan = clanId;
     emit ClanCreated(clanId, knightId);
   }
 
@@ -36,17 +36,17 @@ contract ClanFacet is IClan {
     uint ownerId = clanOwner(clanId);
     require(ITEM.balanceOf(msg.sender, ownerId) == 1,
             "ClanFacet: A knight owning this clan doesn't belong to you");
-    KNHT.layout().knight[ownerId].ownsClan = 0;
-    KNHT.layout().knight[ownerId].inClan = 0;
-    CLAN.layout().clan[clanId].owner = 0;
+    KNHT.state().knight[ownerId].ownsClan = 0;
+    KNHT.state().knight[ownerId].inClan = 0;
+    CLAN.state().clan[clanId].owner = 0;
     emit ClanDissloved(clanId, ownerId);
   }
 
   function onStake(address benefactor, uint clanId, uint amount) public {
     require(clanOwner(clanId) != 0, "ClanFacet: This clan doesn't exist");
 
-    CLAN.layout().stake[benefactor][clanId] += amount;
-    CLAN.layout().clan[clanId].stake += amount;
+    CLAN.state().stake[benefactor][clanId] += amount;
+    CLAN.state().clan[clanId].stake += amount;
     leveling(clanId);
 
     emit StakeAdded(benefactor, clanId, amount);
@@ -55,8 +55,8 @@ contract ClanFacet is IClan {
   function onWithdraw(address benefactor, uint clanId, uint amount) public {
     require(stakeOf(benefactor, clanId) >= amount, "ClanFacet: Not enough SBT staked");
     
-    CLAN.layout().stake[benefactor][clanId] -= amount;
-    CLAN.layout().clan[clanId].stake -= amount;
+    CLAN.state().stake[benefactor][clanId] -= amount;
+    CLAN.state().clan[clanId].stake -= amount;
     leveling(clanId);
 
     emit StakeWithdrawn(benefactor, clanId, amount);
@@ -70,10 +70,10 @@ contract ClanFacet is IClan {
       newLevel++;
     }
     if (clanLevel(clanId) < newLevel) {
-      CLAN.layout().clan[clanId].level = newLevel;
+      CLAN.state().clan[clanId].level = newLevel;
       emit ClanLeveledUp (clanId, newLevel);
     } else if (clanLevel(clanId) > newLevel) {
-      CLAN.layout().clan[clanId].level = newLevel;
+      CLAN.state().clan[clanId].level = newLevel;
       emit ClanLeveledDown (clanId, newLevel);
     }
   }
@@ -86,7 +86,7 @@ contract ClanFacet is IClan {
     require(clanOwner(KNHT.knightClan(knightId)) == 0,
       "ClanFacet: Leave your old clan before joining a new one");
     
-    CLAN.layout().joinProposal[knightId] = clanId;
+    CLAN.state().joinProposal[knightId] = clanId;
     emit KnightAskedToJoin(clanId, knightId);
   }
 
@@ -96,9 +96,9 @@ contract ClanFacet is IClan {
     require(joinProposal(knightId) == clanId,
             "ClanFacet: This knight didn't offer to join your clan");
 
-    CLAN.layout().clan[clanId].totalMembers++;
-    KNHT.layout().knight[knightId].inClan = clanId;
-    CLAN.layout().joinProposal[knightId] = 0;
+    CLAN.state().clan[clanId].totalMembers++;
+    KNHT.state().knight[knightId].inClan = clanId;
+    CLAN.state().joinProposal[knightId] = 0;
 
     emit KnightJoinedClan(clanId, knightId);
   }
@@ -109,7 +109,7 @@ contract ClanFacet is IClan {
     require(joinProposal(knightId) == clanId,
             "ClanFacet: This knight didn't offer to join your clan");
     
-    CLAN.layout().joinProposal[knightId] = 0;
+    CLAN.state().joinProposal[knightId] = 0;
 
     emit JoinProposalRefused(clanId, knightId);
   }
@@ -122,7 +122,7 @@ contract ClanFacet is IClan {
     require(clanOwner(clanId) != knightId,
       "ClanFacet: You can't leave your own clan");
 
-    CLAN.layout().leaveProposal[knightId] = clanId;
+    CLAN.state().leaveProposal[knightId] = clanId;
     
     emit KnightAskedToLeave(clanId, knightId);
   }
@@ -133,9 +133,9 @@ contract ClanFacet is IClan {
     require(leaveProposal(knightId) == clanId,
             "ClanFacet: This knight didn't offer to leave your clan");
 
-    CLAN.layout().clan[clanId].totalMembers--;
-    KNHT.layout().knight[knightId].inClan = 0;
-    CLAN.layout().leaveProposal[knightId] = 0;
+    CLAN.state().clan[clanId].totalMembers--;
+    KNHT.state().knight[knightId].inClan = 0;
+    CLAN.state().leaveProposal[knightId] = 0;
 
     emit KnightLeavedClan(clanId, knightId);
   }
@@ -146,7 +146,7 @@ contract ClanFacet is IClan {
     require(leaveProposal(knightId) == clanId,
             "ClanFacet: This knight didn't offer to leave your clan");
     
-    CLAN.layout().leaveProposal[knightId] = 0;
+    CLAN.state().leaveProposal[knightId] = 0;
 
     emit LeaveProposalRefused(clanId, knightId);
   }

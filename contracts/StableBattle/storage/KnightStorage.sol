@@ -16,7 +16,7 @@ struct Knight {
 }
 
 library KnightStorage {
-  struct Layout {
+  struct State {
     uint256 knightOffset;
     mapping(uint256 => Knight) knight;
     mapping(knightType => uint256) knightPrice;
@@ -24,7 +24,7 @@ library KnightStorage {
 
   bytes32 internal constant STORAGE_SLOT = keccak256("Knight.storage");
 
-  function layout() internal pure returns (Layout storage l) {
+  function state() internal pure returns (State storage l) {
     bytes32 slot = STORAGE_SLOT;
     assembly {
       l.slot := slot
@@ -32,47 +32,47 @@ library KnightStorage {
   }
   
   function knightCheck(uint256 kinghtId) internal view returns(Knight memory) {
-    return layout().knight[kinghtId];
+    return state().knight[kinghtId];
   }
 
   function knightClan(uint256 kinghtId) internal view returns(uint256) {
-    return layout().knight[kinghtId].inClan;
+    return state().knight[kinghtId].inClan;
   }
 
   function knightClanOwnerOf(uint256 kinghtId) internal view returns(uint256) {
-    return layout().knight[kinghtId].ownsClan;
+    return state().knight[kinghtId].ownsClan;
   }
 
   function knightLevel(uint256 kinghtId) internal view returns(uint) {
-    return layout().knight[kinghtId].level;
+    return state().knight[kinghtId].level;
   }
 
   function knightTypeOf(uint256 kinghtId) internal view returns(knightType) {
-    return layout().knight[kinghtId].kt;
+    return state().knight[kinghtId].kt;
   }
 
   function knightOwner(uint256 knightId) internal view returns(address) {
-    return layout().knight[knightId].owner;
+    return state().knight[knightId].owner;
   }
 
   function knightOffset() internal view returns (uint256) {
-    return layout().knightOffset;
+    return state().knightOffset;
   }
 
   function knightPrice(knightType kt) internal view returns (uint256) {
-    return layout().knightPrice[kt];
+    return state().knightPrice[kt];
   }
 }
 
 contract KnightModifiers {
   modifier notKnight(uint256 itemId) {
-    require(itemId < KnightStorage.layout().knightOffset, 
+    require(itemId < KnightStorage.state().knightOffset, 
       "KnightModifiers: Wrong id for something other than knight");
     _;
   }
 
   modifier isKnight(uint256 knightId) {
-    require(knightId >= KnightStorage.layout().knightOffset, 
+    require(knightId >= KnightStorage.state().knightOffset, 
       "KnightModifiers: Wrong id for knight");
     _;
   }

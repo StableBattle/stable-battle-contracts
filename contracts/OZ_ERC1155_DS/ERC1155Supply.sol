@@ -16,7 +16,7 @@ import { ItemsStorage } from "../StableBattle/storage/ItemsStorage.sol";
  * same id are not going to be minted.
  */
 abstract contract ERC1155Supply is ERC1155, IERC1155Supply {
-    using ItemsStorage for ItemsStorage.Layout;
+    using ItemsStorage for ItemsStorage.State;
     
     function _mint(address to, uint256 id, uint256 amount, bytes memory data) internal virtual override {
         super._mint(to, id, amount, data);
@@ -55,7 +55,7 @@ abstract contract ERC1155Supply is ERC1155, IERC1155Supply {
 
         if (from == address(0)) {
             for (uint256 i = 0; i < ids.length; ++i) {
-                ItemsStorage.layout()._totalSupply[ids[i]] += amounts[i];
+                ItemsStorage.state()._totalSupply[ids[i]] += amounts[i];
             }
         }
 
@@ -63,10 +63,10 @@ abstract contract ERC1155Supply is ERC1155, IERC1155Supply {
             for (uint256 i = 0; i < ids.length; ++i) {
                 uint256 id = ids[i];
                 uint256 amount = amounts[i];
-                uint256 supply = ItemsStorage.layout()._totalSupply[id];
+                uint256 supply = ItemsStorage.state()._totalSupply[id];
                 require(supply >= amount, "ERC1155: burn amount exceeds totalSupply");
                 unchecked {
-                    ItemsStorage.layout()._totalSupply[id] = supply - amount;
+                    ItemsStorage.state()._totalSupply[id] = supply - amount;
                 }
             }
         }

@@ -17,7 +17,7 @@ enum gearSlot {
 }
 
 library GearStorage {
-  struct Layout {
+  struct State {
     uint256 gearRangeLeft;
     uint256 gearRangeRight;
     //knightId => gearSlot => itemId
@@ -37,7 +37,7 @@ library GearStorage {
 
   bytes32 internal constant STORAGE_SLOT = keccak256("Gear.storage");
 
-  function layout() internal pure returns (Layout storage l) {
+  function state() internal pure returns (State storage l) {
     bytes32 slot = STORAGE_SLOT;
     assembly {
       l.slot := slot
@@ -45,26 +45,26 @@ library GearStorage {
   }
 
   function getGearSlot(uint256 itemId) internal view returns(gearSlot) {
-    return layout().gearSlot[itemId];
+    return state().gearSlot[itemId];
   }
 
   function getGearName(uint256 itemId) internal view returns(string memory) {
-    return layout().gearName[itemId];
+    return state().gearName[itemId];
   }
 
   function getEquipmentInSlot(uint256 knightId, gearSlot slot) internal view returns(uint256) {
-    return layout().knightSlotItem[knightId][slot];
+    return state().knightSlotItem[knightId][slot];
   }
 
   function notEquippable(address account, uint256 itemId) internal view returns(uint256) {
-    return layout().notEquippable[account][itemId];
+    return state().notEquippable[account][itemId];
   }
 }
 
 contract GearModifiers {
   modifier isGear(uint256 id) {
-    require(id >= GearStorage.layout().gearRangeLeft && 
-            id <  GearStorage.layout().gearRangeRight,
+    require(id >= GearStorage.state().gearRangeLeft && 
+            id <  GearStorage.state().gearRangeRight,
             "GearFacet: Wrong id range for gear item");
     _;
   }

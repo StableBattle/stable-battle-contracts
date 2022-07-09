@@ -9,7 +9,7 @@ import { TournamentStorage as TMNT } from "../storage/TournamentStorage.sol";
 import { ITreasury } from "../../shared/interfaces/ITreasury.sol";
 
 contract TreasuryFacet is ITreasury, TreasuryModifiers {
-  using TRSR for TRSR.Layout;
+  using TRSR for TRSR.State;
 
   function CastleHolder() private view returns(address) {
   //Find owner of castle holding clan
@@ -39,7 +39,7 @@ contract TreasuryFacet is ITreasury, TreasuryModifiers {
     rewards[villageAmount] = reward * getTax();
     //Mint reward tokens
     META.SBT().mintBatch(owners, rewards);
-    TRSR.layout().lastBlock = block.number;
+    TRSR.state().lastBlock = block.number;
   }
 
   function getRewardPerBlock() public view returns(uint) {
@@ -56,7 +56,7 @@ contract TreasuryFacet is ITreasury, TreasuryModifiers {
 
   function setTax(uint tax) external onlyCastleHolder(CastleHolder()) {
     require(tax <= 90, "TreasuryFacet: Can't set a tax above 90%");
-    TRSR.layout().castleTax = tax;
+    TRSR.state().castleTax = tax;
     emit NewTaxSet(tax);
   }
 }

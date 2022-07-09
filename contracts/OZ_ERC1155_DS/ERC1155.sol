@@ -19,7 +19,7 @@ import { ItemsStorage } from "../StableBattle/storage/ItemsStorage.sol";
  * _Available since v3.1._
  */
 contract ERC1155 is Context, IERC1155, IERC1155MetadataURI {
-    using ItemsStorage for ItemsStorage.Layout;
+    using ItemsStorage for ItemsStorage.State;
     using Address for address;
 
     /**
@@ -33,7 +33,7 @@ contract ERC1155 is Context, IERC1155, IERC1155MetadataURI {
      * actual token type ID.
      */
     function uri(uint256) public view virtual override returns (string memory) {
-        return ItemsStorage.layout()._uri;
+        return ItemsStorage.state()._uri;
     }
 
     /**
@@ -83,7 +83,7 @@ contract ERC1155 is Context, IERC1155, IERC1155MetadataURI {
      * @dev See {IERC1155-isApprovedForAll}.
      */
     function isApprovedForAll(address account, address operator) public view virtual override returns (bool) {
-        return ItemsStorage.layout()._operatorApprovals[account][operator];
+        return ItemsStorage.state()._operatorApprovals[account][operator];
     }
 
     /**
@@ -147,12 +147,12 @@ contract ERC1155 is Context, IERC1155, IERC1155MetadataURI {
 
         _beforeTokenTransfer(operator, from, to, ids, amounts, data);
 
-        uint256 fromBalance = ItemsStorage.layout()._balances[id][from];
+        uint256 fromBalance = ItemsStorage.state()._balances[id][from];
         require(fromBalance >= amount, "ERC1155: insufficient balance for transfer");
         unchecked {
-            ItemsStorage.layout()._balances[id][from] = fromBalance - amount;
+            ItemsStorage.state()._balances[id][from] = fromBalance - amount;
         }
-        ItemsStorage.layout()._balances[id][to] += amount;
+        ItemsStorage.state()._balances[id][to] += amount;
 
         emit TransferSingle(operator, from, to, id, amount);
 
@@ -189,12 +189,12 @@ contract ERC1155 is Context, IERC1155, IERC1155MetadataURI {
             uint256 id = ids[i];
             uint256 amount = amounts[i];
 
-            uint256 fromBalance = ItemsStorage.layout()._balances[id][from];
+            uint256 fromBalance = ItemsStorage.state()._balances[id][from];
             require(fromBalance >= amount, "ERC1155: insufficient balance for transfer");
             unchecked {
-                ItemsStorage.layout()._balances[id][from] = fromBalance - amount;
+                ItemsStorage.state()._balances[id][from] = fromBalance - amount;
             }
-            ItemsStorage.layout()._balances[id][to] += amount;
+            ItemsStorage.state()._balances[id][to] += amount;
         }
 
         emit TransferBatch(operator, from, to, ids, amounts);
@@ -224,7 +224,7 @@ contract ERC1155 is Context, IERC1155, IERC1155MetadataURI {
      * this function emits no events.
      */
     function _setURI(string memory newuri) internal virtual {
-        ItemsStorage.layout()._uri = newuri;
+        ItemsStorage.state()._uri = newuri;
     }
 
     /**
@@ -252,7 +252,7 @@ contract ERC1155 is Context, IERC1155, IERC1155MetadataURI {
 
         _beforeTokenTransfer(operator, address(0), to, ids, amounts, data);
 
-        ItemsStorage.layout()._balances[id][to] += amount;
+        ItemsStorage.state()._balances[id][to] += amount;
         emit TransferSingle(operator, address(0), to, id, amount);
 
         _afterTokenTransfer(operator, address(0), to, ids, amounts, data);
@@ -285,7 +285,7 @@ contract ERC1155 is Context, IERC1155, IERC1155MetadataURI {
         _beforeTokenTransfer(operator, address(0), to, ids, amounts, data);
 
         for (uint256 i = 0; i < ids.length; i++) {
-            ItemsStorage.layout()._balances[ids[i]][to] += amounts[i];
+            ItemsStorage.state()._balances[ids[i]][to] += amounts[i];
         }
 
         emit TransferBatch(operator, address(0), to, ids, amounts);
@@ -318,10 +318,10 @@ contract ERC1155 is Context, IERC1155, IERC1155MetadataURI {
 
         _beforeTokenTransfer(operator, from, address(0), ids, amounts, "");
 
-        uint256 fromBalance = ItemsStorage.layout()._balances[id][from];
+        uint256 fromBalance = ItemsStorage.state()._balances[id][from];
         require(fromBalance >= amount, "ERC1155: burn amount exceeds balance");
         unchecked {
-            ItemsStorage.layout()._balances[id][from] = fromBalance - amount;
+            ItemsStorage.state()._balances[id][from] = fromBalance - amount;
         }
 
         emit TransferSingle(operator, from, address(0), id, amount);
@@ -354,10 +354,10 @@ contract ERC1155 is Context, IERC1155, IERC1155MetadataURI {
             uint256 id = ids[i];
             uint256 amount = amounts[i];
 
-            uint256 fromBalance = ItemsStorage.layout()._balances[id][from];
+            uint256 fromBalance = ItemsStorage.state()._balances[id][from];
             require(fromBalance >= amount, "ERC1155: burn amount exceeds balance");
             unchecked {
-                ItemsStorage.layout()._balances[id][from] = fromBalance - amount;
+                ItemsStorage.state()._balances[id][from] = fromBalance - amount;
             }
         }
 
@@ -377,7 +377,7 @@ contract ERC1155 is Context, IERC1155, IERC1155MetadataURI {
         bool approved
     ) internal virtual {
         require(owner != operator, "ERC1155: setting approval status for self");
-        ItemsStorage.layout()._operatorApprovals[owner][operator] = approved;
+        ItemsStorage.state()._operatorApprovals[owner][operator] = approved;
         emit ApprovalForAll(owner, operator, approved);
     }
 

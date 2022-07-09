@@ -7,13 +7,13 @@ import { MetaStorage as META } from "../storage/MetaStorage.sol";
 import { ITreasury } from "../../shared/interfaces/ITreasury.sol";
 
 contract TournamentFacet is ITournament {
-  using TMNT for TMNT.Layout;
+  using TMNT for TMNT.State;
 
   function updateCastleOwnership(uint clanId) external {
     if (castleHolder() != 0) {
       ITreasury(META.SBDAddress()).claimRewards();
     }
-    TMNT.layout().castleHolder = clanId;
+    TMNT.state().castleHolder = clanId;
     emit CastleHolderChanged(clanId);
   }
 

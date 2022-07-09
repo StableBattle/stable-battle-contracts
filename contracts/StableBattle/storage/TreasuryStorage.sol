@@ -3,7 +3,7 @@
 pragma solidity ^0.8.0;
 
 library TreasuryStorage {
-  struct Layout {
+  struct State {
     uint castleTax;
     uint lastBlock;
     uint rewardPerBlock;
@@ -11,7 +11,7 @@ library TreasuryStorage {
 
   bytes32 internal constant STORAGE_SLOT = keccak256("Treasury.storage");
 
-  function layout() internal pure returns (Layout storage l) {
+  function state() internal pure returns (State storage l) {
     bytes32 slot = STORAGE_SLOT;
     assembly {
       l.slot := slot
@@ -19,15 +19,15 @@ library TreasuryStorage {
   }
 
   function castleTax() internal view returns(uint) {
-    return layout().castleTax;
+    return state().castleTax;
   }
   
   function lastBlock() internal view returns(uint) {
-    return layout().lastBlock;
+    return state().lastBlock;
   }
 
   function rewardPerBlock() internal view returns(uint) {
-    return layout().rewardPerBlock;
+    return state().rewardPerBlock;
   }
 }
 

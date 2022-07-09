@@ -3,8 +3,8 @@
 pragma solidity ^0.8.0;
 
 library ItemsStorage {
-  struct Layout {
-  //Original ERC1155 Layout
+  struct State {
+  //Original ERC1155 State
     // Mapping from token ID to account balances
     mapping(uint256 => mapping(address => uint256)) _balances;
 
@@ -27,7 +27,7 @@ library ItemsStorage {
 
   bytes32 internal constant STORAGE_SLOT = keccak256("Items.storage");
 
-  function layout() internal pure returns (Layout storage l) {
+  function state() internal pure returns (State storage l) {
     bytes32 slot = STORAGE_SLOT;
     assembly {
       l.slot := slot
@@ -36,14 +36,14 @@ library ItemsStorage {
 
   function balanceOf(address account, uint256 id) internal view returns (uint256) {
     require(account != address(0), "ERC1155: address zero is not a valid owner");
-    return layout()._balances[id][account];
+    return state()._balances[id][account];
   }
 
   function totalSupply(uint256 id) internal view returns (uint256) {
-      return layout()._totalSupply[id];
+      return state()._totalSupply[id];
   }
 
   function totalKnightSupply() internal view returns (uint256) {
-    return layout().totalKnightSupply;
+    return state().totalKnightSupply;
   }
 }

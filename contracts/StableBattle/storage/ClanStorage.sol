@@ -10,7 +10,7 @@ struct Clan {
 }
 
 library ClanStorage {
-  struct Layout {
+  struct State {
     uint MAX_CLAN_MEMBERS;
     uint[] levelThresholds;
     // clan_id => clan
@@ -25,7 +25,7 @@ library ClanStorage {
 
   bytes32 internal constant STORAGE_SLOT = keccak256("Clan.storage");
 
-  function layout() internal pure returns (Layout storage l) {
+  function state() internal pure returns (State storage l) {
     bytes32 slot = STORAGE_SLOT;
     assembly {
       l.slot := slot
@@ -33,42 +33,42 @@ library ClanStorage {
   }
 
   function clanCheck(uint clanId) internal view returns(Clan memory) {
-    return layout().clan[clanId];
+    return state().clan[clanId];
   }
 
   function clanOwner(uint clanId) internal view returns(uint256) {
-    return layout().clan[clanId].owner;
+    return state().clan[clanId].owner;
   }
 
   function clanTotalMembers(uint clanId) internal view returns(uint) {
-    return layout().clan[clanId].totalMembers;
+    return state().clan[clanId].totalMembers;
   }
   
   function clanStake(uint clanId) internal view returns(uint256) {
-    return layout().clan[clanId].stake;
+    return state().clan[clanId].stake;
   }
 
   function clanLevel(uint clanId) internal view returns(uint) {
-    return layout().clan[clanId].level;
+    return state().clan[clanId].level;
   }
 
   function stakeOf(address benefactor, uint clanId) internal view returns(uint256) {
-    return layout().stake[benefactor][clanId];
+    return state().stake[benefactor][clanId];
   }
 
   function clanLevelThresholds(uint newLevel) internal view returns (uint) {
-    return layout().levelThresholds[newLevel];
+    return state().levelThresholds[newLevel];
   }
 
   function clanMaxLevel() internal view returns (uint) {
-    return layout().levelThresholds.length;
+    return state().levelThresholds.length;
   }
 
   function joinProposal(uint256 knightId) internal view returns (uint) {
-    return layout().joinProposal[knightId];
+    return state().joinProposal[knightId];
   }
 
   function leaveProposal(uint256 knightId) internal view returns (uint) {
-    return layout().leaveProposal[knightId];
+    return state().leaveProposal[knightId];
   }
 }

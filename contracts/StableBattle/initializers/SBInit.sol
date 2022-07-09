@@ -23,13 +23,13 @@ import { ISBT } from "../../shared/interfaces/ISBT.sol";
 import { IItems } from "../../shared/interfaces/IItems.sol";
 
 contract SBInit {
-  using ClanStorage for ClanStorage.Layout;
-  using KnightStorage for KnightStorage.Layout;
-  using ItemsStorage for ItemsStorage.Layout;
-  using MetaStorage for MetaStorage.Layout;
-  using TournamentStorage for TournamentStorage.Layout;
-  using TreasuryStorage for TreasuryStorage.Layout;
-  using GearStorage for GearStorage.Layout;
+  using ClanStorage for ClanStorage.State;
+  using KnightStorage for KnightStorage.State;
+  using ItemsStorage for ItemsStorage.State;
+  using MetaStorage for MetaStorage.State;
+  using TournamentStorage for TournamentStorage.State;
+  using TreasuryStorage for TreasuryStorage.State;
+  using GearStorage for GearStorage.State;
 
   struct Args {
     address USDT_address;
@@ -55,38 +55,38 @@ contract SBInit {
       ds.supportedInterfaces[type(IERC1155).interfaceId] = true;
 
     //Assign StableBattle Storage
-      MetaStorage.layout().USDT = IERC20(_args.USDT_address);
-      MetaStorage.layout().AAVE = IPool(_args.AAVE_address);
-      MetaStorage.layout().SBT = ISBT(_args.SBT_address);
-      MetaStorage.layout().SBV = ISBV(_args.SBV_address);
+      MetaStorage.state().USDT = IERC20(_args.USDT_address);
+      MetaStorage.state().AAVE = IPool(_args.AAVE_address);
+      MetaStorage.state().SBT = ISBT(_args.SBT_address);
+      MetaStorage.state().SBV = ISBV(_args.SBV_address);
 
     //Knight facet
       //all items in [10e12, inf) are knights
-      KnightStorage.layout().knightOffset = 1e13;
-      KnightStorage.layout().knightPrice[knightType.AAVE] = 1e9;
-      KnightStorage.layout().knightPrice[knightType.OTHER] = 0;
+      KnightStorage.state().knightOffset = 1e13;
+      KnightStorage.state().knightPrice[knightType.AAVE] = 1e9;
+      KnightStorage.state().knightPrice[knightType.OTHER] = 0;
 
     //Gear Facet
       //all items in [256, 1e12) are gear
-      GearStorage.layout().gearRangeLeft = 256; //type(uint8).max + 1 See unequipGear in GearFacet
-      GearStorage.layout().gearRangeRight = 1e12;
+      GearStorage.state().gearRangeLeft = 256; //type(uint8).max + 1 See unequipGear in GearFacet
+      GearStorage.state().gearRangeRight = 1e12;
     
     //Totem Facet
       //all items in [1e12, 2e12) are totems
-      //TotemStorage.layout().totemRangeLeft = 1e12;
-      //TotemStorage.layout().totemRangeRight = 2e12;
+      //TotemStorage.state().totemRangeLeft = 1e12;
+      //TotemStorage.state().totemRangeRight = 2e12;
 
     //Items & ERC1155 Facet
-      ItemsStorage.layout()._uri = _args.uri;
+      ItemsStorage.state()._uri = _args.uri;
 
     //Clan Facet
-      ClanStorage.layout().MAX_CLAN_MEMBERS = _args.MAX_CLAN_MEMBERS;
-      ClanStorage.layout().levelThresholds = _args.levelThresholds;
+      ClanStorage.state().MAX_CLAN_MEMBERS = _args.MAX_CLAN_MEMBERS;
+      ClanStorage.state().levelThresholds = _args.levelThresholds;
 
     //Treasury Facet
-      TreasuryStorage.layout().castleTax = 37;
-      TreasuryStorage.layout().lastBlock = block.number;
-      TreasuryStorage.layout().rewardPerBlock = _args.reward_per_block;
+      TreasuryStorage.state().castleTax = 37;
+      TreasuryStorage.state().lastBlock = block.number;
+      TreasuryStorage.state().rewardPerBlock = _args.reward_per_block;
 
   }
 }

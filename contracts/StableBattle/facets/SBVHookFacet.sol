@@ -5,11 +5,11 @@ import { ISBVHook } from "../../shared/interfaces/ISBVHook.sol";
 import { MetaStorage as META } from "../storage/MetaStorage.sol";
 
 contract SBVHookFacet is ISBVHook {
-  using META for META.Layout;
+  using META for META.State;
 
   function SBV_hook(uint id, address newOwner, bool mint) external onlySBV {
-    META.layout().villageOwner[id] = newOwner;
-    if (mint == true) { META.layout().villageAmount++; }
+    META.state().villageOwner[id] = newOwner;
+    if (mint == true) { META.state().villageAmount++; }
     emit VillageInfoUpdated(id, newOwner, META.villageAmount());
   }
 

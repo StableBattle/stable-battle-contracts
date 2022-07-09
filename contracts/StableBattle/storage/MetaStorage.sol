@@ -8,7 +8,7 @@ import { ISBT } from "../../shared/interfaces/ISBT.sol";
 import { ISBV } from "../../shared/interfaces/ISBV.sol";
 
 library MetaStorage {
-  struct Layout {
+  struct State {
     // StableBattle EIP20 Token address
     ISBT SBT;
     // StableBattle EIP721 Village address
@@ -24,7 +24,7 @@ library MetaStorage {
 
   bytes32 internal constant STORAGE_SLOT = keccak256("Meta.storage");
 
-  function layout() internal pure returns (Layout storage l) {
+  function state() internal pure returns (State storage l) {
     bytes32 slot = STORAGE_SLOT;
     assembly {
       l.slot := slot
@@ -36,26 +36,26 @@ library MetaStorage {
   }
 
   function SBT() internal view returns (ISBT) {
-    return layout().SBT;
+    return state().SBT;
   }
 
   function SBV() internal view returns (ISBV) {
-    return layout().SBV;
+    return state().SBV;
   }
 
   function USDT() internal view returns (IERC20) {
-    return layout().USDT;
+    return state().USDT;
   }
 
   function AAVE() internal view returns (IPool) {
-    return layout().AAVE;
+    return state().AAVE;
   }
 
   function villageAmount() internal view returns(uint256) {
-    return layout().villageAmount;
+    return state().villageAmount;
   }
   
   function villageOwner(uint256 id) internal view returns(address) {
-    return layout().villageOwner[id];
+    return state().villageOwner[id];
   }
 }

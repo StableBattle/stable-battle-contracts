@@ -9,7 +9,7 @@ import { MetaStorage as META} from "../storage/MetaStorage.sol";
 import { ItemsStorage as ITEM } from "../storage/ItemsStorage.sol";
 
 contract KnightFacet is ItemsFacet, IKnight {
-  using KNHT for KNHT.Layout;
+  using KNHT for KNHT.State;
 
   function mintKnight(knightType kt) external returns(uint256 id) {
     if (kt == knightType.AAVE) {
@@ -25,7 +25,7 @@ contract KnightFacet is ItemsFacet, IKnight {
     // Mint NFT for the user
     id = randomKnightId();
     _mint(msg.sender, id, 1, "");
-    KNHT.layout().knight[id] = Knight(0, 0, 0, kt, msg.sender);
+    KNHT.state().knight[id] = Knight(0, 0, 0, kt, msg.sender);
 
     emit KnightMinted(id, msg.sender, kt);
   }
