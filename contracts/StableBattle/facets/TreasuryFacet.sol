@@ -14,19 +14,19 @@ contract TreasuryFacet is ITreasury, TreasuryModifiers {
   function CastleHolder() private view returns(address) {
   //Find owner of castle holding clan
     //Find the castle holding clan
-    uint CastleHoldingClan = TMNT.castleHolder();
+    uint256 CastleHoldingClan = TMNT.castleHolder();
     //Find the knight that leads that clan
-    uint CastleHoldingClanLeader = CLAN.clanOwner(CastleHoldingClan);
+    uint256 CastleHoldingClanLeader = CLAN.clanOwner(CastleHoldingClan);
     //Find the owner of said knight
     return KNHT.knightOwner(CastleHoldingClanLeader);
   }
 
   function claimRewards() public {
-    uint villageAmount = META.villageAmount();
+    uint256 villageAmount = META.villageAmount();
 
     //Calculate reward
-    uint paymentCycles = block.number - lastBlock();
-    uint reward = getRewardPerBlock() * paymentCycles;
+    uint256 paymentCycles = block.number - lastBlock();
+    uint256 reward = getRewardPerBlock() * paymentCycles;
     //Assign rewards to village owners
     address[] memory owners = new address[](villageAmount + 1);
     uint256[] memory rewards = new uint256[](villageAmount + 1);

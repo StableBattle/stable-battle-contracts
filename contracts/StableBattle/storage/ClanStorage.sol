@@ -4,8 +4,8 @@ pragma solidity ^0.8.0;
 
 struct Clan {
   uint256 owner;
+  uint256 stake;
   uint totalMembers;
-  uint stake;
   uint level;
 }
 

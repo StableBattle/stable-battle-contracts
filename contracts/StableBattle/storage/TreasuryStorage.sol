@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 
 library TreasuryStorage {
   struct State {
-    uint castleTax;
+    uint8 castleTax;
     uint lastBlock;
     uint rewardPerBlock;
   }
