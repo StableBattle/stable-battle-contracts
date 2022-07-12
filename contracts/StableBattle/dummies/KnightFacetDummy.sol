@@ -1,28 +1,29 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import { ItemsFacetDummy } from "./ItemsFacetDummy.sol";
 import { IKnight } from "../../shared/interfaces/IKnight.sol";
 
 import { knightType, Knight} from "../storage/KnightStorage.sol";
 
-contract KnightFacetDummy is ItemsFacetDummy, IKnight {
+contract KnightFacetDummy is IKnight {
 
-  function knightCheck(uint256 kinghtId) public view returns(Knight memory) {}
+//Knight Facet
+  function mintKnight(knightType kt) external{}
 
-  function knightClan(uint256 kinghtId) public view returns(uint256) {}
+  function burnKnight (uint256 id) external{}
 
-  function knightClanOwnerOf(uint256 kinghtId) public view returns(uint256) {}
+//Knight Getters
+  function getKnightCheck(uint256 kinghtId)  external view returns(Knight memory){}
 
-  function knightLevel(uint256 kinghtId) public view returns(uint) {}
+  function getKnightClan(uint256 kinghtId)  external view returns(uint256){}
 
-  function knightTypeOf(uint256 kinghtId) public view returns(knightType) {}
+  function getKnightClanOwnerOf(uint256 kinghtId)  external view returns(uint256){}
 
-  function knightOwner(uint256 knightId) public view returns(address) {}
+  function getKnightLevel(uint256 kinghtId)  external view returns(uint){}
 
-  function knightPrice(knightType kt) external pure returns(uint256 price) {}
+  function getKnightTypeOf(uint256 kinghtId)  external view returns(knightType){}
 
-  function mintKnight(knightType kt) external returns(uint256 id) {}
+  function getKnightOwner(uint256 knightId)  external view returns(address){}
 
-  function burnKnight (uint256 id) external {}
+  function getKnightPrice(knightType kt) external view returns(uint256 price){}
 }

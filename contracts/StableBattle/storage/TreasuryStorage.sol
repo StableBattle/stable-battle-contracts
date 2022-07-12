@@ -7,6 +7,10 @@ library TreasuryStorage {
     uint8 castleTax;
     uint lastBlock;
     uint rewardPerBlock;
+
+    //Villages information
+    uint256 villageAmount;
+    mapping (uint256 => address) villageOwner;
   }
 
   bytes32 internal constant STORAGE_SLOT = keccak256("Treasury.storage");
@@ -17,17 +21,27 @@ library TreasuryStorage {
       l.slot := slot
     }
   }
+}
 
-  function castleTax() internal view returns(uint) {
-    return state().castleTax;
+abstract contract TreasuryGetters {
+  function castleTax() internal view virtual returns(uint) {
+    return TreasuryStorage.state().castleTax;
   }
   
-  function lastBlock() internal view returns(uint) {
-    return state().lastBlock;
+  function lastBlock() internal view virtual returns(uint) {
+    return TreasuryStorage.state().lastBlock;
   }
 
-  function rewardPerBlock() internal view returns(uint) {
-    return state().rewardPerBlock;
+  function rewardPerBlock() internal view virtual returns(uint) {
+    return TreasuryStorage.state().rewardPerBlock;
+  }
+
+  function villageAmount() internal view virtual returns(uint256) {
+    return TreasuryStorage.state().villageAmount;
+  }
+
+  function villageOwner(uint256 villageId) internal view virtual returns(address) {
+    return TreasuryStorage.state().villageOwner[villageId];
   }
 }
 

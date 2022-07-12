@@ -72,8 +72,8 @@ describe('TreasuryFacetTest', async function () {
     }
     //await USDT.mint(knightPrice.AAVE * 10)
     //await USDT.approve(SBD.Address, knightPrice.AAVE)
-    //await SBD.KnightFacet.mintKnight(0)
-    await SBD.KnightFacet.mintKnight(1)
+    //await SBD.KnightFacet.mintKnight(1)
+    await SBD.KnightFacet.mintKnight(2)
     let eventsKnightMinted = await SBD.KnightFacet.queryFilter('KnightMinted')
     knightId = eventsKnightMinted[0].args.knightId
 
@@ -83,11 +83,11 @@ describe('TreasuryFacetTest', async function () {
   })
 
   it('Should update CastleHolder correctly', async () => {
-    expect(await SBD.TournamentFacet.castleHolder()).to.equal(0)
+    expect(await SBD.TournamentFacet.getCastleHolderClan()).to.equal(0)
     await SBD.TournamentFacet.updateCastleOwnership(clanId)
     let eventsCastleHolderChanged = await SBD.TournamentFacet.queryFilter('CastleHolderChanged')
     expect(eventsCastleHolderChanged[0].args.clanId).to.equal(clanId)
-    expect(await SBD.TournamentFacet.castleHolder()).to.equal(clanId)
+    expect(await SBD.TournamentFacet.getCastleHolderClan()).to.equal(clanId)
   })
 
   it('Should correctly update SB info after mint', async () => {
@@ -113,7 +113,7 @@ describe('TreasuryFacetTest', async function () {
   })
 
   it('Should assign correct amount of SBT rewards based on village & castle ownership', async () => {
-    let tax = await SBD.TreasuryFacet.getTax()
+    let tax = await SBD.TreasuryFacet.getCastleTax()
     let rewardPerBlock = await SBD.TreasuryFacet.getRewardPerBlock()
     let user1BalanceBefore = await SBT.SBTFacet.balanceOf(user1.address)
     let ownerBalanceBefore = await SBT.SBTFacet.balanceOf(owner.address)

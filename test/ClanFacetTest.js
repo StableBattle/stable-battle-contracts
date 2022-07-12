@@ -73,13 +73,13 @@ describe('ClanFacetTest', async function () {
     }
     await USDT.mint(knightPrice.AAVE * 10)
     await USDT.approve(SBD.Address, knightPrice.AAVE)
-    await SBD.KnightFacet.mintKnight(0)
+    await SBD.KnightFacet.mintKnight(1)
     KnightFacet1 = SBD.KnightFacet.connect(user1)
     ClanFacet1 = SBD.ClanFacet.connect(user1)
     KnightFacet2 = SBD.KnightFacet.connect(user2)   
     ClanFacet2 = SBD.ClanFacet.connect(user2) 
-    await KnightFacet1.mintKnight(1)
-    await KnightFacet2.mintKnight(1)
+    await KnightFacet1.mintKnight(2)
+    await KnightFacet2.mintKnight(2)
 
     let eventsKnightMinted = await SBD.KnightFacet.queryFilter('KnightMinted')
     knightId = eventsKnightMinted[0].args.knightId
@@ -93,10 +93,10 @@ describe('ClanFacetTest', async function () {
     clanId = eventsClanCreated[0].args.clanId
     let charId = eventsClanCreated[0].args.charId
     
-    let clanOwner = await SBD.ClanFacet.clanOwner(clanId)
-    let clanTotalMembers = await SBD.ClanFacet.clanTotalMembers(clanId)
-    let clanStake = await SBD.ClanFacet.clanStake(clanId)
-    let clanLevel = await SBD.ClanFacet.clanLevel(clanId)
+    let clanOwner = await SBD.ClanFacet.getClanOwner(clanId)
+    let clanTotalMembers = await SBD.ClanFacet.getClanTotalMembers(clanId)
+    let clanStake = await SBD.ClanFacet.getClanStake(clanId)
+    let clanLevel = await SBD.ClanFacet.getClanLevel(clanId)
 
     expect(charId).to.equal(knightId)
     expect(clanOwner).to.equal(knightId)
@@ -104,8 +104,8 @@ describe('ClanFacetTest', async function () {
     expect(clanStake).to.equal(0)
     expect(clanLevel).to.equal(0)
 
-    expect(await SBD.KnightFacet.knightClan(knightId)).to.equal(clanId)
-    expect(await SBD.KnightFacet.knightClanOwnerOf(knightId)).to.equal(clanId)
+    expect(await SBD.KnightFacet.getKnightClan(knightId)).to.equal(clanId)
+    expect(await SBD.KnightFacet.getKnightClanOwnerOf(knightId)).to.equal(clanId)
   })
 
   it('Should stake & level up a clan correctly', async () => {
@@ -124,8 +124,8 @@ describe('ClanFacetTest', async function () {
     expect(eventsClanLeveledUp[0].args.clanId).to.equal(clanId)
     expect(eventsClanLeveledUp[0].args.newLevel).to.equal(7)
 
-    expect(await SBD.ClanFacet.stakeOf(owner.address, clanId)).to.equal(650)
-    expect(await SBD.ClanFacet.clanLevel(clanId)).to.equal(7)
+    expect(await SBD.ClanFacet.getStakeOf(owner.address, clanId)).to.equal(650)
+    expect(await SBD.ClanFacet.getClanLevel(clanId)).to.equal(7)
   })
 
   it('Should withdraw & level down a clan correctly', async () => {
@@ -144,8 +144,8 @@ describe('ClanFacetTest', async function () {
     expect(eventsClanLeveledDown[0].args.clanId).to.equal(clanId)
     expect(eventsClanLeveledDown[0].args.newLevel).to.equal(5)
 
-    expect(await SBD.ClanFacet.stakeOf(owner.address, clanId)).to.equal(440)
-    expect(await SBD.ClanFacet.clanLevel(clanId)).to.equal(5)
+    expect(await SBD.ClanFacet.getStakeOf(owner.address, clanId)).to.equal(440)
+    expect(await SBD.ClanFacet.getClanLevel(clanId)).to.equal(5)
   })
 
   it('Should allow user1 & user2 to create a join proposals', async () => {
@@ -155,19 +155,23 @@ describe('ClanFacetTest', async function () {
     
     expect(eventsKnightAskedToJoin[0].args.clanId).to.equal(clanId)
     expect(eventsKnightAskedToJoin[0].args.charId).to.equal(knightIdUser1)
+    expect(await SBD.ClanFacet.getJoinProposal(knightIdUser1)).to.equal(clanId)
 
     expect(eventsKnightAskedToJoin[1].args.clanId).to.equal(clanId)
     expect(eventsKnightAskedToJoin[1].args.charId).to.equal(knightIdUser2)
+    expect(await SBD.ClanFacet.getJoinProposal(knightIdUser2)).to.equal(clanId)
   })
 
-  it('Should accept user1 & reject user2', async () => {
+  it('Should accept user1', async () => {
     await SBD.ClanFacet.acceptJoin(knightIdUser1, clanId)
     let eventsKnightJoinedClan = await SBD.ClanFacet.queryFilter('KnightJoinedClan')
     expect(eventsKnightJoinedClan[0].args.clanId).to.equal(clanId)
     expect(eventsKnightJoinedClan[0].args.charId).to.equal(knightIdUser1)
-    expect(await SBD.ClanFacet.clanTotalMembers(clanId)).to.equal(2)
-    expect(await SBD.KnightFacet.knightClan(knightIdUser1)).to.equal(clanId)
-    
+    expect(await SBD.ClanFacet.getClanTotalMembers(clanId)).to.equal(2)
+    expect(await SBD.KnightFacet.getKnightClan(knightIdUser1)).to.equal(clanId)
+  })
+
+  it('Should reject user2', async () => {
     await SBD.ClanFacet.refuseJoin(knightIdUser2, clanId)
     let eventsJoinProposalRefused = await SBD.ClanFacet.queryFilter('JoinProposalRefused')
     expect(eventsJoinProposalRefused[0].args.clanId).to.equal(clanId)
@@ -191,18 +195,18 @@ describe('ClanFacetTest', async function () {
     expect(eventsKnightLeavedClan[0].args.clanId).to.equal(clanId)
     expect(eventsKnightLeavedClan[0].args.charId).to.equal(knightIdUser1)
 
-    expect(await SBD.ClanFacet.clanTotalMembers(clanId)).to.equal(1)
-    expect(await SBD.KnightFacet.knightClan(knightIdUser1)).to.equal(0)
+    expect(await SBD.ClanFacet.getClanTotalMembers(clanId)).to.equal(1)
+    expect(await SBD.KnightFacet.getKnightClan(knightIdUser1)).to.equal(0)
   })
 
   it('Should dissolve a clan correctly', async () => {
     await SBD.ClanFacet.dissolve(clanId)
     
-    let clanOwner = await SBD.ClanFacet.clanOwner(clanId)
+    let clanOwner = await SBD.ClanFacet.getClanOwner(clanId)
 
     expect(clanOwner).to.equal(ethers.constants.AddressZero)
-    expect(await SBD.KnightFacet.knightClan(knightId)).to.equal(0)
-    expect(await SBD.KnightFacet.knightClanOwnerOf(knightId)).to.equal(0)
+    expect(await SBD.KnightFacet.getKnightClan(knightId)).to.equal(0)
+    expect(await SBD.KnightFacet.getKnightClanOwnerOf(knightId)).to.equal(0)
   })
 
 })

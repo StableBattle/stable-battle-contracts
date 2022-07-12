@@ -9,7 +9,7 @@ import "../shared/interfaces/IERC1155Receiver.sol";
 import "../shared/interfaces/IERC1155MetadataURI.sol";
 import "../shared/utils/Address.sol";
 import "../shared/utils/Context.sol";
-import { ItemsStorage } from "../StableBattle/storage/ItemsStorage.sol";
+import { ItemsStorage, ItemsGetters } from "../StableBattle/storage/ItemsStorage.sol";
 
 /**
  * @dev Implementation of the basic standard multi-token.
@@ -18,7 +18,7 @@ import { ItemsStorage } from "../StableBattle/storage/ItemsStorage.sol";
  *
  * _Available since v3.1._
  */
-contract ERC1155 is Context, IERC1155, IERC1155MetadataURI {
+contract ERC1155 is Context, IERC1155, IERC1155MetadataURI, ItemsGetters {
     using ItemsStorage for ItemsStorage.State;
     using Address for address;
 
@@ -44,7 +44,7 @@ contract ERC1155 is Context, IERC1155, IERC1155MetadataURI {
      * - `account` cannot be the zero address.
      */
     function balanceOf(address account, uint256 id) public view virtual override returns (uint256) {
-        return ItemsStorage.balanceOf(account, id);
+        return _balanceOf(account, id);
     }
 
     /**

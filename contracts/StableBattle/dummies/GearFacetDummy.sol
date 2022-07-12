@@ -6,15 +6,18 @@ import { IGear } from "../../shared/interfaces/IGear.sol";
 import { gearSlot } from "../storage/GearStorage.sol";
 
 contract GearFacetDummy is IGear {
-  function getGearSlot(uint256 itemId) public view returns(gearSlot) {}
 
-  function getGearName(uint256 itemId) public view returns(string memory) {}
+//Gear Facet
+  function createGear(uint id, gearSlot slot, string memory name) external{}
 
-  function getGearEquipable(address account, uint256 itemId) public view returns(uint256) {}
+  function updateKnightGear(uint256 knightId, uint256[] memory items) external{}
 
-  function getEquipmentInSlot(uint256 knightId, gearSlot slot) public view returns(uint256) {}
+//Gear Getters
+  function getGearEquipable(address account, uint256 itemId) external view returns(uint256){}
 
-  function createGear(uint id, gearSlot slot, string memory name) public {}
+  function getGearSlotOf(uint256 itemId) external view returns(gearSlot){}
 
-  function updateKnightGear(uint256 knightId, uint256[] memory items) external {}
+  function getGearName(uint256 itemId) external view returns(string memory){}
+
+  function getEquipmentInSlot(uint256 knightId, gearSlot slot) external view returns(uint256){}
 }

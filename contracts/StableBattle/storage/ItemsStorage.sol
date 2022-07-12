@@ -21,8 +21,6 @@ library ItemsStorage {
   //Items Facet Addition
     // Mapping from token ID to its owner
     mapping (uint256 => address) _knightOwners;
-
-    uint256 totalKnightSupply;
   }
 
   bytes32 internal constant STORAGE_SLOT = keccak256("Items.storage");
@@ -33,17 +31,26 @@ library ItemsStorage {
       l.slot := slot
     }
   }
+}
 
-  function balanceOf(address account, uint256 id) internal view returns (uint256) {
+abstract contract ItemsGetters {
+  function _balanceOf(address account, uint256 id) internal view virtual returns (uint256) {
     require(account != address(0), "ERC1155: address zero is not a valid owner");
-    return state()._balances[id][account];
+    return ItemsStorage.state()._balances[id][account];
   }
 
-  function totalSupply(uint256 id) internal view returns (uint256) {
-      return state()._totalSupply[id];
+  function _totalSupply(uint256 id) internal view virtual returns (uint256) {
+      return ItemsStorage.state()._totalSupply[id];
   }
+}
 
-  function totalKnightSupply() internal view returns (uint256) {
-    return state().totalKnightSupply;
+abstract contract ItemsModifiers {
+  function ownsItem(uint256 itemId) internal view returns(bool) {
+    return ItemsStorage.state()._balances[itemId][msg.sender] > 0;
+  }
+  modifier ifOwnsItem(uint256 itemId) {
+    require(ownsItem(itemId),
+    "ItemModifiers: You don't own this item");
+    _;
   }
 }

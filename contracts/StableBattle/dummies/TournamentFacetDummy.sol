@@ -7,6 +7,6 @@ contract TournamentFacetDummy is ITournament {
 
   function updateCastleOwnership(uint clanId) external {}
 
-  function castleHolder() external view returns(uint) {}
+  function getCastleHolderClan() external view returns(uint){}
 
 }

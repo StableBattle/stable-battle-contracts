@@ -42,7 +42,7 @@ contract SBT is ERC20, Modifiers, ISBT {
   }
 
   function withdraw(uint clan_id, uint256 amount) external {
-    require (ClanFacet.stakeOf(msg.sender, clan_id) >= amount, "SBT: withdrawal amount exceeds stake");
+    require (ClanFacet.getStakeOf(msg.sender, clan_id) >= amount, "SBT: withdrawal amount exceeds stake");
     ERC20._transfer(address(ClanFacet), msg.sender, amount);
     ClanFacet.onWithdraw(msg.sender, clan_id, amount);
     emit Withdraw(msg.sender, clan_id, amount);

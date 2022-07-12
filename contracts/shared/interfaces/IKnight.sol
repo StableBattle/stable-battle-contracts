@@ -5,23 +5,25 @@ import { knightType, Knight } from "../../StableBattle/storage/KnightStorage.sol
 
 interface IKnight {
 
-  function mintKnight(knightType kt) external returns(uint256 id);
+//Knight Facet
+  function mintKnight(knightType kt) external;
 
   function burnKnight (uint256 id) external;
-  
-  function knightCheck(uint256 kinghtId)  external view returns(Knight memory);
 
-  function knightClan(uint256 kinghtId)  external view returns(uint256);
+//Knight Getters
+  function getKnightCheck(uint256 kinghtId)  external view returns(Knight memory);
 
-  function knightClanOwnerOf(uint256 kinghtId)  external view returns(uint256);
+  function getKnightClan(uint256 kinghtId)  external view returns(uint256);
 
-  function knightLevel(uint256 kinghtId)  external view returns(uint);
+  function getKnightClanOwnerOf(uint256 kinghtId)  external view returns(uint256);
 
-  function knightTypeOf(uint256 kinghtId)  external view returns(knightType);
+  function getKnightLevel(uint256 kinghtId)  external view returns(uint);
 
-  function knightOwner(uint256 knightId)  external view returns(address);
+  function getKnightTypeOf(uint256 kinghtId)  external view returns(knightType);
 
-  function knightPrice(knightType kt) external view returns(uint256 price);
+  function getKnightOwner(uint256 knightId)  external view returns(address);
+
+  function getKnightPrice(knightType kt) external view returns(uint256 price);
   
   event KnightMinted (uint knightId, address wallet, knightType kt);
   event KnightBurned (uint knightId, address wallet, knightType kt);

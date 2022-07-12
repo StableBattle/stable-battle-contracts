@@ -5,7 +5,7 @@ pragma solidity ^0.8.0;
 library TournamentStorage {
   struct State {
     //clan that holds the castle
-    uint256 castleHolder;
+    uint256 castleHolderClan;
   }
 
   bytes32 internal constant STORAGE_SLOT = keccak256("Tournament.storage");
@@ -16,8 +16,10 @@ library TournamentStorage {
       l.slot := slot
     }
   }
+}
 
-  function castleHolder() internal view returns (uint256) {
-    return state().castleHolder;
+abstract contract TournamentGetters {
+  function castleHolderClan() internal view virtual returns (uint256) {
+    return TournamentStorage.state().castleHolderClan;
   }
 }

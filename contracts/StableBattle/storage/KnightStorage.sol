@@ -3,6 +3,7 @@
 pragma solidity ^0.8.0;
 
 enum knightType {
+  NONE,
   AAVE,
   OTHER
 }
@@ -17,9 +18,10 @@ struct Knight {
 
 library KnightStorage {
   struct State {
-    uint256 knightOffset;
     mapping(uint256 => Knight) knight;
     mapping(knightType => uint256) knightPrice;
+    mapping(knightType => uint256) knightsMinted;
+    mapping(knightType => uint256) knightsBurned;
   }
 
   bytes32 internal constant STORAGE_SLOT = keccak256("Knight.storage");
@@ -30,49 +32,73 @@ library KnightStorage {
       l.slot := slot
     }
   }
-  
-  function knightCheck(uint256 kinghtId) internal view returns(Knight memory) {
-    return state().knight[kinghtId];
+}
+
+abstract contract KnightGetters {
+  function knightCheck(uint256 knightId) internal view virtual returns(Knight memory) {
+    return KnightStorage.state().knight[knightId];
   }
 
-  function knightClan(uint256 kinghtId) internal view returns(uint256) {
-    return state().knight[kinghtId].inClan;
+  function knightClan(uint256 knightId) internal view virtual returns(uint256) {
+    return KnightStorage.state().knight[knightId].inClan;
   }
 
-  function knightClanOwnerOf(uint256 kinghtId) internal view returns(uint256) {
-    return state().knight[kinghtId].ownsClan;
+  function knightClanOwnerOf(uint256 knightId) internal view virtual returns(uint256) {
+    return KnightStorage.state().knight[knightId].ownsClan;
   }
 
-  function knightLevel(uint256 kinghtId) internal view returns(uint) {
-    return state().knight[kinghtId].level;
+  function knightLevel(uint256 knightId) internal view virtual returns(uint) {
+    return KnightStorage.state().knight[knightId].level;
   }
 
-  function knightTypeOf(uint256 kinghtId) internal view returns(knightType) {
-    return state().knight[kinghtId].kt;
+  function knightTypeOf(uint256 knightId) internal view virtual returns(knightType) {
+    return KnightStorage.state().knight[knightId].kt;
   }
 
-  function knightOwner(uint256 knightId) internal view returns(address) {
-    return state().knight[knightId].owner;
+  function knightOwner(uint256 knightId) internal view virtual returns(address) {
+    return KnightStorage.state().knight[knightId].owner;
   }
 
-  function knightOffset() internal view returns (uint256) {
-    return state().knightOffset;
+  function knightPrice(knightType kt) internal view virtual returns (uint256) {
+    return KnightStorage.state().knightPrice[kt];
   }
 
-  function knightPrice(knightType kt) internal view returns (uint256) {
-    return state().knightPrice[kt];
+  function knightsMinted(knightType kt) internal view virtual returns (uint256) {
+    return KnightStorage.state().knightsMinted[kt];
+  }
+
+  function knightsBurned(knightType kt) internal view virtual returns (uint256) {
+    return KnightStorage.state().knightsBurned[kt];
+  }
+
+  function totalKnightSupply(knightType kt) internal view virtual returns (uint256) {
+    return knightsMinted(kt) - knightsBurned(kt);
+  }
+
+  function knightsMinted() internal view virtual returns (uint256 knightsMintedTotal) {
+    for (uint8 i = 0; i < uint8(type(knightType).max) + 1; i++) {
+      knightsMintedTotal += knightsMinted(knightType(i));
+    }
+  }
+
+  function knightsBurned() internal view virtual returns (uint256 knightsBurnedTotal) {
+    for (uint8 i = 0; i < uint8(type(knightType).max) + 1; i++) {
+      knightsBurnedTotal += knightsBurned(knightType(i));
+    }
+  }
+
+  function totalKnightSupply() internal view virtual returns (uint256) {
+    return knightsMinted() - knightsBurned();
   }
 }
 
-contract KnightModifiers {
-  modifier notKnight(uint256 itemId) {
-    require(itemId < KnightStorage.state().knightOffset, 
-      "KnightModifiers: Wrong id for something other than knight");
-    _;
+abstract contract KnightModifiers is KnightGetters {
+  function isKnight(uint256 knightId) internal view returns(bool) {
+    return knightId >= type(uint256).max - knightsMinted();
   }
-
-  modifier isKnight(uint256 knightId) {
-    require(knightId >= KnightStorage.state().knightOffset, 
+  
+  modifier ifIsKnight(uint256 knightId) {
+    require(isKnight(knightId),
       "KnightModifiers: Wrong id for knight");
     _;
   }

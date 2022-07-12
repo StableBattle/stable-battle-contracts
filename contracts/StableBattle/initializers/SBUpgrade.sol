@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import { TreasuryStorage } from "../storage/TreasuryStorage.sol";
 
-contract SBInit {
+contract SBUpgrade {
   using TreasuryStorage for TreasuryStorage.State;
 
   struct Args {

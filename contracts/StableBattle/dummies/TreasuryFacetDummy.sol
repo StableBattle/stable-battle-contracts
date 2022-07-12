@@ -5,11 +5,17 @@ import { ITreasury } from "../../shared/interfaces/ITreasury.sol";
 
 contract TreasuryFacetDummy is ITreasury {
 
-  function claimRewards() public {}
+//Treasury Facet
 
-  function getRewardPerBlock() public view returns(uint) {}
+  function claimRewards() external{}
 
-  function getTax() public view returns(uint) {}
+  function setTax(uint8 tax) external{}
 
-  function setTax(uint tax) external {}
+//Public Getters
+
+  function getCastleTax() external view returns(uint){}
+  
+  function getLastBlock() external view returns(uint){}
+
+  function getRewardPerBlock() external view returns(uint){}
 }

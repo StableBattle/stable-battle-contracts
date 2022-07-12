@@ -4,12 +4,12 @@ pragma solidity ^0.8.0;
 import { ItemsFacet } from "./ItemsFacet.sol";
 import { IForge } from "../../shared/interfaces/IForge.sol";
 
-import { GearStorage as GEAR, gearSlot, GearModifiers } from "../storage/GearStorage.sol";
+import { gearSlot, GearModifiers, GearGetters } from "../storage/GearStorage.sol";
 
-contract ForgeFacet is ItemsFacet, IForge, GearModifiers {
+contract ForgeFacet is ItemsFacet, IForge, GearModifiers, GearGetters {
 
   function mintGear(uint id, uint amount, address to) public isGear(id) {
-    require(GEAR.getGearSlot(id) != gearSlot.NONE,
+    require(gearSlotOf(id) != gearSlot.NONE,
       "ForgeFacet: This type of gear not yet exists, use createGear instead");
     _mint(to, id, amount, "");
     emit GearMinted(id, amount, to);

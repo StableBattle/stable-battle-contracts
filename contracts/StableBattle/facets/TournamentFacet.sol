@@ -2,24 +2,21 @@
 pragma solidity ^0.8.0;
 
 import { ITournament } from "../../shared/interfaces/ITournament.sol";
-import { TournamentStorage as TMNT } from "../storage/TournamentStorage.sol";
-import { MetaStorage as META } from "../storage/MetaStorage.sol";
-import { ITreasury } from "../../shared/interfaces/ITreasury.sol";
+import { TournamentStorage as TMNT, TournamentGetters } from "../storage/TournamentStorage.sol";
+import { InternalCalls } from "../storage/MetaStorage.sol";
 
-contract TournamentFacet is ITournament {
+contract TournamentFacet is ITournament, TournamentGetters, InternalCalls {
   using TMNT for TMNT.State;
 
   function updateCastleOwnership(uint clanId) external {
-    if (castleHolder() != 0) {
-      ITreasury(META.SBDAddress()).claimRewards();
-    }
-    TMNT.state().castleHolder = clanId;
+    if (castleHolderClan() != 0) { TreasuryFacet().claimRewards(); }
+    TMNT.state().castleHolderClan = clanId;
     emit CastleHolderChanged(clanId);
   }
 
-  function castleHolder() public view returns(uint) {
-    return TMNT.castleHolder();
-  }
+//Public Getters
 
-  //function updateLeaderboard() {}
+  function getCastleHolderClan() public view returns (uint256) {
+    return castleHolderClan();
+  }
 }

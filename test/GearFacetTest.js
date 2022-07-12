@@ -77,7 +77,7 @@ describe('GearFacetTest', async function () {
       SBVFacet: await ethers.getContractAt('SBVFacet', SBVAddress),
       addresses: []
     }
-    await SBD.KnightFacet.mintKnight(1)
+    await SBD.KnightFacet.mintKnight(2)
 
     let eventsKnightMinted = await SBD.KnightFacet.queryFilter('KnightMinted')
     knightId = eventsKnightMinted[0].args.knightId
@@ -87,9 +87,9 @@ describe('GearFacetTest', async function () {
     await SBD.GearFacet.createGear(1000, gearType.WEAPON, "Rusty Sword");
     await SBD.GearFacet.createGear(2000, gearType.WEAPON, "Fine Sword");
     await SBD.GearFacet.createGear(3000, gearType.SHIELD, "Some Shield");
-    expect(await SBD.GearFacet.getGearSlot(1000)).to.equal(1);
-    expect(await SBD.GearFacet.getGearSlot(2000)).to.equal(1);
-    expect(await SBD.GearFacet.getGearSlot(3000)).to.equal(2);
+    expect(await SBD.GearFacet.getGearSlotOf(1000)).to.equal(1);
+    expect(await SBD.GearFacet.getGearSlotOf(2000)).to.equal(1);
+    expect(await SBD.GearFacet.getGearSlotOf(3000)).to.equal(2);
     expect(await SBD.GearFacet.getGearName(1000)).to.equal("Rusty Sword");
     expect(await SBD.GearFacet.getGearName(2000)).to.equal("Fine Sword");
     expect(await SBD.GearFacet.getGearName(3000)).to.equal("Some Shield");
@@ -102,43 +102,43 @@ describe('GearFacetTest', async function () {
     expect(await SBD.ItemsFacet.balanceOf(owner.address, 1000)).to.equal(1);
     expect(await SBD.ItemsFacet.balanceOf(owner.address, 2000)).to.equal(1);
     expect(await SBD.ItemsFacet.balanceOf(owner.address, 3000)).to.equal(1);
-    expect(await SBD.GearFacet.getGearEquipable(owner.address, 1000)).to.equal(1);
-    expect(await SBD.GearFacet.getGearEquipable(owner.address, 2000)).to.equal(1);
-    expect(await SBD.GearFacet.getGearEquipable(owner.address, 3000)).to.equal(1);
+    expect(await SBD.GearFacet["getGearEquipable(address,uint256)"](owner.address, 1000)).to.equal(1);
+    expect(await SBD.GearFacet["getGearEquipable(address,uint256)"](owner.address, 2000)).to.equal(1);
+    expect(await SBD.GearFacet["getGearEquipable(address,uint256)"](owner.address, 3000)).to.equal(1);
   })
 
   it('Should equip Rusty Sword & Some Shield as 1 function call', async () => {
     await SBD.GearFacet.updateKnightGear(knightId, [1000, 3000]);
     expect(await SBD.GearFacet.getEquipmentInSlot(knightId, 1)).to.equal(1000);
     expect(await SBD.GearFacet.getEquipmentInSlot(knightId, 2)).to.equal(3000);
-    expect(await SBD.GearFacet.getGearEquipable(owner.address, 1000)).to.equal(0);
-    expect(await SBD.GearFacet.getGearEquipable(owner.address, 2000)).to.equal(1);
-    expect(await SBD.GearFacet.getGearEquipable(owner.address, 3000)).to.equal(0);
+    expect(await SBD.GearFacet["getGearEquipable(address,uint256)"](owner.address, 1000)).to.equal(0);
+    expect(await SBD.GearFacet["getGearEquipable(address,uint256)"](owner.address, 2000)).to.equal(1);
+    expect(await SBD.GearFacet["getGearEquipable(address,uint256)"](owner.address, 3000)).to.equal(0);
   })
 
   it('Should unequip Rusty Sword & equip Fine Sword', async () => {
     await SBD.GearFacet.updateKnightGear(knightId, [2000]);
     expect(await SBD.GearFacet.getEquipmentInSlot(knightId, 1)).to.equal(2000);
-    expect(await SBD.GearFacet.getGearEquipable(owner.address, 1000)).to.equal(1);
-    expect(await SBD.GearFacet.getGearEquipable(owner.address, 2000)).to.equal(0);
-    expect(await SBD.GearFacet.getGearEquipable(owner.address, 3000)).to.equal(0);
+    expect(await SBD.GearFacet["getGearEquipable(address,uint256)"](owner.address, 1000)).to.equal(1);
+    expect(await SBD.GearFacet["getGearEquipable(address,uint256)"](owner.address, 2000)).to.equal(0);
+    expect(await SBD.GearFacet["getGearEquipable(address,uint256)"](owner.address, 3000)).to.equal(0);
   })
 
   it('Should correctly reequip Some Shield', async () => {
     await SBD.GearFacet.updateKnightGear(knightId, [3000]);
     expect(await SBD.GearFacet.getEquipmentInSlot(knightId, 1)).to.equal(2000);
     expect(await SBD.GearFacet.getEquipmentInSlot(knightId, 2)).to.equal(3000);
-    expect(await SBD.GearFacet.getGearEquipable(owner.address, 1000)).to.equal(1);
-    expect(await SBD.GearFacet.getGearEquipable(owner.address, 2000)).to.equal(0);
-    expect(await SBD.GearFacet.getGearEquipable(owner.address, 3000)).to.equal(0);
+    expect(await SBD.GearFacet["getGearEquipable(address,uint256)"](owner.address, 1000)).to.equal(1);
+    expect(await SBD.GearFacet["getGearEquipable(address,uint256)"](owner.address, 2000)).to.equal(0);
+    expect(await SBD.GearFacet["getGearEquipable(address,uint256)"](owner.address, 3000)).to.equal(0);
   })
 
   it('Should correctly unequip Fine Sword', async () => {
     await SBD.GearFacet.updateKnightGear(knightId, [1]);
     expect(await SBD.GearFacet.getEquipmentInSlot(knightId, 1)).to.equal(0);
     expect(await SBD.GearFacet.getEquipmentInSlot(knightId, 2)).to.equal(3000);
-    expect(await SBD.GearFacet.getGearEquipable(owner.address, 1000)).to.equal(1);
-    expect(await SBD.GearFacet.getGearEquipable(owner.address, 2000)).to.equal(1);
-    expect(await SBD.GearFacet.getGearEquipable(owner.address, 3000)).to.equal(0);
+    expect(await SBD.GearFacet["getGearEquipable(address,uint256)"](owner.address, 1000)).to.equal(1);
+    expect(await SBD.GearFacet["getGearEquipable(address,uint256)"](owner.address, 2000)).to.equal(1);
+    expect(await SBD.GearFacet["getGearEquipable(address,uint256)"](owner.address, 3000)).to.equal(0);
   })
 })

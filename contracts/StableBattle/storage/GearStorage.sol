@@ -43,29 +43,31 @@ library GearStorage {
       l.slot := slot
     }
   }
+}
 
-  function getGearSlot(uint256 itemId) internal view returns(gearSlot) {
-    return state().gearSlot[itemId];
+abstract contract GearGetters {
+  function gearSlotOf(uint256 itemId) internal view virtual returns(gearSlot) {
+    return GearStorage.state().gearSlot[itemId];
   }
 
-  function getGearName(uint256 itemId) internal view returns(string memory) {
-    return state().gearName[itemId];
+  function gearName(uint256 itemId) internal view virtual returns(string memory) {
+    return GearStorage.state().gearName[itemId];
   }
 
-  function getEquipmentInSlot(uint256 knightId, gearSlot slot) internal view returns(uint256) {
-    return state().knightSlotItem[knightId][slot];
+  function equipmentInSlot(uint256 knightId, gearSlot slot) internal view virtual returns(uint256) {
+    return GearStorage.state().knightSlotItem[knightId][slot];
   }
 
-  function notEquippable(address account, uint256 itemId) internal view returns(uint256) {
-    return state().notEquippable[account][itemId];
+  function notEquippable(address account, uint256 itemId) internal view virtual returns(uint256) {
+    return GearStorage.state().notEquippable[account][itemId];
   }
 }
 
-contract GearModifiers {
+abstract contract GearModifiers {
   modifier isGear(uint256 id) {
     require(id >= GearStorage.state().gearRangeLeft && 
             id <  GearStorage.state().gearRangeRight,
-            "GearFacet: Wrong id range for gear item");
+            "GearModifiers: Wrong id range for gear item");
     _;
   }
 }

@@ -29,8 +29,8 @@ abstract contract ERC1155Supply is ERC1155, IERC1155Supply {
     /**
      * @dev Total amount of tokens in with a given id.
      */
-    function totalSupply(uint256 id) public view virtual returns (uint256) {
-        return ItemsStorage.totalSupply(id);
+    function totalSupply(uint256 id) public view virtual override returns (uint256) {
+        return _totalSupply(id);
     }
 
     /**

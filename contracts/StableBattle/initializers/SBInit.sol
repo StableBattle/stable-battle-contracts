@@ -55,14 +55,14 @@ contract SBInit {
       ds.supportedInterfaces[type(IERC1155).interfaceId] = true;
 
     //Assign StableBattle Storage
-      MetaStorage.state().USDT = IERC20(_args.USDT_address);
-      MetaStorage.state().AAVE = IPool(_args.AAVE_address);
-      MetaStorage.state().SBT = ISBT(_args.SBT_address);
-      MetaStorage.state().SBV = ISBV(_args.SBV_address);
+      MetaStorage.state().USDT = _args.USDT_address;
+      MetaStorage.state().AAVE = _args.AAVE_address;
+      MetaStorage.state().SBT = _args.SBT_address;
+      MetaStorage.state().SBV = _args.SBV_address;
 
     //Knight facet
-      //all items in [10e12, inf) are knights
-      KnightStorage.state().knightOffset = 1e13;
+      //Knight enumeration begins from type(uint256).max
+      ///for better compactibility with adding new item types in the future
       KnightStorage.state().knightPrice[knightType.AAVE] = 1e9;
       KnightStorage.state().knightPrice[knightType.OTHER] = 0;
 

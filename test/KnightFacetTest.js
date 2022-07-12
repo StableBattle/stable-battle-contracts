@@ -66,7 +66,7 @@ describe('KnightFacetTest', async function () {
   })
 
   it('knight price should be correct', async () => {
-    let knightPriceFromCall = await SBD.KnightFacet.knightPrice(0)
+    let knightPriceFromCall = await SBD.KnightFacet.getKnightPrice(1)
     assert.equal(knightPrice.AAVE, knightPriceFromCall)
   })
 
@@ -81,16 +81,16 @@ describe('KnightFacetTest', async function () {
   })
 
   it('should mint a knight correctly', async () => {
-    //mintKnight(0) == mint AAVE, mintKnight(1) = mintOTHER
+    //mintKnight(1) == mint AAVE, mintKnight(2) = mintOTHER
     await USDT.mint(knightPrice.AAVE * 10)
     await USDT.approve(SBD.Address, knightPrice.AAVE)
-    await SBD.KnightFacet.mintKnight(0)
+    await SBD.KnightFacet.mintKnight(1)
     let eventsKnightMinted = await SBD.KnightFacet.queryFilter('KnightMinted')
     let [knightId, knightOwner, knightType] = eventsKnightMinted[0].args
     expect(knightOwner).to.equal(owner.address)
-    let knightOwnerFromCall = await SBD.KnightFacet.knightOwner(knightId)
+    let knightOwnerFromCall = await SBD.KnightFacet.getKnightOwner(knightId)
     expect(knightOwner).to.equal(knightOwnerFromCall)
-    expect(knightType).to.equal(0)
+    expect(knightType).to.equal(1)
   })
 
   it('should burn a knight correctly', async () => {
@@ -105,7 +105,7 @@ describe('KnightFacetTest', async function () {
     expect(knightId).to.equal(knightId2)
     expect(knightOwner).to.equal(knightOwner2)
     expect(knightType).to.equal(knightType2)
-    knightOwnerFromCall = await SBD.KnightFacet.knightOwner(knightId)
+    knightOwnerFromCall = await SBD.KnightFacet.getKnightOwner(knightId)
     expect(knightOwnerFromCall).to.equal(ethers.constants.AddressZero)
     expect(balance_after - balance_before).to.equal(knightPrice.AAVE)
   })

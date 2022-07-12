@@ -1,62 +1,64 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import { MetaStorage as META } from "../storage/MetaStorage.sol";
-import { TreasuryStorage as TRSR, TreasuryModifiers } from "../storage/TreasuryStorage.sol";
-import { KnightStorage as KNHT } from "../storage/KnightStorage.sol";
-import { ClanStorage as CLAN } from "../storage/ClanStorage.sol";
-import { TournamentStorage as TMNT } from "../storage/TournamentStorage.sol";
 import { ITreasury } from "../../shared/interfaces/ITreasury.sol";
+import { TreasuryStorage as TRSR, TreasuryGetters, TreasuryModifiers } from "../storage/TreasuryStorage.sol";
+import { KnightGetters } from "../storage/KnightStorage.sol";
+import { ClanGetters } from "../storage/ClanStorage.sol";
+import { TournamentGetters } from "../storage/TournamentStorage.sol";
+import { ExternalCalls } from "../storage/MetaStorage.sol";
 
-contract TreasuryFacet is ITreasury, TreasuryModifiers {
+contract TreasuryFacet is ITreasury, 
+                          TreasuryModifiers, 
+                          TreasuryGetters, 
+                          ClanGetters,
+                          TournamentGetters,
+                          KnightGetters, 
+                          ExternalCalls {
   using TRSR for TRSR.State;
 
-  function CastleHolder() private view returns(address) {
-  //Find owner of castle holding clan
-    //Find the castle holding clan
-    uint256 CastleHoldingClan = TMNT.castleHolder();
-    //Find the knight that leads that clan
-    uint256 CastleHoldingClanLeader = CLAN.clanOwner(CastleHoldingClan);
-    //Find the owner of said knight
-    return KNHT.knightOwner(CastleHoldingClanLeader);
-  }
-
   function claimRewards() public {
-    uint256 villageAmount = META.villageAmount();
+    uint256 villageAmount = villageAmount();
 
     //Calculate reward
     uint256 paymentCycles = block.number - lastBlock();
-    uint256 reward = getRewardPerBlock() * paymentCycles;
+    uint256 reward = rewardPerBlock() * paymentCycles;
     //Assign rewards to village owners
     address[] memory owners = new address[](villageAmount + 1);
     uint256[] memory rewards = new uint256[](villageAmount + 1);
     for (uint v = 0; v < villageAmount; v++){
-      owners[v] = META.villageOwner(v);
-      rewards[v] = reward * (100 - getTax());
+      owners[v] = villageOwner(v);
+      rewards[v] = reward * (100 - castleTax());
     }
     //Assign reward to castle holder clan leader
-    owners[villageAmount] = CastleHolder();
-    rewards[villageAmount] = reward * getTax();
+    owners[villageAmount] = castleHolderAddress();
+    rewards[villageAmount] = reward * castleTax();
     //Mint reward tokens
-    META.SBT().mintBatch(owners, rewards);
     TRSR.state().lastBlock = block.number;
+    SBT().mintBatch(owners, rewards);
   }
 
-  function getRewardPerBlock() public view returns(uint) {
-    return TRSR.rewardPerBlock();
-  }
-
-  function getTax() public view returns(uint) {
-    return TRSR.castleTax();
-  }
-
-  function lastBlock() internal view returns(uint) {
-    return TRSR.lastBlock();
-  }
-
-  function setTax(uint tax) external onlyCastleHolder(CastleHolder()) {
+  function setTax(uint8 tax) external onlyCastleHolder(castleHolderAddress()) {
     require(tax <= 90, "TreasuryFacet: Can't set a tax above 90%");
     TRSR.state().castleTax = tax;
     emit NewTaxSet(tax);
+  }
+
+  function castleHolderAddress() internal view returns(address) {
+    return knightOwner(clanOwner(castleHolderClan()));
+  }
+
+//Public Getters
+
+  function getCastleTax() public view returns(uint) {
+    return castleTax();
+  }
+  
+  function getLastBlock() public view returns(uint) {
+    return lastBlock();
+  }
+
+  function getRewardPerBlock() public view returns(uint) {
+    return rewardPerBlock();
   }
 }

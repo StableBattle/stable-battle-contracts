@@ -5,11 +5,11 @@ import { ERC1155Supply } from "../../OZ_ERC1155_DS/ERC1155Supply.sol";
 import { IItems } from "../../shared/interfaces/IItems.sol";
 
 import { ItemsStorage as ITEM } from "../storage/ItemsStorage.sol";
-import { KnightStorage as KNHT, Knight } from "../storage/KnightStorage.sol";
+//import { KnightStorage as KNHT, knightType } from "../storage/KnightStorage.sol";
 
 contract ItemsFacet is ERC1155Supply, IItems {
   using ITEM for ITEM.State;
-  using KNHT for KNHT.State;
+//using KNHT for KNHT.State;
     
   function _mint(address to, uint256 id, uint256 amount, bytes memory data) internal virtual override {
       super._mint(to, id, amount, data);
@@ -28,12 +28,14 @@ contract ItemsFacet is ERC1155Supply, IItems {
     bytes memory data
   ) internal virtual override {
     super._afterTokenTransfer(operator, from, to, ids, amounts, data);
+    /*
     for (uint i = 0; i < ids.length; i++) {
       if (ids[i] >= KNHT.knightOffset()) {
-        KNHT.state().knight[ids[i]].owner = to;
-        if (from == address(0)) { ITEM.state().totalKnightSupply++; }
-        else if (to == address(0)) { ITEM.state().totalKnightSupply--; }
+        knightType kt = abi.decode(data, (knightType));
+        if (from == address(0)) { KNHT.state().knightsMinted[kt]++; }
+        else if (to == address(0)) { KNHT.state().knightsBurned[kt]++; }
       }
     }
+    */
   }
 }
