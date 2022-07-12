@@ -3,11 +3,11 @@ pragma solidity ^0.8.0;
 
 import { ItemsFacet } from "./ItemsFacet.sol";
 import { IKnight } from "../../shared/interfaces/IKnight.sol";
-import { IClan } from "../../shared/interfaces/IClan.sol";
+//import { IClan } from "../../shared/interfaces/IClan.sol";
 
 import { KnightStorage as KNHT, knightType, Knight, KnightGetters, KnightModifiers} from "../storage/KnightStorage.sol";
 import { ExternalCalls } from "../storage/MetaStorage.sol";
-import { ItemsStorage as ITEM, ItemsModifiers } from "../storage/ItemsStorage.sol";
+import { ItemsModifiers } from "../storage/ItemsStorage.sol";
 import { ClanStorage as CLAN } from "../storage/ClanStorage.sol";
 
 contract KnightFacet is ItemsFacet, 
