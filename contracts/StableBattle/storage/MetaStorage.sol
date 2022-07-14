@@ -15,6 +15,19 @@ import { ISBVHook } from "../../shared/interfaces/ISBVHook.sol";
 import { ITournament } from "../../shared/interfaces/ITournament.sol";
 import { ITreasury } from "../../shared/interfaces/ITreasury.sol";
 
+enum Pool {
+  NONE,
+  AAVE,
+  TEST
+}
+
+enum Coin {
+  NONE,
+  USDT,
+  USDC,
+  TEST
+}
+
 library MetaStorage {
   struct State {
     // StableBattle EIP20 Token address
@@ -22,8 +35,9 @@ library MetaStorage {
     // StableBattle EIP721 Village address
     address SBV;
 
-    address USDT;
-    address AAVE;
+    mapping (Pool => address) pool;
+    mapping (Coin => address) coin;
+    mapping (Pool => mapping (Coin => bool)) compatible;
   }
 
   bytes32 internal constant STORAGE_SLOT = keccak256("Meta.storage");
@@ -80,23 +94,73 @@ abstract contract ExternalCalls {
   }
 
   function USDT() internal view virtual returns (IERC20) {
-    return IERC20(MetaStorage.state().USDT);
+    return IERC20(MetaStorage.state().coin[Coin.USDT]);
+  }
+
+  function USDC() internal view virtual returns (IERC20) {
+    return IERC20(MetaStorage.state().coin[Coin.USDC]);
   }
 
   function AAVE() internal view virtual returns (IPool) {
-    return IPool(MetaStorage.state().AAVE);
+    return IPool(MetaStorage.state().pool[Pool.AAVE]);
+  }
+
+  function COIN(Coin coin) internal view virtual returns (IERC20) {
+    return IERC20(MetaStorage.state().coin[coin]);
+  }
+
+  function PoolAddress(Pool pool) internal view virtual returns (address) {
+    return MetaStorage.state().pool[pool];
+  }
+
+  function PoolAndCoinCompatibility(Pool p, Coin c) internal view returns (bool) {
+    return MetaStorage.state().compatible[p][c];
   }
 }
 
 abstract contract MetaModifiers {
-  modifier onlySBV {
-    require(MetaStorage.state().SBV == msg.sender,
-      "MetaModifiers: can only be called by SBV");
+  function isVaildPool(Pool pool) internal view virtual returns(bool) {
+    return pool != Pool.NONE ? true : false;
+  }
+
+  modifier ifIsVaildPool(Pool pool) {
+    require(isVaildPool(pool), "MetaModifiers: This is not a valid pool");
     _;
   }
 
-  modifier onlySBT {
-    require(MetaStorage.state().SBT == msg.sender,
+  function isValidCoin(Coin coin) internal view virtual returns(bool) {
+    return coin != Coin.NONE ? true : false;
+  }
+
+  modifier ifIsValidCoin(Coin coin) {
+    require(isValidCoin(coin), "MetaModifiers: This is not a valid coin");
+    _;
+  }
+
+  function isCompatible(Pool p, Coin c) internal view virtual returns(bool) {
+    return MetaStorage.state().compatible[p][c];
+  }
+
+  modifier ifIsCompatible(Pool p, Coin c) {
+    require(isCompatible(p, c), "MetaModifiers: This token is incompatible with this pool");
+    _;
+  }
+
+  function isSBV() internal view virtual returns(bool) {
+    return MetaStorage.state().SBV == msg.sender;
+  }
+
+  modifier ifIsSBV {
+    require(isSBV(), "MetaModifiers: can only be called by SBV");
+    _;
+  }
+
+  function isSBT() internal view virtual returns(bool) {
+    return MetaStorage.state().SBT == msg.sender;
+  }
+
+  modifier ifIsSBT {
+    require(isSBT(),
       "MetaModifiers: can only be called by SBT");
     _;
   }

@@ -5,49 +5,60 @@ import { ItemsFacet } from "./ItemsFacet.sol";
 import { IKnight } from "../../shared/interfaces/IKnight.sol";
 //import { IClan } from "../../shared/interfaces/IClan.sol";
 
-import { KnightStorage as KNHT, knightType, Knight, KnightGetters, KnightModifiers} from "../storage/KnightStorage.sol";
-import { ExternalCalls } from "../storage/MetaStorage.sol";
+import { KnightStorage as KNHT, Knight, KnightGetters, KnightModifiers} from "../storage/KnightStorage.sol";
+import { Pool, Coin, ExternalCalls, MetaModifiers } from "../storage/MetaStorage.sol";
 import { ItemsModifiers } from "../storage/ItemsStorage.sol";
-import { ClanStorage as CLAN } from "../storage/ClanStorage.sol";
+//import { ClanStorage as CLAN } from "../storage/ClanStorage.sol";
 
-contract KnightFacet is ItemsFacet, 
-                        IKnight, 
-                        KnightGetters, 
-                        KnightModifiers, 
-                        ExternalCalls, 
-                        ItemsModifiers {
+contract KnightFacet is ItemsFacet,
+                        IKnight,
+                        KnightGetters,
+                        KnightModifiers,
+                        ExternalCalls,
+                        ItemsModifiers,
+                        MetaModifiers
+{
   using KNHT for KNHT.State;
-  using CLAN for CLAN.State;
+//using CLAN for CLAN.State;
 
-  function mintKnight(knightType kt) external {
-    require(kt != knightType.NONE,
-      "KnightFacet: Can only mint knights of valid knightType's");
-    if (kt == knightType.AAVE) {
-      // Check if user gave its approval for 1000 USDT
-      require(USDT().allowance(msg.sender, address(this)) >= knightPrice(knightType.AAVE), 
+  function mintKnight(Pool p, Coin c)
+    public
+    ifIsValidCoin(c)
+    ifIsVaildPool(p)
+    ifIsCompatible(p, c)
+  {
+    if (c == Coin.USDT) {
+      // Check if user gave its approval for enough COIN
+      require(COIN(c).allowance(msg.sender, address(this)) >= knightPrice(c), 
         "KnightFacet: User allocated insufficient amount of funds");
-      // Transfer 1000 USDT from user to contract
-      USDT().transferFrom(msg.sender, address(this), knightPrice(knightType.AAVE));
-      // Supply 1000 USDT to AAVE
-      USDT().approve(address(AAVE()), knightPrice(knightType.AAVE));
-      AAVE().supply(address(USDT()), knightPrice(knightType.AAVE), address(this), 0);
+      // Transfer enough COIN from user to contract
+      COIN(c).transferFrom(msg.sender, address(this), knightPrice(c));
+      // Approve COIN for Pool
+      COIN(c).approve(PoolAddress(p), knightPrice(c));
+    }
+    if (p == Pool.AAVE) {
+      AAVE().supply(address(COIN(c)), knightPrice(c), address(this), 0);
     }
     // Mint NFT for the user
-    uint256 knightId = type(uint256).max - knightsMinted();
+    uint256 knightId = type(uint256).max - knightsMintedTotal();
     _mint(msg.sender, knightId, 1, "");
-    KNHT.state().knightsMinted[kt]++;
+    KNHT.state().knightsMinted[p][c]++;
     //Initialize Knight
-    KNHT.state().knight[knightId] = Knight(0, 0, 0, kt, msg.sender);
+    KNHT.state().knight[knightId] = Knight(p, c, msg.sender, 0, 0);
 
-    emit KnightMinted(knightId, msg.sender, kt);
+    emit KnightMinted(knightId, msg.sender, p, c);
   }
 
   function burnKnight (uint256 knightId)
     external
     ifIsKnight(knightId)
     ifOwnsItem(knightId)
+  //ifIsVaildPool(knightPool(knightId))
+  //ifIsValidCoin(knightCoin(knightId))
+  //ifIsCompatible(c, p)
   {
-    knightType kt = knightTypeOf(knightId);
+    Pool p = knightPool(knightId);
+    Coin c = knightCoin(knightId);
   /*
     uint256 ownerId = knightClanOwnerOf(knightId);
     uint256 clanId = knightClan(knightId);
@@ -72,68 +83,92 @@ contract KnightFacet is ItemsFacet,
     }
   */
     // Null the knight
-    KNHT.state().knight[knightId] = Knight(0, 0, 0, knightType.NONE, address(0));
+    KNHT.state().knight[knightId] = Knight(Pool.NONE, Coin.NONE, address(0), 0, 0);
     // Burn NFT
     _burn(msg.sender, knightId, 1);
-    KNHT.state().knightsBurned[kt]++;
-    // Withraw 1000 USDT from AAVE to the user
-    if(kt == knightType.AAVE) {
-      AAVE().withdraw(address(USDT()), knightPrice(knightType.AAVE), msg.sender);
+    KNHT.state().knightsBurned[p][c]++;
+    if (p == Pool.AAVE) {
+    // Withraw price in Coin from AAVE to the user
+      AAVE().withdraw(address(COIN(c)), knightPrice(c), msg.sender);
     }
-    emit KnightBurned(knightId, msg.sender, kt);
+    emit KnightBurned(knightId, msg.sender, p, c);
   }
 
 //Public Getters
 
-  function getKnightCheck(uint256 knightId) public view returns(Knight memory) {
-    return knightCheck(knightId);
+  function getKnightInfo(uint256 knightId) external view returns(Knight memory) {
+    return knightInfo(knightId);
   }
 
-  function getKnightClan(uint256 knightId) public view returns(uint256) {
-    return knightClan(knightId);
+  function getKnightCoin(uint256 knightId) external view returns(Coin) {
+    return knightCoin(knightId);
   }
 
-  function getKnightClanOwnerOf(uint256 knightId) public view returns(uint256) {
-    return knightClanOwnerOf(knightId);
+  function getKnightPool(uint256 knightId) external view returns(Pool) {
+    return knightPool(knightId);
   }
 
-  function getKnightLevel(uint256 knightId) public view returns(uint) {
-    return knightLevel(knightId);
-  }
-
-  function getKnightTypeOf(uint256 knightId) public view returns(knightType) {
-    return knightTypeOf(knightId);
-  }
-
-  function getKnightOwner(uint256 knightId) public view returns(address) {
+  function getKnightOwner(uint256 knightId) external view returns(address) {
     return knightOwner(knightId);
   }
 
-  function getKnightPrice(knightType kt) public view returns (uint256) {
-    return knightPrice(kt);
+  function getKnightClan(uint256 knightId) external view returns(uint256) {
+    return knightClan(knightId);
   }
 
-  function getKnightsMinted(knightType kt) public view returns (uint256) {
-    return knightsMinted(kt);
+  function getKnightClanOwnerOf(uint256 knightId) external view returns(uint256) {
+    return knightClanOwnerOf(knightId);
   }
 
-  function getKnightsBurned(knightType kt) public view returns (uint256) {
-    return knightsBurned(kt);
+  function getKnightPrice(Coin coin) external view returns (uint256) {
+    return knightPrice(coin);
   }
 
-  function getTotalKnightSupply(knightType kt) public view returns (uint256) {
-    return totalKnightSupply(kt);
+  //returns amount of minted knights for a particular coin & pool
+  function getKnightsMinted(Pool pool, Coin coin) external view returns (uint256) {
+    return knightsMinted(pool, coin);
   }
 
-  function getKnightsMinted() public view returns (uint256 knightsMintedTotal) {
-    return knightsMinted();
+  //returns amount of minted knights for any coin in a particular pool
+  function getKnightsMintedOfPool(Pool pool) external view returns (uint256 knightsMintedTotal) {
+    return knightsMintedOfPool(pool);
   }
 
-  function getKnightsBurned() public view returns (uint256 knightsBurnedTotal) {
-    return knightsBurned();
+  //returns amount of minted knights for any pool in a particular coin
+  function getKnightsMintedOfCoin(Coin coin) external view returns (uint256) {
+    return knightsMintedOfCoin(coin);
   }
 
-  function getTotalKnightSupply() public view returns (uint256) {
+  //returns a total amount of minted knights
+  function getKnightsMintedTotal() external view returns (uint256) {
+    return knightsMintedTotal();
+  }
+
+  //returns amount of burned knights for a particular coin & pool
+  function getKnightsBurned(Pool pool, Coin coin) external view returns (uint256) {
+    return knightsBurned(pool, coin);
+  }
+
+  //returns amount of burned knights for any coin in a particular pool
+  function getKnightsBurnedOfPool(Pool pool) external view returns (uint256 knightsBurnedTotal) {
+    return knightsBurnedOfPool(pool);
+  }
+
+  //returns amount of burned knights for any pool in a particular coin
+  function getKnightsBurnedOfCoin(Coin coin) external view returns (uint256) {
+    return knightsBurnedOfCoin(coin);
+  }
+
+  //returns a total amount of burned knights
+  function getKnightsBurnedTotal() external view returns (uint256) {
+    return knightsBurnedTotal();
+  }
+
+  function getTotalKnightSupply() external view returns (uint256) {
     return totalKnightSupply();
+  }
+
+  function getPoolAndCoinCompatibility(Pool p, Coin c) external view returns (bool) {
+    return PoolAndCoinCompatibility(p, c);
   }
 }

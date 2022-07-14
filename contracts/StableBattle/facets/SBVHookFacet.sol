@@ -8,7 +8,7 @@ import { TreasuryStorage as TRSR, TreasuryGetters } from "../storage/TreasurySto
 contract SBVHookFacet is ISBVHook, MetaModifiers, TreasuryGetters {
   using TRSR for TRSR.State;
 
-  function SBV_hook(uint id, address newOwner, bool mint) external onlySBV {
+  function SBV_hook(uint id, address newOwner, bool mint) external ifIsSBV {
     TRSR.state().villageOwner[id] = newOwner;
     if (mint == true) { TRSR.state().villageAmount++; }
     emit VillageInfoUpdated(id, newOwner, villageAmount());

@@ -2,26 +2,22 @@
 
 pragma solidity ^0.8.0;
 
-enum knightType {
-  NONE,
-  AAVE,
-  OTHER
-}
+import { Pool, Coin } from "./MetaStorage.sol";
 
 struct Knight {
+  Pool pool;
+  Coin coin;
+  address owner;
   uint256 inClan;
   uint256 ownsClan;
-  uint level;
-  knightType kt;
-  address owner;
 }
 
 library KnightStorage {
   struct State {
     mapping(uint256 => Knight) knight;
-    mapping(knightType => uint256) knightPrice;
-    mapping(knightType => uint256) knightsMinted;
-    mapping(knightType => uint256) knightsBurned;
+    mapping(Coin => uint256) knightPrice;
+    mapping(Pool => mapping(Coin => uint256)) knightsMinted;
+    mapping(Pool => mapping(Coin => uint256)) knightsBurned;
   }
 
   bytes32 internal constant STORAGE_SLOT = keccak256("Knight.storage");
@@ -35,8 +31,20 @@ library KnightStorage {
 }
 
 abstract contract KnightGetters {
-  function knightCheck(uint256 knightId) internal view virtual returns(Knight memory) {
+  function knightInfo(uint256 knightId) internal view virtual returns(Knight memory) {
     return KnightStorage.state().knight[knightId];
+  }
+
+  function knightCoin(uint256 knightId) internal view virtual returns(Coin) {
+    return KnightStorage.state().knight[knightId].coin;
+  }
+
+  function knightPool(uint256 knightId) internal view virtual returns(Pool) {
+    return KnightStorage.state().knight[knightId].pool;
+  }
+
+  function knightOwner(uint256 knightId) internal view virtual returns(address) {
+    return KnightStorage.state().knight[knightId].owner;
   }
 
   function knightClan(uint256 knightId) internal view virtual returns(uint256) {
@@ -47,54 +55,70 @@ abstract contract KnightGetters {
     return KnightStorage.state().knight[knightId].ownsClan;
   }
 
-  function knightLevel(uint256 knightId) internal view virtual returns(uint) {
-    return KnightStorage.state().knight[knightId].level;
+  function knightPrice(Coin coin) internal view virtual returns (uint256) {
+    return KnightStorage.state().knightPrice[coin];
   }
 
-  function knightTypeOf(uint256 knightId) internal view virtual returns(knightType) {
-    return KnightStorage.state().knight[knightId].kt;
+  //returns amount of minted knights for a particular coin & pool
+  function knightsMinted(Pool pool, Coin coin) internal view virtual returns (uint256) {
+    return KnightStorage.state().knightsMinted[pool][coin];
   }
 
-  function knightOwner(uint256 knightId) internal view virtual returns(address) {
-    return KnightStorage.state().knight[knightId].owner;
-  }
-
-  function knightPrice(knightType kt) internal view virtual returns (uint256) {
-    return KnightStorage.state().knightPrice[kt];
-  }
-
-  function knightsMinted(knightType kt) internal view virtual returns (uint256) {
-    return KnightStorage.state().knightsMinted[kt];
-  }
-
-  function knightsBurned(knightType kt) internal view virtual returns (uint256) {
-    return KnightStorage.state().knightsBurned[kt];
-  }
-
-  function totalKnightSupply(knightType kt) internal view virtual returns (uint256) {
-    return knightsMinted(kt) - knightsBurned(kt);
-  }
-
-  function knightsMinted() internal view virtual returns (uint256 knightsMintedTotal) {
-    for (uint8 i = 0; i < uint8(type(knightType).max) + 1; i++) {
-      knightsMintedTotal += knightsMinted(knightType(i));
+  //returns amount of minted knights for any coin in a particular pool
+  function knightsMintedOfPool(Pool pool) internal view virtual returns (uint256 minted) {
+    for (uint8 coin = 1; coin < uint8(type(Coin).max) + 1; coin++) {
+      minted += knightsMinted(pool, Coin(coin));
     }
   }
 
-  function knightsBurned() internal view virtual returns (uint256 knightsBurnedTotal) {
-    for (uint8 i = 0; i < uint8(type(knightType).max) + 1; i++) {
-      knightsBurnedTotal += knightsBurned(knightType(i));
+  //returns amount of minted knights for any pool in a particular coin
+  function knightsMintedOfCoin(Coin coin) internal view virtual returns (uint256 minted) {
+    for (uint8 pool = 1; pool < uint8(type(Pool).max) + 1; pool++) {
+      minted += knightsMinted(Pool(pool), coin);
+    }
+  }
+
+  //returns a total amount of minted knights
+  function knightsMintedTotal() internal view virtual returns (uint256 minted) {
+    for (uint8 pool = 1; pool < uint8(type(Pool).max) + 1; pool++) {
+      minted += knightsMintedOfPool(Pool(pool));
+    }
+  }
+
+  //returns amount of burned knights for a particular coin & pool
+  function knightsBurned(Pool pool, Coin coin) internal view virtual returns (uint256) {
+    return KnightStorage.state().knightsBurned[pool][coin];
+  }
+
+  //returns amount of burned knights for any coin in a particular pool
+  function knightsBurnedOfPool(Pool pool) internal view virtual returns (uint256 burned) {
+    for (uint8 coin = 1; coin < uint8(type(Coin).max) + 1; coin++) {
+      burned += knightsBurned(pool, Coin(coin));
+    }
+  }
+
+  //returns amount of burned knights for any pool in a particular coin
+  function knightsBurnedOfCoin(Coin coin) internal view virtual returns (uint256 burned) {
+    for (uint8 pool = 1; pool < uint8(type(Pool).max) + 1; pool++) {
+      burned += knightsBurned(Pool(pool), coin);
+    }
+  }
+
+  //returns a total amount of burned knights
+  function knightsBurnedTotal() internal view virtual returns (uint256 burned) {
+    for (uint8 pool = 1; pool < uint8(type(Pool).max) + 1; pool++) {
+      burned += knightsBurnedOfPool(Pool(pool));
     }
   }
 
   function totalKnightSupply() internal view virtual returns (uint256) {
-    return knightsMinted() - knightsBurned();
+    return knightsMintedTotal() - knightsBurnedTotal();
   }
 }
 
 abstract contract KnightModifiers is KnightGetters {
-  function isKnight(uint256 knightId) internal view returns(bool) {
-    return knightId >= type(uint256).max - knightsMinted();
+  function isKnight(uint256 knightId) internal view virtual returns(bool) {
+    return knightId >= type(uint256).max - knightsMintedTotal();
   }
   
   modifier ifIsKnight(uint256 knightId) {

@@ -9,9 +9,9 @@ import { IDiamondLoupe } from "../../shared/interfaces/IDiamondLoupe.sol";
 import { IERC1155 } from "../../shared/interfaces/IERC1155.sol";
 
 import { ClanStorage, Clan } from "../storage/ClanStorage.sol";
-import { KnightStorage, Knight, knightType} from "../storage/KnightStorage.sol";
+import { KnightStorage, Knight} from "../storage/KnightStorage.sol";
 import { ItemsStorage } from "../storage/ItemsStorage.sol";
-import { MetaStorage } from "../storage/MetaStorage.sol";
+import { Coin, Pool, MetaStorage } from "../storage/MetaStorage.sol";
 import { TournamentStorage } from "../storage/TournamentStorage.sol";
 import { TreasuryStorage } from "../storage/TreasuryStorage.sol";
 import { GearStorage, gearSlot } from "../storage/GearStorage.sol";
@@ -33,16 +33,10 @@ contract SBInit {
 
   struct Args {
     address USDT_address;
+    address USDC_address;
     address AAVE_address;
     address SBT_address;
     address SBV_address;
-    
-    string uri;
-
-    uint MAX_CLAN_MEMBERS;
-    uint[] levelThresholds;
-
-    uint reward_per_block;
   }
 
   function SB_init(Args memory _args) external {
@@ -54,17 +48,21 @@ contract SBInit {
       ds.supportedInterfaces[type(IDiamondLoupe).interfaceId] = true;
       ds.supportedInterfaces[type(IERC1155).interfaceId] = true;
 
-    //Assign StableBattle Storage
-      MetaStorage.state().USDT = _args.USDT_address;
-      MetaStorage.state().AAVE = _args.AAVE_address;
+    // Assign Meta Storage
+      MetaStorage.state().coin[Coin.USDT] = _args.USDT_address;
+      MetaStorage.state().coin[Coin.USDC] = _args.USDC_address;
+      MetaStorage.state().pool[Pool.AAVE] = _args.AAVE_address;
       MetaStorage.state().SBT = _args.SBT_address;
       MetaStorage.state().SBV = _args.SBV_address;
+      MetaStorage.state().compatible[Pool.AAVE][Coin.USDT] = true;
+      MetaStorage.state().compatible[Pool.AAVE][Coin.USDC] = true;
+      MetaStorage.state().compatible[Pool.TEST][Coin.TEST] = true;
 
     //Knight facet
       //Knight enumeration begins from type(uint256).max
       ///for better compactibility with adding new item types in the future
-      KnightStorage.state().knightPrice[knightType.AAVE] = 1e9;
-      KnightStorage.state().knightPrice[knightType.OTHER] = 0;
+      KnightStorage.state().knightPrice[Coin.USDT] = 1e9;
+      KnightStorage.state().knightPrice[Coin.USDC] = 1e9;
 
     //Gear Facet
       //all items in [256, 1e12) are gear
@@ -77,16 +75,15 @@ contract SBInit {
       //TotemStorage.state().totemRangeRight = 2e12;
 
     //Items & ERC1155 Facet
-      ItemsStorage.state()._uri = _args.uri;
+      ItemsStorage.state()._uri = "ex_uri";
 
     //Clan Facet
-      ClanStorage.state().MAX_CLAN_MEMBERS = _args.MAX_CLAN_MEMBERS;
-      ClanStorage.state().levelThresholds = _args.levelThresholds;
+      ClanStorage.state().MAX_CLAN_MEMBERS = 10;
+      ClanStorage.state().levelThresholds = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900];
 
     //Treasury Facet
       TreasuryStorage.state().castleTax = 37;
       TreasuryStorage.state().lastBlock = block.number;
-      TreasuryStorage.state().rewardPerBlock = _args.reward_per_block;
-
+      TreasuryStorage.state().rewardPerBlock = 100;
   }
 }

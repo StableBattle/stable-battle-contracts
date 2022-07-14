@@ -70,23 +70,17 @@ async function initSBD (SBD_address, SBT_address_, SBV_address_) {
   const diamondCut = await ethers.getContractAt('IDiamondCut', SBD_address)
   let tx
   let receipt
-  let USDT_address  = ethers.utils.getAddress("0x21C561e551638401b937b03fE5a0a0652B99B7DD")
-  let AAVE_address  = ethers.utils.getAddress("0x6C9fB0D5bD9429eb9Cd96B85B81d872281771E6B")
-  let SBT_address   = SBT_address_
-  let SBV_address   = SBV_address_
-  let uri = "ex_uri"
-  let max_members = 10
-  let levelThresholds = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900]
-  let reward_per_block = 100
+  let USDT_address = ethers.utils.getAddress("0x21C561e551638401b937b03fE5a0a0652B99B7DD")
+  let USDC_address = ethers.utils.getAddress("0x9aa7fEc87CA69695Dd1f879567CcF49F3ba417E2")
+  let AAVE_address = ethers.utils.getAddress("0x6C9fB0D5bD9429eb9Cd96B85B81d872281771E6B")
+  let SBT_address  = SBT_address_
+  let SBV_address  = SBV_address_
   let args = [[
     USDT_address,
+    USDC_address,
     AAVE_address,
     SBT_address,
     SBV_address,
-    uri,
-    max_members,
-    levelThresholds,
-    reward_per_block
   ]]
   // call to init function
   let functionCall = diamondInit.interface.encodeFunctionData('SB_init', args)
