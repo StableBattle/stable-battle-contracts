@@ -27,7 +27,7 @@ contract KnightFacet is ItemsFacet,
     ifIsVaildPool(p)
     ifIsCompatible(p, c)
   {
-    if (c == Coin.USDT) {
+    if (c != Coin.TEST) {
       // Check if user gave its approval for enough COIN
       require(COIN(c).allowance(msg.sender, address(this)) >= knightPrice(c), 
         "KnightFacet: User allocated insufficient amount of funds");
