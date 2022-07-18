@@ -29,7 +29,8 @@ async function initSBD (SBD_address, SBT_address_, SBV_address_) {
     'TournamentFacet',
     'TreasuryFacet',
     'GearFacet',
-    'EtherscanFacet'
+    'EtherscanFacet',
+    'DemoFightFacet'
   ]
   const cut = []
   //let ItemsSelectors = [
