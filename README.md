@@ -8,16 +8,24 @@ Only Knight and DemoFight facets were sufficiently tested for this demo. Proper 
 
 <details>
 <summary>AAVE addresses</summary>
+
 Mumbai: 0x6C9fB0D5bD9429eb9Cd96B85B81d872281771E6B
+
 Rinkeby: 0xE039BdF1d874d27338e09B55CB09879Dedca52D8
+
 Ropsten: 0x6C9fB0D5bD9429eb9Cd96B85B81d872281771E6B
+
 </details>
 
 <details>
 <summary>USDC addresses</summary>
+
 Mumbai: 0x9aa7fEc87CA69695Dd1f879567CcF49F3ba417E2
+
 Rinkeby: 0xb18d016cDD2d9439A19f15633005A6b2cd6Aa774
+
 Ropsten: 0xe99F86Ec081BcA8b1627BDf8062C19fAcC79997B
+
 </details>
 
 
