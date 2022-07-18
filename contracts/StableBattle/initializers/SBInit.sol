@@ -54,9 +54,9 @@ contract SBInit {
       MetaStorage.state().pool[Pool.AAVE] = _args.AAVE_address;
       MetaStorage.state().SBT = _args.SBT_address;
       MetaStorage.state().SBV = _args.SBV_address;
-      MetaStorage.state().compatible[Pool.AAVE][Coin.USDT] = true;
+    //MetaStorage.state().compatible[Pool.AAVE][Coin.USDT] = true;
       MetaStorage.state().compatible[Pool.AAVE][Coin.USDC] = true;
-      MetaStorage.state().compatible[Pool.TEST][Coin.TEST] = true;
+    //MetaStorage.state().compatible[Pool.TEST][Coin.TEST] = true;
 
     //Knight facet
       //Knight enumeration begins from type(uint256).max
