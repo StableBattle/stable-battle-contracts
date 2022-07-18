@@ -26,12 +26,12 @@ module.exports = {
   networks: {
     hardhat: {
       forking: {
-        url: process.env.ALCHEMY_URL || "",
+        url: process.env.MUMBAI_ALCHEMY_URL || "",
         blockNumber: 26681409,
       },
     },
     polygonMumbai: {
-      url: process.env.ALCHEMY_URL || "",
+      url: process.env.MUMBAI_ALCHEMY_URL || "",
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
@@ -42,5 +42,6 @@ module.exports = {
   },
   etherscan: {
     apiKey: process.env.POLYGONSCAN_API_KEY,
+    //apiKey: process.env.ETHERSCAN_API_KEY,
   }
 };
