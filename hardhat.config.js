@@ -26,12 +26,27 @@ module.exports = {
   networks: {
     hardhat: {
       forking: {
-        url: process.env.ALCHEMY_URL || "",
+        url: process.env.MUMBAI_ALCHEMY_URL || "",
         blockNumber: 26681409,
       },
     },
     polygonMumbai: {
-      url: process.env.ALCHEMY_URL || "",
+      url: process.env.MUMBAI_ALCHEMY_URL || "",
+      accounts:
+        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+    },
+    rinkeby: {
+      url: process.env.RINKEBY_ALCHEMY_URL || "",
+      accounts:
+        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+    },
+    ropsten: {
+      url: process.env.ROPSTEN_URL || "",
+      accounts:
+        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+    },
+    arbitrumTestnet: {
+      url: process.env.ARBITRUM_RINKEBY_URL || "",
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
@@ -42,5 +57,7 @@ module.exports = {
   },
   etherscan: {
     apiKey: process.env.POLYGONSCAN_API_KEY,
+    //apiKey: process.env.ROPSTEN_API_KEY,
+    //apiKey: process.env.RINKEBY_API_KEY,
   }
 };
