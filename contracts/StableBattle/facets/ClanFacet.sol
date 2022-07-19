@@ -37,10 +37,12 @@ contract ClanFacet is IClan,
     public 
     ifOwnsItem(clanLeader(clanId))
   {
+    require(ownsItem(clanLeader(clanId)) || isSBD(), 
+      "ClanFacet: you don't lead this clan");
     uint256 leaderId = clanLeader(clanId);
     KNHT.state().knight[leaderId].inClan = 0;
     CLAN.state().clan[clanId].leader = 0;
-    emit ClanAbandoned(clanId, leaderId, false);
+    emit ClanAbandoned(clanId, leaderId);
   }
 
   function changeLeader(uint256 clanId, uint256 knightId)
@@ -126,16 +128,16 @@ contract ClanFacet is IClan,
     ifIsInAnyClan(knightId)
   { 
     uint256 clanId = knightClan(knightId);
-    if (clanExists(clanId) && proposal(knightId, clanId) != Proposal.LEAVE) {
+    if ((clanExists(clanId) && proposal(knightId, clanId) != Proposal.LEAVE)) {
       //create leave proposal if clan exist & such proposal doesn't
       CLAN.state().proposal[knightId][clanId] = Proposal.LEAVE;
       emit KnightAskedToLeave(clanId, knightId);
-    } else if(ownsItem(clanLeader(clanId)) || clanExists(clanId)) {
+    } else if(ownsItem(clanLeader(clanId)) || clanExists(clanId) || isSBD()) {
       //leave abandoned clan or allow knight to leave if clan leader
       CLAN.state().clan[clanId].totalMembers--;
       KNHT.state().knight[knightId].inClan = 0;
       CLAN.state().proposal[knightId][clanId] = Proposal.NONE;
-      emit KnightLeftClan(clanId, knightId, false);
+      emit KnightLeftClan(clanId, knightId);
     } else { 
       revert("ClanFacet: Either proposal already exist or you don't own a clan leader");
     }

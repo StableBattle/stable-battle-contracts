@@ -6,7 +6,7 @@ import { IKnight } from "../../shared/interfaces/IKnight.sol";
 //import { IClan } from "../../shared/interfaces/IClan.sol";
 
 import { KnightStorage as KNHT, Knight, KnightGetters, KnightModifiers} from "../storage/KnightStorage.sol";
-import { Pool, Coin, ExternalCalls, MetaModifiers } from "../storage/MetaStorage.sol";
+import { Pool, Coin, InternalCalls, ExternalCalls, MetaModifiers } from "../storage/MetaStorage.sol";
 import { ItemsModifiers } from "../storage/ItemsStorage.sol";
 //import { ClanStorage as CLAN } from "../storage/ClanStorage.sol";
 
@@ -15,6 +15,7 @@ contract KnightFacet is ItemsFacet,
                         KnightGetters,
                         KnightModifiers,
                         ExternalCalls,
+                        InternalCalls,
                         ItemsModifiers,
                         MetaModifiers
 {
@@ -59,29 +60,14 @@ contract KnightFacet is ItemsFacet,
   {
     Pool p = knightPool(knightId);
     Coin c = knightCoin(knightId);
-  /*
-    uint256 ownerId = knightClanOwnerOf(knightId);
+    //Leave or abandon clan
     uint256 clanId = knightClan(knightId);
-    //Dissolve knight's clan and/or kick him out
-    if (ownerId != 0) {
-    //Copy of disslove(uint256) from ClanFacet
-    //Should think of a better way to do this
-    //Maybe worth a CALL
-      KNHT.state().knight[ownerId].ownsClan = 0;
-      KNHT.state().knight[ownerId].inClan = 0;
-      CLAN.state().clan[clanId].owner = 0;
-      emit IClan.ClanDissloved(clanId, ownerId, true);
+    uint256 leaderId = clanLeader(clanId);
+    if (clanId != 0 && leaderId != 0) {
+      knightId == leaderId ?
+        ClanFacet().abandon(clanId) : 
+        ClanFacet().leave(knightId);
     }
-    if (clanId != 0) {
-    //Copy of acceptLeave() from ClanFacet
-    //Should think of a better way to do this
-    //Maybe worth a CALL
-      CLAN.state().clan[clanId].totalMembers--;
-      KNHT.state().knight[knightId].inClan = 0;
-      CLAN.state().leaveProposal[knightId] = 0;
-      emit IClan.KnightLeavedClan(clanId, knightId, true);
-    }
-  */
     // Null the knight
     KNHT.state().knight[knightId] = Knight(Pool.NONE, Coin.NONE, address(0), 0);
     // Burn NFT

@@ -164,4 +164,13 @@ abstract contract MetaModifiers {
       "MetaModifiers: can only be called by SBT");
     _;
   }
+
+  function isSBD() internal view virtual returns(bool) {
+    return address(this) == msg.sender;
+  }
+
+  modifier ifIsSBV {
+    require(isSBV(), "MetaModifiers: can only be called by StableBattle");
+    _;
+  }
 }
