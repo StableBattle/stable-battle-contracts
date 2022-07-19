@@ -71,21 +71,25 @@ async function initSBD (SBD_address, SBT_address_, SBV_address_) {
   const diamondCut = await ethers.getContractAt('IDiamondCut', SBD_address)
   let tx
   let receipt
+  let AAVE_address = ethers.constants.AddressZero
   let USDT_address = ethers.constants.AddressZero
   let USDC_address = ethers.constants.AddressZero
-  let AAVE_address = ethers.constants.AddressZero
+  let AAVE_USDT_address = ethers.constants.AddressZero
+  let AAVE_USDC_address = ethers.constants.AddressZero
   if (hre.network.name === 'hardhat' || hre.network.name === 'polygonMumbai') {
+    AAVE_address = ethers.utils.getAddress("0x6C9fB0D5bD9429eb9Cd96B85B81d872281771E6B")
     USDT_address = ethers.utils.getAddress("0x21C561e551638401b937b03fE5a0a0652B99B7DD")
     USDC_address = ethers.utils.getAddress("0x9aa7fEc87CA69695Dd1f879567CcF49F3ba417E2")
-    AAVE_address = ethers.utils.getAddress("0x6C9fB0D5bD9429eb9Cd96B85B81d872281771E6B")
+    AAVE_USDT_address = ethers.utils.getAddress("0x6Ca4abE253bd510fCA862b5aBc51211C1E1E8925")
+    AAVE_USDC_address = ethers.utils.getAddress("0xCdc2854e97798AfDC74BC420BD5060e022D14607")
   } else if (hre.network.name === 'rinkeby') {
+    AAVE_address = ethers.utils.getAddress("0xE039BdF1d874d27338e09B55CB09879Dedca52D8")
     USDT_address = ethers.utils.getAddress("0x326005cFdF58bfB38650396836BEBF815F5ab4dD")
     USDC_address = ethers.utils.getAddress("0xb18d016cDD2d9439A19f15633005A6b2cd6Aa774")
-    AAVE_address = ethers.utils.getAddress("0xE039BdF1d874d27338e09B55CB09879Dedca52D8")
   } else if (hre.network.name === 'ropsten') {
+    AAVE_address = ethers.utils.getAddress("0x23a85024f54A19e243bA7a74E339a5C80998c7a4")
     USDT_address = ethers.utils.getAddress("0xAf5a1D0523cF9E38005E234a9eea82cc167CC474")
     USDC_address = ethers.utils.getAddress("0xe99F86Ec081BcA8b1627BDf8062C19fAcC79997B")
-    AAVE_address = ethers.utils.getAddress("0x23a85024f54A19e243bA7a74E339a5C80998c7a4")
   } else if (hre.network.name === 'arbitrumTestnet') {
     USDT_address = ethers.utils.getAddress("0x7c53810c756C636cEF076c92D5D7C04555694E76")
     USDC_address = ethers.utils.getAddress("0x774382EF196781400a335AF0c4219eEd684ED713")
@@ -98,9 +102,11 @@ async function initSBD (SBD_address, SBT_address_, SBV_address_) {
   let SBT_address  = SBT_address_
   let SBV_address  = SBV_address_
   let args = [[
+    AAVE_address,
     USDT_address,
     USDC_address,
-    AAVE_address,
+    AAVE_USDT_address,
+    AAVE_USDC_address,
     SBT_address,
     SBV_address,
   ]]

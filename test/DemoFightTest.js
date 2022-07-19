@@ -7,10 +7,12 @@ const { ethers } = require('hardhat')
 
 describe('DemoFightFacetTest', async function () {
   let USDC_address = ethers.utils.getAddress("0x9aa7fEc87CA69695Dd1f879567CcF49F3ba417E2")
+  let USDT_address = ethers.utils.getAddress("0x21C561e551638401b937b03fE5a0a0652B99B7DD")
   let AAVE_address = ethers.utils.getAddress("0x6C9fB0D5bD9429eb9Cd96B85B81d872281771E6B")
-  let knightPrice = { USDC: 1e9 }
+  let knightPrice = { USDC: 1e9, USDT: 1e9 }
   let user = []
   let USDC = []
+  let USDT = []
   let AAVE
   let SBD
   let SBT
@@ -27,6 +29,9 @@ describe('DemoFightFacetTest', async function () {
     USDC[0] = await ethers.getContractAt('IERC20Mintable', USDC_address)
     USDC[1] = USDC[0].connect(user[1])
     USDC[2] = USDC[0].connect(user[2])
+    USDT[0] = await ethers.getContractAt('IERC20Mintable', USDT_address)
+    USDT[1] = USDT[0].connect(user[1])
+    USDT[2] = USDT[0].connect(user[2])
     AAVE = await ethers.getContractAt('IPool', AAVE_address)
     const [SBDAddress, SBTAddress, SBVAddress] = await deployStableBattle()
     SBD = {
@@ -66,10 +71,20 @@ describe('DemoFightFacetTest', async function () {
     KnightFacet[1] = SBD.KnightFacet.connect(user[1])
     KnightFacet[2] = SBD.KnightFacet.connect(user[2])
     for (let i = 0; i < 3; i++) {
+      //mint test knight
+    //await KnightFacet[i].mintKnight(2, 3)
+
+      await USDT[i].mint(knightPrice.USDT)
+      await USDT[i].approve(SBD.Address, knightPrice.USDT)
+    //console.log(await USDT[i].allowance(user[i].address, SBD.Address))
+      await KnightFacet[i].mintKnight(1, 1)
+      
       await USDC[i].mint(knightPrice.USDC)
       await USDC[i].approve(SBD.Address, knightPrice.USDC)
     //console.log(await USDC[i].allowance(user[i].address, SBD.Address))
       await KnightFacet[i].mintKnight(1, 2)
+    }
+    for (let i = 0; i < 3; i++) {
     }
 
     let eventsKnightMinted = await SBD.KnightFacet.queryFilter('KnightMinted')
@@ -85,7 +100,7 @@ describe('DemoFightFacetTest', async function () {
   //console.log("stakeTotal", stakeTotal);
   //console.log("stakeByKnights", stakeByKnights);
   //console.log("currentReward", preTimeskipReward);
-    expect(stakedByKnights).to.be.equal(3e9);
+    expect(stakedByKnights).to.be.equal(6e9);
     expect(totalYield).to.be.at.least(stakedByKnights);
   })
 

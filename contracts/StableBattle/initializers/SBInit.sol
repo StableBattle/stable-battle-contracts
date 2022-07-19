@@ -32,9 +32,14 @@ contract SBInit {
   using GearStorage for GearStorage.State;
 
   struct Args {
+    address AAVE_address;
+
     address USDT_address;
     address USDC_address;
-    address AAVE_address;
+
+    address AAVE_USDT_address;
+    address AAVE_USDC_address;
+
     address SBT_address;
     address SBV_address;
   }
@@ -54,13 +59,16 @@ contract SBInit {
       MetaStorage.state().pool[Pool.AAVE] = _args.AAVE_address;
       MetaStorage.state().SBT = _args.SBT_address;
       MetaStorage.state().SBV = _args.SBV_address;
-    //MetaStorage.state().compatible[Pool.AAVE][Coin.USDT] = true;
+      MetaStorage.state().compatible[Pool.AAVE][Coin.USDT] = true;
       MetaStorage.state().compatible[Pool.AAVE][Coin.USDC] = true;
-    //MetaStorage.state().compatible[Pool.TEST][Coin.TEST] = true;
+      MetaStorage.state().compatible[Pool.TEST][Coin.TEST] = true;
+      MetaStorage.state().acoin[Coin.USDT] = _args.AAVE_USDT_address;
+      MetaStorage.state().acoin[Coin.USDC] = _args.AAVE_USDC_address;
 
     //Knight facet
       //Knight enumeration begins from type(uint256).max
       ///for better compactibility with adding new item types in the future
+      KnightStorage.state().knightPrice[Coin.TEST] = 0;
       KnightStorage.state().knightPrice[Coin.USDT] = 1e9;
       KnightStorage.state().knightPrice[Coin.USDC] = 1e9;
 

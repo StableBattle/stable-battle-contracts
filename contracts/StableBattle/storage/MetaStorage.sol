@@ -38,6 +38,7 @@ library MetaStorage {
     mapping (Pool => address) pool;
     mapping (Coin => address) coin;
     mapping (Pool => mapping (Coin => bool)) compatible;
+    mapping (Coin => address) acoin;
   }
 
   bytes32 internal constant STORAGE_SLOT = keccak256("Meta.storage");
@@ -107,6 +108,10 @@ abstract contract ExternalCalls {
 
   function COIN(Coin coin) internal view virtual returns (IERC20) {
     return IERC20(MetaStorage.state().coin[coin]);
+  }
+
+  function ACOIN(Coin coin) internal view virtual returns (IERC20) {
+    return IERC20(MetaStorage.state().acoin[coin]);
   }
 
   function PoolAddress(Pool pool) internal view virtual returns (address) {

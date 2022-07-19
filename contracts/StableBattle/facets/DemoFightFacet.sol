@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import { KnightModifiers, KnightGetters} from "../storage/KnightStorage.sol";
-import { Pool, Coin, ExternalCalls } from "../storage/MetaStorage.sol";
+import { Pool, Coin, ExternalCalls, MetaModifiers } from "../storage/MetaStorage.sol";
 
 abstract contract DemoFightGetters {
   function userReward(address user) internal view virtual returns (uint256) {
@@ -14,7 +14,7 @@ abstract contract DemoFightGetters {
   }
 }
 
-contract DemoFightFacet is DemoFightGetters, KnightGetters, ExternalCalls {
+contract DemoFightFacet is DemoFightGetters, KnightGetters, ExternalCalls, MetaModifiers {
   using DemoFightStorage for DemoFightStorage.State;
 
   function battleWonBy(address user, uint256 reward) public {
@@ -33,20 +33,34 @@ contract DemoFightFacet is DemoFightGetters, KnightGetters, ExternalCalls {
     emit RewardClaimed(user, reward);
   }
 
-  function totalYield() internal view returns(uint256 totalStake) {
-    (totalStake, , , , , ) = AAVE().getUserAccountData(address(this));
-    totalStake /= 100;
+//Internal getters
+
+  function totalYield() internal view returns(uint256 yield) {
+    for (uint8 p = 1; p < uint8(type(Pool).max) + 1; p++) {
+      for (uint8 c = 1; c < uint8(type(Coin).max) + 1; c++) {
+        if (isCompatible(Pool(p), Coin(c)) && 
+            Pool(p) != Pool.TEST && Coin(c) != Coin.TEST) {
+          yield += ACOIN(Coin(c)).balanceOf(address(this));
+        }
+      } 
+    }
   }
 
-  function stakedByKnights() internal view returns(uint256) {
-    return knightPrice(Coin.USDC) * knightsMinted(Pool.AAVE, Coin.USDC);
+  function stakedByKnights() internal view returns(uint256 stake) {
+    for (uint8 p = 1; p < uint8(type(Pool).max) + 1; p++) {
+      for (uint8 c = 1; c < uint8(type(Coin).max) + 1; c++) {
+        if (isCompatible(Pool(p), Coin(c))) {
+          stake += knightPrice(Coin(c)) * knightsMinted(Pool(p), Coin(c));
+        }
+      }
+    }
   }
 
   function currentYield() internal view returns(uint256 reward){
     return totalYield() - stakedByKnights() - lockedYield();
   }
 
-//Public getters
+//External getters
 
   function getTotalYield() external view returns(uint256){
     return totalYield();
@@ -67,7 +81,9 @@ contract DemoFightFacet is DemoFightGetters, KnightGetters, ExternalCalls {
   function getUserReward(address user) external view returns(uint256) {
     return userReward(user);
   }
+  
 //Events
+
   event NewWinner(address user, uint256 reward);
   event RewardClaimed(address user, uint256 reward);
 }
