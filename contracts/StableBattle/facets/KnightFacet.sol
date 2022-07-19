@@ -44,7 +44,7 @@ contract KnightFacet is ItemsFacet,
     _mint(msg.sender, knightId, 1, "");
     KNHT.state().knightsMinted[p][c]++;
     //Initialize Knight
-    KNHT.state().knight[knightId] = Knight(p, c, msg.sender, 0, 0);
+    KNHT.state().knight[knightId] = Knight(p, c, msg.sender, 0);
 
     emit KnightMinted(knightId, msg.sender, p, c);
   }
@@ -83,7 +83,7 @@ contract KnightFacet is ItemsFacet,
     }
   */
     // Null the knight
-    KNHT.state().knight[knightId] = Knight(Pool.NONE, Coin.NONE, address(0), 0, 0);
+    KNHT.state().knight[knightId] = Knight(Pool.NONE, Coin.NONE, address(0), 0);
     // Burn NFT
     _burn(msg.sender, knightId, 1);
     KNHT.state().knightsBurned[p][c]++;
@@ -114,10 +114,6 @@ contract KnightFacet is ItemsFacet,
 
   function getKnightClan(uint256 knightId) external view returns(uint256) {
     return knightClan(knightId);
-  }
-
-  function getKnightClanOwnerOf(uint256 knightId) external view returns(uint256) {
-    return knightClanOwnerOf(knightId);
   }
 
   function getKnightPrice(Coin coin) external view returns (uint256) {

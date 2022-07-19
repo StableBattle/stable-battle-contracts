@@ -45,7 +45,7 @@ contract TreasuryFacet is ITreasury,
   }
 
   function castleHolderAddress() internal view returns(address) {
-    return knightOwner(clanOwner(castleHolderClan()));
+    return knightOwner(clanLeader(castleHolderClan()));
   }
 
 //Public Getters

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import { ClanStorage as CLAN, Clan, ClanGetters, ClanModifiers, proposalType } from "../storage/ClanStorage.sol";
+import { ClanStorage as CLAN, Clan, Proposal, ClanGetters, ClanModifiers } from "../storage/ClanStorage.sol";
 import { ItemsModifiers, ItemsGetters } from "../storage/ItemsStorage.sol";
 import { KnightStorage as KNHT, KnightModifiers } from "../storage/KnightStorage.sol";
 import { MetaModifiers } from "../storage/MetaStorage.sol";
@@ -18,28 +18,39 @@ contract ClanFacet is IClan,
   using CLAN for CLAN.State;
   using KNHT for KNHT.State;
 
-//Creation and Dissolution of a clan
-  function create(uint256 knightId) public ifIsKnight(knightId) ifOwnsItem(knightId) returns (uint clanId) {
-    require(clanOwner(knightClan(knightId)) == 0,
-            "ClanFacet: Leave a clan before creating your own");
-    require(knightClanOwnerOf(knightId) == 0, "ClanFacet: Only one clan per knight");
+//Creation, Abandonment and Leader Change
+  function create(uint256 knightId)
+    public
+    ifIsKnight(knightId)
+  //ifOwnsItem(knightId)
+    ifNotInClan(knightId)
+    returns(uint clanId)
+  {
     clanId = clansInTotal() + 1;
     CLAN.state().clan[clanId] = Clan(knightId, 0, 1, 0);
     KNHT.state().knight[knightId].inClan = clanId;
-    KNHT.state().knight[knightId].ownsClan = clanId;
     CLAN.state().clansInTotal++;
     emit ClanCreated(clanId, knightId);
   }
 
-  function dissolve(uint256 clanId) 
+  function abandon(uint256 clanId) 
     public 
-    ifOwnsItem(clanOwner(clanId))
+    ifOwnsItem(clanLeader(clanId))
   {
-    uint256 ownerId = clanOwner(clanId);
-    KNHT.state().knight[ownerId].ownsClan = 0;
-    KNHT.state().knight[ownerId].inClan = 0;
-    CLAN.state().clan[clanId].owner = 0;
-    emit ClanDissloved(clanId, ownerId, false);
+    uint256 leaderId = clanLeader(clanId);
+    KNHT.state().knight[leaderId].inClan = 0;
+    CLAN.state().clan[clanId].leader = 0;
+    emit ClanAbandoned(clanId, leaderId, false);
+  }
+
+  function changeLeader(uint256 clanId, uint256 knightId)
+    public
+    ifIsKnight(knightId)
+    ifIsInClan(knightId, clanId)
+  //ifOwnsItem(clanLeader(clanId))
+    ifIsNotClanLeader(knightId, clanId)
+  {
+    CLAN.state().clan[clanId].leader = knightId;
   }
 
 // Clan stakes and leveling
@@ -72,7 +83,7 @@ contract ClanFacet is IClan,
   //Calculate clan level based on stake
   function leveling(uint256 clanId) private {
     uint newLevel = 0;
-    while (clanStake(clanId) > clanLevelThresholds(newLevel) &&
+    while (clanStake(clanId) > clanLevelThreshold(newLevel) &&
            newLevel < clanMaxLevel()) {
       newLevel++;
     }
@@ -86,98 +97,74 @@ contract ClanFacet is IClan,
   }
 
 //Join, Leave and Invite Proposals
+  //ONLY knight supposed call the join function
   function join(uint256 knightId, uint256 clanId)
     public
     ifIsKnight(knightId)
-    ifOwnsItem(knightId)
+  //ifOwnsItem(knightId)
     ifClanExists(clanId)
   {
-    require(clanOwner(knightClan(knightId)) == 0,
-      "ClanFacet: Leave your old clan before joining a new one");
-    
-    CLAN.state().joinProposal[knightId] = clanId;
-    emit KnightAskedToJoin(clanId, knightId);
+    require(!clanExists(knightClan(knightId)) || notInClan(knightId),
+      "ClanFacet: Leave your clan before joining a new one");
+    if (proposal(knightId, clanId) == Proposal.INVITE) {
+      //join clan immediately if invited
+      CLAN.state().clan[clanId].totalMembers++;
+      KNHT.state().knight[knightId].inClan = clanId;
+      CLAN.state().proposal[knightId][clanId] = Proposal.NONE;
+      emit KnightJoinedClan(clanId, knightId);
+    } else {
+      //create join proposal
+      CLAN.state().proposal[knightId][clanId] = Proposal.JOIN;
+      emit KnightAskedToJoin(clanId, knightId);
+    }
   }
 
-  function acceptJoin(uint256 knightId, uint256 clanId)
+  //BOTH knights and leaders supposed call the leave function
+  function leave(uint256 knightId)
     public
-    ifClanExists(clanId)
     ifIsKnight(knightId)
-    ifOwnsItem(clanOwner(clanId))
-  {
-    require(joinProposal(knightId) == clanId,
-            "ClanFacet: This knight didn't offer to join your clan");
-
-    CLAN.state().clan[clanId].totalMembers++;
-    KNHT.state().knight[knightId].inClan = clanId;
-    CLAN.state().joinProposal[knightId] = 0;
-
-    emit KnightJoinedClan(clanId, knightId);
+    ifIsInAnyClan(knightId)
+  { 
+    uint256 clanId = knightClan(knightId);
+    if (clanExists(clanId) && proposal(knightId, clanId) != Proposal.LEAVE) {
+      //create leave proposal if clan exist & such proposal doesn't
+      CLAN.state().proposal[knightId][clanId] = Proposal.LEAVE;
+      emit KnightAskedToLeave(clanId, knightId);
+    } else if(ownsItem(clanLeader(clanId)) || clanExists(clanId)) {
+      //leave abandoned clan or allow knight to leave if clan leader
+      CLAN.state().clan[clanId].totalMembers--;
+      KNHT.state().knight[knightId].inClan = 0;
+      CLAN.state().proposal[knightId][clanId] = Proposal.NONE;
+      emit KnightLeftClan(clanId, knightId, false);
+    } else { 
+      revert("ClanFacet: Either proposal already exist or you don't own a clan leader");
+    }
   }
 
-  function refuseJoin(uint256 knightId, uint256 clanId)
+  //ONLY leaders supposed call the invite function
+  function invite(uint256 knightId, uint256 clanId)
     public
-    ifClanExists(clanId)
     ifIsKnight(knightId)
-    ifOwnsItem(clanOwner(clanId))
+  //ifOwnsItem(clanLeader(clanId))
+    ifNotInClan(knightId)
   {
-    require(joinProposal(knightId) == clanId,
-            "ClanFacet: This knight didn't offer to join your clan");
-    
-    CLAN.state().joinProposal[knightId] = 0;
-
-    emit JoinProposalRefused(clanId, knightId);
-  }
-
-  function leave(uint256 knightId, uint256 clanId) 
-    public
-    ifClanExists(clanId)
-    ifIsKnight(knightId)
-  {
-    require(knightClan(knightId) == clanId, 
-      "ClanFacet: Your knight doesn't belong to this clan");
-    require(clanOwner(clanId) != knightId,
-      "ClanFacet: You can't leave your own clan");
-
-    CLAN.state().leaveProposal[knightId] = clanId;
-    
-    emit KnightAskedToLeave(clanId, knightId);
-  }
-
-  function acceptLeave(uint256 knightId, uint256 clanId)
-    public
-    ifClanExists(clanId)
-    ifIsKnight(knightId)
-    ifOwnsItem(clanOwner(clanId))
-  {
-    require(leaveProposal(knightId) == clanId,
-            "ClanFacet: This knight didn't offer to leave your clan");
-
-    CLAN.state().clan[clanId].totalMembers--;
-    KNHT.state().knight[knightId].inClan = 0;
-    CLAN.state().leaveProposal[knightId] = 0;
-
-    emit KnightLeavedClan(clanId, knightId, false);
-  }
-
-  function refuseLeave(uint256 knightId, uint256 clanId)
-    public
-    ifClanExists(clanId)
-    ifIsKnight(knightId)
-    ifOwnsItem(clanOwner(clanId))
-  {
-    require(leaveProposal(knightId) == clanId,
-            "ClanFacet: This knight didn't offer to leave your clan");
-    
-    CLAN.state().leaveProposal[knightId] = 0;
-
-    emit LeaveProposalRefused(clanId, knightId);
+    if (proposal(knightId, clanId) == Proposal.JOIN && notInClan(knightId)) {
+      //welcome the knight to join if it already offered it
+      CLAN.state().clan[clanId].totalMembers++;
+      KNHT.state().knight[knightId].inClan = clanId;
+      CLAN.state().proposal[knightId][clanId] = Proposal.NONE;
+      emit KnightJoinedClan(clanId, knightId);
+    } else {
+      //create invite proposal for the knight
+      CLAN.state().proposal[knightId][clanId] = Proposal.INVITE;
+      emit KnightInvitedToClan(clanId, knightId);
+    }
   }
 
 //Public getters
 
-  function getClanOwner(uint clanId) public view returns(uint256) {
-    return clanOwner(clanId);
+  function getClanLeader(uint clanId) public view returns(uint256) {
+    return clanLeader(clanId);
   }
 
   function getClanTotalMembers(uint clanId) public view returns(uint) {
@@ -196,19 +183,15 @@ contract ClanFacet is IClan,
     return stakeOf(benefactor, clanId);
   }
 
-  function getClanLevelThresholds(uint newLevel) public view returns (uint) {
-    return clanLevelThresholds(newLevel);
+  function getClanLevelThreshold(uint level) public view returns (uint) {
+    return clanLevelThreshold(level);
   }
 
   function getClanMaxLevel() public view returns (uint) {
     return clanMaxLevel();
   }
 
-  function getJoinProposal(uint256 knightId) public view returns (uint) {
-    return joinProposal(knightId);
-  }
-
-  function getLeaveProposal(uint256 knightId) public view returns (uint) {
-    return leaveProposal(knightId);
+  function getProposal(uint256 knightId, uint256 clanId) public view returns (Proposal) {
+    return proposal(knightId, clanId);
   }
 }

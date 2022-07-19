@@ -1,32 +1,30 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
+import { Proposal } from "../../StableBattle/storage/ClanStorage.sol";
+
 interface IClan {
-//Clan Facet
-  
-  function create(uint charId) external returns (uint clanId);
+  function create(uint256 knightId) external returns(uint clanId);
 
-  function dissolve(uint clanId) external;
+  function abandon(uint256 clanId) external;
 
-  function onStake(address benefactor, uint clanId, uint amount) external;
+  function changeLeader(uint256 clanId, uint256 knightId) external;
 
-  function onWithdraw(address benefactor, uint clanId, uint amount) external;
+// Clan stakes and leveling
+  function onStake(address benefactor, uint256 clanId, uint256 amount) external;
 
-  function join(uint charId, uint clanId) external;
+  function onWithdraw(address benefactor, uint256 clanId, uint256 amount) external;
 
-  function acceptJoin(uint256 charId, uint256 clanId) external;
+//Join, Leave and Invite Proposals
+  function join(uint256 knightId, uint256 clanId) external;
 
-  function refuseJoin(uint256 charId, uint256 clanId) external;
+  function leave(uint256 knightId) external;
 
-  function leave(uint256 charId, uint256 clanId) external;
+  function invite(uint256 knightId, uint256 clanId) external;
 
-  function acceptLeave(uint256 charId, uint256 clanId) external;
+//Public getters
 
-  function refuseLeave(uint256 charId, uint256 clanId) external;
-  
-//Getters
-
-  function getClanOwner(uint clanId) external view returns(uint256);
+  function getClanLeader(uint clanId) external view returns(uint256);
 
   function getClanTotalMembers(uint clanId) external view returns(uint);
   
@@ -36,24 +34,24 @@ interface IClan {
 
   function getStakeOf(address benefactor, uint clanId) external view returns(uint256);
 
-  function getClanLevelThresholds(uint newLevel) external view returns (uint);
+  function getClanLevelThreshold(uint level) external view returns (uint);
 
   function getClanMaxLevel() external view returns (uint);
 
-  function getJoinProposal(uint256 knightId) external view returns (uint);
+  function getProposal(uint256 knightId, uint256 clanId) external view returns (Proposal);
 
-  function getLeaveProposal(uint256 knightId) external view returns (uint);
+  event ClanCreated(uint clanId, uint256 knightId);
+  event ClanAbandoned(uint clanId, uint256 knightId, bool ownerBurned);
+  event ClanLeaderChanged(uint clanId, uint256 knightId);
 
-  event ClanCreated(uint clanId, uint charId);
-  event ClanDissloved(uint clanId, uint charId, bool ownerBurned);
   event StakeAdded(address benefactor, uint clanId, uint amount);
   event StakeWithdrawn(address benefactor, uint clanId, uint amount);
   event ClanLeveledUp(uint clanId, uint newLevel);
   event ClanLeveledDown(uint clanId, uint newLevel);
-  event KnightAskedToJoin(uint clanId, uint charId);
-  event KnightJoinedClan(uint clanId, uint charId);
-  event JoinProposalRefused(uint clanId, uint charId);
-  event KnightAskedToLeave(uint clanId, uint charId);
-  event KnightLeavedClan(uint clanId, uint charId, bool knightBurned);
-  event LeaveProposalRefused(uint clanId, uint charId);
+
+  event KnightAskedToJoin(uint clanId, uint256 knightId);
+  event KnightJoinedClan(uint clanId, uint256 knightId);
+  event KnightAskedToLeave(uint clanId, uint256 knightId);
+  event KnightLeftClan(uint clanId, uint256 knightId, bool knightBurned);
+  event KnightInvitedToClan(uint clanId, uint256 knightId);
 }

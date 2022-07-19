@@ -9,7 +9,6 @@ struct Knight {
   Coin coin;
   address owner;
   uint256 inClan;
-  uint256 ownsClan;
 }
 
 library KnightStorage {
@@ -49,10 +48,6 @@ abstract contract KnightGetters {
 
   function knightClan(uint256 knightId) internal view virtual returns(uint256) {
     return KnightStorage.state().knight[knightId].inClan;
-  }
-
-  function knightClanOwnerOf(uint256 knightId) internal view virtual returns(uint256) {
-    return KnightStorage.state().knight[knightId].ownsClan;
   }
 
   function knightPrice(Coin coin) internal view virtual returns (uint256) {
@@ -124,6 +119,36 @@ abstract contract KnightModifiers is KnightGetters {
   modifier ifIsKnight(uint256 knightId) {
     require(isKnight(knightId),
       "KnightModifiers: Wrong id for knight");
+    _;
+  }
+
+  function isInAnyClan(uint256 knightId) internal view virtual returns(bool) {
+    return knightClan(knightId) != 0;
+  }
+
+  modifier ifIsInAnyClan(uint256 knightId) {
+    require(isInAnyClan(knightId),
+      "KnightModifiers: This knight don't belong to any clan");
+    _;
+  }
+
+  function isInClan(uint256 knightId, uint256 clanId) internal view virtual returns(bool) {
+    return knightClan(knightId) == clanId;
+  }
+
+  modifier ifIsInClan(uint256 knightId, uint256 clanId) {
+    require(isInClan(knightId, clanId),
+      "KnightModifiers: This knight don't belong to this clan");
+    _;
+  }
+
+  function notInClan(uint256 knightId) internal view virtual returns(bool) {
+    return knightClan(knightId) == 0;
+  }
+
+  modifier ifNotInClan(uint256 knightId) {
+    require(notInClan(knightId),
+      "KnightModifiers: This knight already belongs to some clan");
     _;
   }
 }

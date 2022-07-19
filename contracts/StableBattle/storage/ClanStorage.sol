@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.0;
 
-enum proposalType {
+enum Proposal {
   NONE,
   JOIN,
   LEAVE,
@@ -10,7 +10,7 @@ enum proposalType {
 }
 
 struct Clan {
-  uint256 owner;
+  uint256 leader;
   uint256 stake;
   uint totalMembers;
   uint level;
@@ -23,7 +23,7 @@ library ClanStorage {
     // clanId => Clan
     mapping(uint256 => Clan) clan;
     // knightId => clanId => proposalType
-    mapping (uint256 => mapping(uint256 => proposalType)) proposal;
+    mapping (uint256 => mapping(uint256 => Proposal)) proposal;
     // knightId => clanId
     mapping (uint256 => uint256) joinProposal;
     // knightId => clanId
@@ -49,8 +49,8 @@ abstract contract ClanGetters {
     return ClanStorage.state().clan[clanId];
   }
 
-  function clanOwner(uint clanId) internal view virtual returns(uint256) {
-    return ClanStorage.state().clan[clanId].owner;
+  function clanLeader(uint clanId) internal view virtual returns(uint256) {
+    return ClanStorage.state().clan[clanId].leader;
   }
 
   function clanTotalMembers(uint clanId) internal view virtual returns(uint) {
@@ -69,8 +69,8 @@ abstract contract ClanGetters {
     return ClanStorage.state().stake[benefactor][clanId];
   }
 
-  function clanLevelThresholds(uint newLevel) internal view virtual returns (uint) {
-    return ClanStorage.state().levelThresholds[newLevel];
+  function clanLevelThreshold(uint level) internal view virtual returns (uint) {
+    return ClanStorage.state().levelThresholds[level];
   }
 
   function clanMaxLevel() internal view virtual returns (uint) {
@@ -85,7 +85,7 @@ abstract contract ClanGetters {
     return ClanStorage.state().leaveProposal[knightId];
   }
 
-  function proposal(uint256 knightId, uint256 clanId) internal virtual returns(proposalType) {
+  function proposal(uint256 knightId, uint256 clanId) internal view virtual returns(Proposal) {
     return ClanStorage.state().proposal[knightId][clanId];
   }
 
@@ -96,12 +96,32 @@ abstract contract ClanGetters {
 
 abstract contract ClanModifiers {
   function clanExists(uint256 clanId) internal view returns(bool) {
-    return ClanStorage.state().clan[clanId].owner != 0;
+    return ClanStorage.state().clan[clanId].leader != 0;
   }
 
   modifier ifClanExists(uint256 clanId) {
     require(clanExists(clanId),
       "ClanModifiers: This clan doesn't exist");
+    _;
+  }
+
+  function isClanLeader(uint256 knightId, uint256 clanId) internal view returns(bool) {
+    return ClanStorage.state().clan[clanId].leader == knightId;
+  }
+
+  modifier ifIsClanLeader(uint256 knightId, uint clanId) {
+    require(isClanLeader(knightId, clanId), 
+      "ClanModifiers: This knight is doesn't own this clan");
+    _;
+  }
+
+  function isNotClanLeader(uint256 knightId, uint256 clanId) internal view returns(bool) {
+    return ClanStorage.state().clan[clanId].leader != knightId;
+  }
+
+  modifier ifIsNotClanLeader(uint256 knightId, uint clanId) {
+    require(isNotClanLeader(knightId, clanId), 
+      "ClanModifiers: This knight is already owns this clan");
     _;
   }
 }

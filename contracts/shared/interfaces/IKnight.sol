@@ -22,8 +22,6 @@ interface IKnight {
 
   function getKnightClan(uint256 knightId) external view returns(uint256);
 
-  function getKnightClanOwnerOf(uint256 knightId) external view returns(uint256);
-
   function getKnightPrice(Coin coin) external view returns (uint256);
 
   //returns amount of minted knights for a particular coin & pool
