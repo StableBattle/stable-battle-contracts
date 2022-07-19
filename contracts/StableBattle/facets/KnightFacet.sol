@@ -3,12 +3,11 @@ pragma solidity ^0.8.0;
 
 import { ItemsFacet } from "./ItemsFacet.sol";
 import { IKnight } from "../../shared/interfaces/IKnight.sol";
-//import { IClan } from "../../shared/interfaces/IClan.sol";
 
 import { KnightStorage as KNHT, Knight, KnightGetters, KnightModifiers} from "../storage/KnightStorage.sol";
 import { Pool, Coin, InternalCalls, ExternalCalls, MetaModifiers } from "../storage/MetaStorage.sol";
 import { ItemsModifiers } from "../storage/ItemsStorage.sol";
-//import { ClanStorage as CLAN } from "../storage/ClanStorage.sol";
+import { ClanGetters } from "../storage/ClanStorage.sol";
 
 contract KnightFacet is ItemsFacet,
                         IKnight,
@@ -17,10 +16,10 @@ contract KnightFacet is ItemsFacet,
                         ExternalCalls,
                         InternalCalls,
                         ItemsModifiers,
-                        MetaModifiers
+                        MetaModifiers,
+                        ClanGetters
 {
   using KNHT for KNHT.State;
-//using CLAN for CLAN.State;
 
   function mintKnight(Pool p, Coin c)
     public

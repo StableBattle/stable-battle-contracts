@@ -169,8 +169,8 @@ abstract contract MetaModifiers {
     return address(this) == msg.sender;
   }
 
-  modifier ifIsSBV {
-    require(isSBV(), "MetaModifiers: can only be called by StableBattle");
+  modifier ifIsSBD {
+    require(isSBD(), "MetaModifiers: can only be called by StableBattle");
     _;
   }
 }
