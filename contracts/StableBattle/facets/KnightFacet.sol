@@ -64,7 +64,7 @@ contract KnightFacet is ItemsFacet,
     uint256 leaderId = clanLeader(clanId);
     if (clanId != 0 && leaderId != 0) {
       knightId == leaderId ?
-        ClanFacet().abandon(clanId) : 
+        ClanFacet().abandon(clanId) :
         ClanFacet().leave(knightId);
     }
     // Null the knight

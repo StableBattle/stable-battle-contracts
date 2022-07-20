@@ -24,10 +24,6 @@ library ClanStorage {
     mapping(uint256 => Clan) clan;
     // knightId => clanId => proposalType
     mapping (uint256 => mapping(uint256 => Proposal)) proposal;
-    // knightId => clanId
-    mapping (uint256 => uint256) joinProposal;
-    // knightId => clanId
-    mapping (uint256 => uint256) leaveProposal;
     // address => clanId => amount
     mapping (address => mapping (uint => uint256)) stake;
     
@@ -75,14 +71,6 @@ abstract contract ClanGetters {
 
   function clanMaxLevel() internal view virtual returns (uint) {
     return ClanStorage.state().levelThresholds.length;
-  }
-
-  function joinProposal(uint256 knightId) internal view virtual returns (uint) {
-    return ClanStorage.state().joinProposal[knightId];
-  }
-
-  function leaveProposal(uint256 knightId) internal view virtual returns (uint) {
-    return ClanStorage.state().leaveProposal[knightId];
   }
 
   function proposal(uint256 knightId, uint256 clanId) internal view virtual returns(Proposal) {
