@@ -52,10 +52,10 @@ contract KnightFacet is ItemsFacet,
   function burnKnight (uint256 knightId)
     external
     ifIsKnight(knightId)
-    ifOwnsItem(knightId)
-  //ifIsVaildPool(knightPool(knightId))
-  //ifIsValidCoin(knightCoin(knightId))
-  //ifIsCompatible(c, p)
+  //ifOwnsItem(knightId)
+    ifIsVaildPool(knightPool(knightId))
+    ifIsValidCoin(knightCoin(knightId))
+    ifIsCompatible(knightPool(knightId), knightCoin(knightId))
   {
     Pool p = knightPool(knightId);
     Coin c = knightCoin(knightId);
