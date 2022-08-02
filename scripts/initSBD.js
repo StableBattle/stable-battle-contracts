@@ -78,26 +78,22 @@ async function initSBD (SBD_address, SBT_address_, SBV_address_) {
   let AAVE_USDC_address = ethers.constants.AddressZero
   if (hre.network.name === 'hardhat' || hre.network.name === 'polygonMumbai') {
     AAVE_address = ethers.utils.getAddress("0x6C9fB0D5bD9429eb9Cd96B85B81d872281771E6B")
+
     USDT_address = ethers.utils.getAddress("0x21C561e551638401b937b03fE5a0a0652B99B7DD")
     USDC_address = ethers.utils.getAddress("0x9aa7fEc87CA69695Dd1f879567CcF49F3ba417E2")
+    
     AAVE_USDT_address = ethers.utils.getAddress("0x6Ca4abE253bd510fCA862b5aBc51211C1E1E8925")
     AAVE_USDC_address = ethers.utils.getAddress("0xCdc2854e97798AfDC74BC420BD5060e022D14607")
-  } else if (hre.network.name === 'rinkeby') {
-    AAVE_address = ethers.utils.getAddress("0xE039BdF1d874d27338e09B55CB09879Dedca52D8")
-    USDT_address = ethers.utils.getAddress("0x326005cFdF58bfB38650396836BEBF815F5ab4dD")
-    USDC_address = ethers.utils.getAddress("0xb18d016cDD2d9439A19f15633005A6b2cd6Aa774")
-  } else if (hre.network.name === 'ropsten') {
-    AAVE_address = ethers.utils.getAddress("0x23a85024f54A19e243bA7a74E339a5C80998c7a4")
-    USDT_address = ethers.utils.getAddress("0xAf5a1D0523cF9E38005E234a9eea82cc167CC474")
-    USDC_address = ethers.utils.getAddress("0xe99F86Ec081BcA8b1627BDf8062C19fAcC79997B")
-  } else if (hre.network.name === 'arbitrumTestnet') {
-    USDT_address = ethers.utils.getAddress("0x7c53810c756C636cEF076c92D5D7C04555694E76")
-    USDC_address = ethers.utils.getAddress("0x774382EF196781400a335AF0c4219eEd684ED713")
-    AAVE_address = ethers.utils.getAddress("")
-  } else if (hre.network.name === 'avalancheFujiTestnet') {
-  } else if (hre.network.name === 'ftmTestnet') {
-  } else if (hre.network.name === 'harmonyTest') {
-  } else if (hre.network.name === 'optimisticKovan') {
+  } else if (hre.network.name === 'goerli') {
+    AAVE_address = ethers.utils.getAddress("0x368EedF3f56ad10b9bC57eed4Dac65B26Bb667f6")
+
+    USDT_address = ethers.utils.getAddress("0xC2C527C0CACF457746Bd31B2a698Fe89de2b6d49")
+    USDC_address = ethers.utils.getAddress("0xA2025B15a1757311bfD68cb14eaeFCc237AF5b43")
+    EURS_address = ethers.utils.getAddress("0xc31E63CB07209DFD2c7Edb3FB385331be2a17209")
+    
+    AAVE_USDT_address = ethers.utils.getAddress("0x73258E6fb96ecAc8a979826d503B45803a382d68")
+    AAVE_USDC_address = ethers.utils.getAddress("0x1Ee669290939f8a8864497Af3BC83728715265FF")
+    AAVE_EURS_address = ethers.utils.getAddress("0xaA63E0C86b531E2eDFE9F91F6436dF20C301963D")
   }
   let SBT_address  = SBT_address_
   let SBV_address  = SBV_address_
@@ -105,8 +101,10 @@ async function initSBD (SBD_address, SBT_address_, SBV_address_) {
     AAVE_address,
     USDT_address,
     USDC_address,
+    EURS_address,
     AAVE_USDT_address,
     AAVE_USDC_address,
+    AAVE_EURS_address,
     SBT_address,
     SBV_address,
   ]]

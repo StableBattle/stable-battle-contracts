@@ -18,6 +18,8 @@ contract DemoFightFacetDummy {
   function getStakedByKnights() public view returns(uint256) {}
 
   function getUserReward(address user) external view returns(uint256) {}
+  
+  function getStakeInfo() external view returns(uint256, uint256, uint256, uint256) {}
 
 //Events
   event NewWinner(address user, uint256 reward);

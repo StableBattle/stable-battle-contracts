@@ -81,6 +81,10 @@ contract DemoFightFacet is DemoFightGetters, KnightGetters, ExternalCalls, MetaM
   function getUserReward(address user) external view returns(uint256) {
     return userReward(user);
   }
+
+  function getStakeInfo() external view returns(uint256, uint256, uint256, uint256) {
+    return(currentYield(), totalYield(), lockedYield(), stakedByKnights());
+  }
   
 //Events
 

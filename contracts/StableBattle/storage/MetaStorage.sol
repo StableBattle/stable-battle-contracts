@@ -25,6 +25,7 @@ enum Coin {
   NONE,
   USDT,
   USDC,
+  EURS,
   TEST
 }
 

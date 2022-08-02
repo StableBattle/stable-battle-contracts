@@ -36,9 +36,11 @@ contract SBInit {
 
     address USDT_address;
     address USDC_address;
+    address EURS_address;
 
     address AAVE_USDT_address;
     address AAVE_USDC_address;
+    address AAVE_EURS_address;
 
     address SBT_address;
     address SBV_address;
@@ -54,16 +56,25 @@ contract SBInit {
       ds.supportedInterfaces[type(IERC1155).interfaceId] = true;
 
     // Assign Meta Storage
-      MetaStorage.state().coin[Coin.USDT] = _args.USDT_address;
-      MetaStorage.state().coin[Coin.USDC] = _args.USDC_address;
-      MetaStorage.state().pool[Pool.AAVE] = _args.AAVE_address;
       MetaStorage.state().SBT = _args.SBT_address;
       MetaStorage.state().SBV = _args.SBV_address;
+      //AAVE
+      MetaStorage.state().pool[Pool.AAVE] = _args.AAVE_address;
+
+      MetaStorage.state().coin[Coin.USDT] = _args.USDT_address;
+      MetaStorage.state().coin[Coin.USDC] = _args.USDC_address;
+      MetaStorage.state().coin[Coin.EURS] = _args.EURS_address;
+
       MetaStorage.state().compatible[Pool.AAVE][Coin.USDT] = true;
       MetaStorage.state().compatible[Pool.AAVE][Coin.USDC] = true;
-      MetaStorage.state().compatible[Pool.TEST][Coin.TEST] = true;
+      MetaStorage.state().compatible[Pool.AAVE][Coin.EURS] = true;
+
       MetaStorage.state().acoin[Coin.USDT] = _args.AAVE_USDT_address;
       MetaStorage.state().acoin[Coin.USDC] = _args.AAVE_USDC_address;
+      MetaStorage.state().acoin[Coin.EURS] = _args.AAVE_EURS_address;
+
+      //TEST
+      MetaStorage.state().compatible[Pool.TEST][Coin.TEST] = true;
 
     //Knight facet
       //Knight enumeration begins from type(uint256).max
@@ -71,6 +82,7 @@ contract SBInit {
       KnightStorage.state().knightPrice[Coin.TEST] = 0;
       KnightStorage.state().knightPrice[Coin.USDT] = 1e9;
       KnightStorage.state().knightPrice[Coin.USDC] = 1e9;
+      KnightStorage.state().knightPrice[Coin.EURS] = 1e9;
 
     //Gear Facet
       //all items in [256, 1e12) are gear
