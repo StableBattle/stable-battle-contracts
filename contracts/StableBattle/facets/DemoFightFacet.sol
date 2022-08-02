@@ -50,7 +50,8 @@ contract DemoFightFacet is DemoFightGetters, KnightGetters, ExternalCalls, MetaM
     for (uint8 p = 1; p < uint8(type(Pool).max) + 1; p++) {
       for (uint8 c = 1; c < uint8(type(Coin).max) + 1; c++) {
         if (isCompatible(Pool(p), Coin(c))) {
-          stake += knightPrice(Coin(c)) * knightsMinted(Pool(p), Coin(c));
+          stake += knightPrice(Coin(c)) * 
+                  (knightsMinted(Pool(p), Coin(c)) - knightsBurned(Pool(p), Coin(c)));
         }
       }
     }
@@ -82,7 +83,7 @@ contract DemoFightFacet is DemoFightGetters, KnightGetters, ExternalCalls, MetaM
     return userReward(user);
   }
 
-  function getStakeInfo() external view returns(uint256, uint256, uint256, uint256) {
+  function getYieldInfo() external view returns(uint256, uint256, uint256, uint256) {
     return(currentYield(), totalYield(), lockedYield(), stakedByKnights());
   }
   
