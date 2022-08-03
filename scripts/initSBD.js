@@ -81,9 +81,11 @@ async function initSBD (SBD_address, SBT_address_, SBV_address_) {
 
     USDT_address = ethers.utils.getAddress("0x21C561e551638401b937b03fE5a0a0652B99B7DD")
     USDC_address = ethers.utils.getAddress("0x9aa7fEc87CA69695Dd1f879567CcF49F3ba417E2")
+    EURS_address = ethers.utils.getAddress("0x302567472401C7c7B50ee7eb3418c375D8E3F728")
     
     AAVE_USDT_address = ethers.utils.getAddress("0x6Ca4abE253bd510fCA862b5aBc51211C1E1E8925")
     AAVE_USDC_address = ethers.utils.getAddress("0xCdc2854e97798AfDC74BC420BD5060e022D14607")
+    AAVE_EURS_address = ethers.utils.getAddress("0xf6AeDD279Aae7361e70030515f56c22A16d81433")
   } else if (hre.network.name === 'goerli') {
     AAVE_address = ethers.utils.getAddress("0x368EedF3f56ad10b9bC57eed4Dac65B26Bb667f6")
 

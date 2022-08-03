@@ -19,7 +19,7 @@ contract DemoFightFacetDummy {
 
   function getUserReward(address user) external view returns(uint256) {}
   
-  function getStakeInfo() external view returns(uint256, uint256, uint256, uint256) {}
+  function getYieldInfo() external view returns(uint256, uint256, uint256, uint256) {}
 
 //Events
   event NewWinner(address user, uint256 reward);
