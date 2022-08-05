@@ -23,7 +23,6 @@ async function initSBD (SBD_address, SBT_address_, SBV_address_) {
     //Deploy ItemsFacet first since it's inherited to mint knights and items
     'ItemsFacet',
     'ClanFacet',
-    'ForgeFacet',
     'KnightFacet',
     'SBVHookFacet',
     'TournamentFacet',
@@ -40,27 +39,11 @@ async function initSBD (SBD_address, SBT_address_, SBV_address_) {
     const facet = await Facet.deploy({gasLimit: 5000000})
     await facet.deployed()
     console.log(`${FacetName} deployed: ${facet.address}`)
-    if (FacetName == "ItemsFacet") {
-      ItemsSelectors = getSelectors(facet)
-      //console.log("ItemsSelectors: ", ItemsSelectors)
-      cut.push({
-        facetAddress: facet.address,
-        action: FacetCutAction.Add,
-        functionSelectors: ItemsSelectors
-      })
-    } else if (FacetName == "ForgeFacet" || FacetName == "KnightFacet") {
-      cut.push({
-        facetAddress: facet.address,
-        action: FacetCutAction.Add,
-        functionSelectors: getSelectors(facet).remove(ItemsSelectors)
-      })
-    } else {
       cut.push({
         facetAddress: facet.address,
         action: FacetCutAction.Add,
         functionSelectors: getSelectors(facet)
       })
-    }
     fs.writeFileSync("./scripts/dep_args/facet_addresses.txt", facet.address + "\n", {flag: "a"})
   }
 

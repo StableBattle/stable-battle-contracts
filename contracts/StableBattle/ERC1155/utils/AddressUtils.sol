@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.8;
 
-import { UintUtils } from './UintUtils.sol';
+import { UintUtils } from "./UintUtils.sol";
 
 library AddressUtils {
     using UintUtils for uint256;
@@ -20,8 +20,8 @@ library AddressUtils {
     }
 
     function sendValue(address payable account, uint256 amount) internal {
-        (bool success, ) = account.call{ value: amount }('');
-        require(success, 'AddressUtils: failed to send value');
+        (bool success, ) = account.call{ value: amount }("");
+        require(success, "AddressUtils: failed to send value");
     }
 
     function functionCall(address target, bytes memory data)
@@ -29,7 +29,7 @@ library AddressUtils {
         returns (bytes memory)
     {
         return
-            functionCall(target, data, 'AddressUtils: failed low-level call');
+            functionCall(target, data, "AddressUtils: failed low-level call");
     }
 
     function functionCall(
@@ -50,7 +50,7 @@ library AddressUtils {
                 target,
                 data,
                 value,
-                'AddressUtils: failed low-level call with value'
+                "AddressUtils: failed low-level call with value"
             );
     }
 
@@ -62,7 +62,7 @@ library AddressUtils {
     ) internal returns (bytes memory) {
         require(
             address(this).balance >= value,
-            'AddressUtils: insufficient balance for call'
+            "AddressUtils: insufficient balance for call"
         );
         return _functionCallWithValue(target, data, value, error);
     }
@@ -75,7 +75,7 @@ library AddressUtils {
     ) private returns (bytes memory) {
         require(
             isContract(target),
-            'AddressUtils: function call to non-contract'
+            "AddressUtils: function call to non-contract"
         );
 
         (bool success, bytes memory returnData) = target.call{ value: value }(

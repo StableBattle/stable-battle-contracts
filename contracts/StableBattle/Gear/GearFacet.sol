@@ -54,22 +54,22 @@ contract GearFacet is IGear, GearModifiers, GearInternal {
 //Public Getters
 
   function getGearSlotOf(uint256 itemId) external view returns(gearSlot) {
-    _gearSlotOf(itemId);
+    return _gearSlotOf(itemId);
   }
 
   function getGearName(uint256 itemId) external view returns(string memory) {
-    _gearName(itemId);
+    return _gearName(itemId);
   }
 
   function getEquipmentInSlot(uint256 knightId, gearSlot slot) external view returns(uint256) {
-    _equipmentInSlot(knightId, slot);
+    return _equipmentInSlot(knightId, slot);
   }
 
   function getGearEquipable(address account, uint256 itemId) external view returns(uint256) {
-    _gearEquipable(account, itemId);
+    return _gearEquipable(account, itemId);
   }
 
   function getGearEquipable(uint256 itemId) external view returns(uint256) { 
-    _gearEquipable(itemId); 
+    return _gearEquipable(itemId); 
   }
 }

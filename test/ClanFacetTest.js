@@ -47,7 +47,6 @@ describe('ClanFacetTest', async function () {
       LoupeFacet: await ethers.getContractAt('DiamondLoupeFacet', SBDAddress),
       OwnershipFacet: await ethers.getContractAt('OwnershipFacet', SBDAddress),
       ClanFacet: await ethers.getContractAt('ClanFacet', SBDAddress),
-      ForgeFacet: await ethers.getContractAt('ForgeFacet', SBDAddress),
       ItemsFacet: await ethers.getContractAt('ItemsFacet', SBDAddress),
       KnightFacet: await ethers.getContractAt('KnightFacet', SBDAddress),
       TournamentFacet: await ethers.getContractAt('TournamentFacet', SBDAddress),

@@ -39,7 +39,6 @@ describe('StableBattleTest', async function () {
       LoupeFacet: await ethers.getContractAt('DiamondLoupeFacet', SBDAddress),
       OwnershipFacet: await ethers.getContractAt('OwnershipFacet', SBDAddress),
       ClanFacet: await ethers.getContractAt('ClanFacet', SBDAddress),
-      ForgeFacet: await ethers.getContractAt('ForgeFacet', SBDAddress),
       ItemsFacet: await ethers.getContractAt('ItemsFacet', SBDAddress),
       KnightFacet: await ethers.getContractAt('KnightFacet', SBDAddress),
       TournamentFacet: await ethers.getContractAt('TournamentFacet', SBDAddress),
@@ -70,7 +69,7 @@ describe('StableBattleTest', async function () {
     for (const address of await SBT.LoupeFacet.facetAddresses()){ SBT.addresses.push(address) }
     for (const address of await SBV.LoupeFacet.facetAddresses()){ SBV.addresses.push(address) }
 
-    assert.equal(SBD.addresses.length, 12)
+    assert.equal(SBD.addresses.length, 11)
     assert.equal(SBT.addresses.length, 4)
     assert.equal(SBV.addresses.length, 4)
   })

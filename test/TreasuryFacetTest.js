@@ -46,7 +46,6 @@ describe('TreasuryFacetTest', async function () {
       LoupeFacet: await ethers.getContractAt('DiamondLoupeFacet', SBDAddress),
       OwnershipFacet: await ethers.getContractAt('OwnershipFacet', SBDAddress),
       ClanFacet: await ethers.getContractAt('ClanFacet', SBDAddress),
-      ForgeFacet: await ethers.getContractAt('ForgeFacet', SBDAddress),
       ItemsFacet: await ethers.getContractAt('ItemsFacet', SBDAddress),
       KnightFacet: await ethers.getContractAt('KnightFacet', SBDAddress),
       TournamentFacet: await ethers.getContractAt('TournamentFacet', SBDAddress),
@@ -73,7 +72,7 @@ describe('TreasuryFacetTest', async function () {
     //await USDT.mint(knightPrice.AAVE * 10)
     //await USDT.approve(SBD.Address, knightPrice.AAVE)
     //await SBD.KnightFacet.mintKnight(1)
-    await SBD.KnightFacet.mintKnight(2)
+    await SBD.KnightFacet.mintKnight(2, 3)
     let eventsKnightMinted = await SBD.KnightFacet.queryFilter('KnightMinted')
     knightId = eventsKnightMinted[0].args.knightId
 

@@ -52,7 +52,6 @@ describe('GearFacetTest', async function () {
       LoupeFacet: await ethers.getContractAt('DiamondLoupeFacet', SBDAddress),
       OwnershipFacet: await ethers.getContractAt('OwnershipFacet', SBDAddress),
       ClanFacet: await ethers.getContractAt('ClanFacet', SBDAddress),
-      ForgeFacet: await ethers.getContractAt('ForgeFacet', SBDAddress),
       ItemsFacet: await ethers.getContractAt('ItemsFacet', SBDAddress),
       KnightFacet: await ethers.getContractAt('KnightFacet', SBDAddress),
       TournamentFacet: await ethers.getContractAt('TournamentFacet', SBDAddress),
@@ -77,7 +76,7 @@ describe('GearFacetTest', async function () {
       SBVFacet: await ethers.getContractAt('SBVFacet', SBVAddress),
       addresses: []
     }
-    await SBD.KnightFacet.mintKnight(2)
+    await SBD.KnightFacet.mintKnight(2, 3)
 
     let eventsKnightMinted = await SBD.KnightFacet.queryFilter('KnightMinted')
     knightId = eventsKnightMinted[0].args.knightId
@@ -96,9 +95,9 @@ describe('GearFacetTest', async function () {
   })
 
   it('Should mint 2 WEAPONs & 1 SHIELD correctly ', async () => {
-    await SBD.ForgeFacet["mintGear(uint256,uint256)"](1000, 1);
-    await SBD.ForgeFacet["mintGear(uint256,uint256)"](2000, 1);
-    await SBD.ForgeFacet["mintGear(uint256,uint256)"](3000, 1);
+    await SBD.GearFacet["mintGear(uint256,uint256)"](1000, 1);
+    await SBD.GearFacet["mintGear(uint256,uint256)"](2000, 1);
+    await SBD.GearFacet["mintGear(uint256,uint256)"](3000, 1);
     expect(await SBD.ItemsFacet.balanceOf(owner.address, 1000)).to.equal(1);
     expect(await SBD.ItemsFacet.balanceOf(owner.address, 2000)).to.equal(1);
     expect(await SBD.ItemsFacet.balanceOf(owner.address, 3000)).to.equal(1);
