@@ -12,10 +12,10 @@ contract KnightFacet is IKnight,
                         ItemsModifiers,
                         KnightInternal
 {
-  function mintKnight(Pool p, Coin c)
+  function mintKnight(Pool p, Coin c, string memory uri)
     external
   {
-    _mintKnight(p, c);
+    _mintKnight(p, c, uri);
   }
 
   function burnKnight(uint256 knightId)

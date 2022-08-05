@@ -10,11 +10,12 @@ import { ClanInternal } from "../Clan/ClanInternal.sol";
 import { Pool, Coin } from "../Meta/MetaStorage.sol";
 import { MetaModifiers } from "../Meta/MetaModifiers.sol";
 import { ExternalCalls } from "../Meta/ExternalCalls.sol";
-import { ERC1155BaseInternal } from "@solidstate/contracts/token/ERC1155/base/ERC1155BaseInternal.sol";
+import { ERC1155BaseInternal } from "../Items/ERC1155/base/ERC1155BaseInternal.sol";
+import { ERC1155MetadataInternal } from "../Items/ERC1155/metadata/ERC1155MetadataInternal.sol";
 
 abstract contract KnightInternal is
   IKnightInternal,
-  //ERC1155BaseInternal,
+  ERC1155MetadataInternal,
   KnightGetters,
   KnightModifiers,
   ClanInternal,
@@ -23,7 +24,7 @@ abstract contract KnightInternal is
 {
   using KnightStorage for KnightStorage.State;
 
-  function _mintKnight(Pool p, Coin c)
+  function _mintKnight(Pool p, Coin c, string memory uri)
     internal
     ifIsValidCoin(c)
     ifIsVaildPool(p)
@@ -44,6 +45,7 @@ abstract contract KnightInternal is
     // Mint NFT for the user
     uint256 knightId = type(uint256).max - _knightsMintedTotal();
     _mint(msg.sender, knightId, 1, "");
+    _setTokenURI(knightId, uri);
     KnightStorage.state().knightsMinted[p][c]++;
     //Initialize Knight
     KnightStorage.state().knight[knightId] = Knight(p, c, msg.sender, 0);

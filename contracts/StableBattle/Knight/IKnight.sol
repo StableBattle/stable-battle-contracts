@@ -8,7 +8,7 @@ import { Coin, Pool } from "../Meta/MetaStorage.sol";
 interface IKnight is IKnightInternal {
 
 //Knight Facet
-  function mintKnight(Pool p, Coin c) external;
+  function mintKnight(Pool p, Coin c, string memory uri) external;
 
   function burnKnight (uint256 knightId) external;
 
