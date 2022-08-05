@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import { IClan } from "../../shared/interfaces/IClan.sol";
+import { IClan } from "../../StableBattle/Clan/IClan.sol";
 
 struct AppStorage {
   //ERC20

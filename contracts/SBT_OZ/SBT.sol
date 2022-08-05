@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "./ERC20.sol";
 import "./Modifiers.sol";
 import { ISBT } from "../shared/interfaces/ISBT.sol";
-import { IClan } from "../shared/interfaces/IClan.sol";
+import { IClan } from "../StableBattle/Clan/IClan.sol";
 
 contract SBT is ERC20, Modifiers, ISBT {
 

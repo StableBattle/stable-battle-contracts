@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import "../../shared/interfaces/ISBVHook.sol";
+import "../../StableBattle/SBVHook/ISBVHook.sol";
 
 struct AppStorage {
   // Token name

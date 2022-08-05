@@ -8,7 +8,7 @@ import { IDiamondCut } from "../../shared/interfaces/IDiamondCut.sol";
 import { IDiamondLoupe } from "../../shared/interfaces/IDiamondLoupe.sol";
 
 import { AppStorage } from "../libraries/LibAppStorage.sol";
-import { IClan } from "../../shared/interfaces/IClan.sol";
+import { IClan } from "../../StableBattle/Clan/IClan.sol";
 import { IERC20 } from "../../shared/interfaces/IERC20.sol";
 import { ISBT } from "../../shared/interfaces/ISBT.sol";
 

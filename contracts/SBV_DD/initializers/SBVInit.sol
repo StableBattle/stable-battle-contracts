@@ -8,7 +8,7 @@ import { IDiamondCut } from "../../shared/interfaces/IDiamondCut.sol";
 import { IDiamondLoupe } from "../../shared/interfaces/IDiamondLoupe.sol";
 
 import { AppStorage } from "../libraries/LibAppStorage.sol";
-import { ISBVHook } from "../../shared/interfaces/ISBVHook.sol";
+import { ISBVHook } from "../../StableBattle/SBVHook/ISBVHook.sol";
 import { IERC721 } from "../../shared/interfaces/IERC721.sol";
 import { IERC721Enumerable } from "@openzeppelin/contracts/interfaces/IERC721Enumerable.sol";
 
