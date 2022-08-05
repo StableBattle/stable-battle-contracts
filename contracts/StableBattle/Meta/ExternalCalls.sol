@@ -18,14 +18,6 @@ abstract contract ExternalCalls {
     return ISBV(MetaStorage.state().SBV);
   }
 
-  function USDT() internal view virtual returns (IERC20) {
-    return IERC20(MetaStorage.state().coin[Coin.USDT]);
-  }
-
-  function USDC() internal view virtual returns (IERC20) {
-    return IERC20(MetaStorage.state().coin[Coin.USDC]);
-  }
-
   function AAVE() internal view virtual returns (IPool) {
     return IPool(MetaStorage.state().pool[Pool.AAVE]);
   }

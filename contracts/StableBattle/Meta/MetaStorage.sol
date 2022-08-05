@@ -4,15 +4,16 @@ pragma solidity ^0.8.0;
 
 enum Pool {
   NONE,
-  AAVE,
-  TEST
+  TEST,
+  AAVE
 }
 
 enum Coin {
   NONE,
+  TEST,
   USDT,
   USDC,
-  TEST
+  EURS
 }
 
 library MetaStorage {
