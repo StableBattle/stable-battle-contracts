@@ -1,0 +1,39 @@
+{
+  "description": "A StableBattle Knight NFT", 
+  "external_url": "https://stablebattle.io/", 
+  "image": "https://i.imgur.com/r352jQm.png", 
+  "name": "Stablus Battlus II",
+  "attributes": [
+    {
+      "trait_type": "Level",
+      "value": 8,
+      "max_value": 10
+    },
+    {
+      "trait_type": "Health",
+      "value": 78,
+      "max_value": 100
+    },
+    {
+      "trait_type": "Clan",
+      "value": "Stable Knights"
+    },
+    {
+      "trait_type": "Pool",
+      "value": "TEST"
+    },
+    {
+      "trait_type": "Coin",
+      "value": "TEST"
+    },
+    {
+      "trait_type": "Value",
+      "value": "$1000"
+    },
+    {
+      "display_type": "date", 
+      "trait_type": "knighthood", 
+      "value": 1659976579
+    }
+  ]
+}
