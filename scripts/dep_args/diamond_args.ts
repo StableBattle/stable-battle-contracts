@@ -1,8 +1,6 @@
-/* global ethers */
-/* eslint prefer-const: "off" */
-
-const fs = require('fs')
-require("dotenv").config();
+import * as fs from "fs";
+import * as readline from "readline";
+import { ethers } from "hardhat";
 
 const owner_address = 
   ethers.utils.getAddress(

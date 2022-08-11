@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Unlicensed
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.10;
 
 import { ITournament } from "../Tournament/ITournament.sol";
 import { TournamentInternal } from "../Tournament/TournamentInternal.sol";

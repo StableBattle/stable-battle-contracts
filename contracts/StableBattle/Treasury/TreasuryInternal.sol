@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Unlicensed
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.10;
 
 import { ITreasuryInternal } from "../Treasury/ITreasuryInternal.sol";
 import { TreasuryStorage } from "../Treasury/TreasuryStorage.sol";

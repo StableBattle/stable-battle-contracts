@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Unlicensed
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.10;
 
-import { IERC20 } from "../../shared/interfaces/IERC20.sol";
+import { IERC20 } from "@solidstate/contracts/token/ERC20/IERC20.sol";
 import { IPool } from "@aave/core-v3/contracts/interfaces/IPool.sol";
 import { ISBT } from "../../shared/interfaces/ISBT.sol";
 import { ISBV } from "../../shared/interfaces/ISBV.sol";

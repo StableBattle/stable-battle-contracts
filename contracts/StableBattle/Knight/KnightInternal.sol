@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Unlicensed
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.10;
 
 import { IKnightInternal } from "../Knight/IKnightInternal.sol";
 import { Knight, KnightStorage } from "../Knight/KnightStorage.sol";

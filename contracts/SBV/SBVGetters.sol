@@ -1,0 +1,13 @@
+// SPDX-License-Identifier: Unlicensed
+pragma solidity ^0.8.0;
+
+import { ISBVHook } from "../StableBattle/SBVHook/ISBVHook.sol";
+import { SBVStorage } from "./SBTStorage.sol";
+
+contract SBVGetters {
+  using SBVStorage for SBVStorage.State;
+
+  function SBVHook() internal view returns(ISBVHook) {
+    return ISBVHook(SBVStorage.state().SBD);
+  }
+}

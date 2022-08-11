@@ -1,6 +1,5 @@
-/* global ethers fs */
-/* eslint prefer-const: "off" */
-const fs = require('fs')
+import { ethers } from "hardhat";
+import * as fs from "fs";
 
 const { initSBD } = require('./initSBD.js')
 const { initSBT } = require('./initSBT.js')
@@ -64,13 +63,9 @@ async function deployStableBattle () {
 
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
-if (require.main === module) {
-  deployStableBattle()
-    .then(() => process.exit(0))
-    .catch(error => {
-      console.error(error)
-      process.exit(1)
-    })
-}
+deployStableBattle().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});
 
 exports.deployStableBattle = deployStableBattle
