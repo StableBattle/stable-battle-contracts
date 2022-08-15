@@ -91,11 +91,11 @@ async function initSBD (SBD_address, SBT_address_, SBV_address_) {
 
     USDT_address = ethers.utils.getAddress("0xC2C527C0CACF457746Bd31B2a698Fe89de2b6d49")
     USDC_address = ethers.utils.getAddress("0xA2025B15a1757311bfD68cb14eaeFCc237AF5b43")
-    EURS_address = ethers.utils.getAddress("0xc31E63CB07209DFD2c7Edb3FB385331be2a17209")
+    EURS_address = ethers.utils.getAddress("0xaA63E0C86b531E2eDFE9F91F6436dF20C301963D")
     
     AAVE_USDT_address = ethers.utils.getAddress("0x73258E6fb96ecAc8a979826d503B45803a382d68")
     AAVE_USDC_address = ethers.utils.getAddress("0x1Ee669290939f8a8864497Af3BC83728715265FF")
-    AAVE_EURS_address = ethers.utils.getAddress("0xaA63E0C86b531E2eDFE9F91F6436dF20C301963D")
+    AAVE_EURS_address = ethers.utils.getAddress("0xc31E63CB07209DFD2c7Edb3FB385331be2a17209")
   }
   let SBT_address  = SBT_address_
   let SBV_address  = SBV_address_
