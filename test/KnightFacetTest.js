@@ -5,9 +5,9 @@ const { deployStableBattle } = require('../scripts/deploy.js')
 const { assert, expect } = require('chai')
 
 describe('KnightFacetTest', async function () {
-  let USDT_address = ethers.utils.getAddress("0x21C561e551638401b937b03fE5a0a0652B99B7DD")
-  let USDC_address = ethers.utils.getAddress("0x9aa7fEc87CA69695Dd1f879567CcF49F3ba417E2")
-  let AAVE_address = ethers.utils.getAddress("0x6C9fB0D5bD9429eb9Cd96B85B81d872281771E6B")
+  let AAVE_address = ethers.utils.getAddress("0x368EedF3f56ad10b9bC57eed4Dac65B26Bb667f6")
+  let USDT_address = ethers.utils.getAddress("0xC2C527C0CACF457746Bd31B2a698Fe89de2b6d49")
+  let USDC_address = ethers.utils.getAddress("0xA2025B15a1757311bfD68cb14eaeFCc237AF5b43")
   let knightPrice = { USDT: 1e9, USDC: 1e9, TEST: 0}
   let COIN = []
   let numberOfCoins = 2;
@@ -72,7 +72,7 @@ describe('KnightFacetTest', async function () {
     knightPriceFromCall = await SBD.KnightFacet.getKnightPrice(2)
     assert.equal(knightPrice.USDC, knightPriceFromCall)
 
-    knightPriceFromCall = await SBD.KnightFacet.getKnightPrice(3)
+    knightPriceFromCall = await SBD.KnightFacet.getKnightPrice(4)
     assert.equal(knightPrice.TEST, knightPriceFromCall)
   })
 

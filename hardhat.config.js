@@ -24,10 +24,14 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 module.exports = {
   solidity: "0.8.10",
   networks: {
-    hardhat: {
+    hardhat: {/*
       forking: {
         url: process.env.MUMBAI_ALCHEMY_URL || "",
         blockNumber: 26681409,
+      },*/
+      forking: {
+        url: process.env.GOERLI_URL || "",
+        blockNumber: 7400000,
       },
     },
     polygonMumbai: {
