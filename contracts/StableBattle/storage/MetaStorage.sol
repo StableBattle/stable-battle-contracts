@@ -17,16 +17,16 @@ import { ITreasury } from "../../shared/interfaces/ITreasury.sol";
 
 enum Pool {
   NONE,
-  AAVE,
-  TEST
+  TEST,
+  AAVE
 }
 
 enum Coin {
   NONE,
+  TEST,
   USDT,
   USDC,
-  EURS,
-  TEST
+  EURS
 }
 
 library MetaStorage {

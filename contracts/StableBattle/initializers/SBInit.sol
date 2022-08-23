@@ -63,11 +63,11 @@ contract SBInit {
 
       MetaStorage.state().coin[Coin.USDT] = _args.USDT_address;
       MetaStorage.state().coin[Coin.USDC] = _args.USDC_address;
-      MetaStorage.state().coin[Coin.EURS] = _args.EURS_address;
+    //MetaStorage.state().coin[Coin.EURS] = _args.EURS_address;
 
       MetaStorage.state().compatible[Pool.AAVE][Coin.USDT] = true;
       MetaStorage.state().compatible[Pool.AAVE][Coin.USDC] = true;
-      MetaStorage.state().compatible[Pool.AAVE][Coin.EURS] = true;
+    //MetaStorage.state().compatible[Pool.AAVE][Coin.EURS] = true;
 
       MetaStorage.state().acoin[Coin.USDT] = _args.AAVE_USDT_address;
       MetaStorage.state().acoin[Coin.USDC] = _args.AAVE_USDC_address;

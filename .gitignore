@@ -4,6 +4,8 @@ coverage
 coverage.json
 typechain
 *_address*.txt
+yarn.lock
+.DS_Store
 
 #Hardhat files
 cache
