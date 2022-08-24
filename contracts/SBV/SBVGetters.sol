@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import { ISBVHook } from "../StableBattle/SBVHook/ISBVHook.sol";
+import { ISBVHook } from "../StableBattle/Facets/SBVHook/ISBVHook.sol";
 import { SBVStorage } from "./SBTStorage.sol";
 
 contract SBVGetters {

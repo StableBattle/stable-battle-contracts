@@ -4,8 +4,8 @@ pragma solidity ^0.8.10;
 
 import { IERC20 } from "@solidstate/contracts/token/ERC20/IERC20.sol";
 import { IPool } from "@aave/core-v3/contracts/interfaces/IPool.sol";
-import { ISBT } from "../../shared/interfaces/ISBT.sol";
-import { ISBV } from "../../shared/interfaces/ISBV.sol";
+import { ISBT } from "../../../shared/interfaces/ISBT.sol";
+import { ISBV } from "../../../shared/interfaces/ISBV.sol";
 
 import { Pool, Coin, MetaStorage } from "./MetaStorage.sol";
 
@@ -24,6 +24,10 @@ abstract contract ExternalCalls {
 
   function COIN(Coin coin) internal view virtual returns (IERC20) {
     return IERC20(MetaStorage.state().coin[coin]);
+  }
+
+  function ACOIN(Coin coin) internal view virtual returns (IERC20) {
+    return IERC20(MetaStorage.state().acoin[coin]);
   }
 
   function PoolAddress(Pool pool) internal view virtual returns (address) {

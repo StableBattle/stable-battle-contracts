@@ -1,22 +1,30 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
+import * as dotenv from "dotenv";
+dotenv.config({ path: __dirname+'/.env' });
 
 const config: HardhatUserConfig = {
   solidity: "0.8.10",
   networks: {
     hardhat: {
+      /*
       forking: {
         url: process.env.MUMBAI_ALCHEMY_URL || "",
         blockNumber: 26681409,
       },
+      */
+      forking: {
+        url: process.env.GOERLI_ALCHEMY_URL || "",
+        blockNumber: 7400000,
+      },
     },
-    polygonMumbai: {
+    mumbai: {
       url: process.env.MUMBAI_ALCHEMY_URL || "",
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
     goerli: {
-      url: process.env.GOERLI_URL || "",
+      url: process.env.GOERLI_ALCHEMY_URL || "",
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },

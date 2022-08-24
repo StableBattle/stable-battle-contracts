@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import { UpgradeableProxyOwnable } from "@solidstate/contracts/proxy/upgradeable/UpgradeableProxyOwnable.sol";
 import { ERC721MetadataStorage } from "@solidstate/contracts/token/ERC721/metadata/ERC721MetadataStorage.sol";
 
-contract SBTProxy is UpgradeableProxyOwnable {
+contract SBVProxy is UpgradeableProxyOwnable {
   using ERC721MetadataStorage for ERC721MetadataStorage.Layout;
 
   constructor(address implementation, address owner) {

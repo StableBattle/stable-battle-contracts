@@ -1,63 +1,88 @@
 import { ethers } from "hardhat";
+import hre from "hardhat";
 import * as fs from "fs";
 
-const { initSBD } = require('./initSBD.js')
-const { initSBT } = require('./initSBT.js')
-const { initSBV } = require('./initSBV.js')
+const { initSBD } = require('./initSBD.ts');
 
 async function deployStableBattle () {
-  
   const accounts = await ethers.getSigners()
   const contractOwner = accounts[0]
+  //Check that config folder exists for this network & create one if not
+  if (!fs.existsSync("./scripts/config/" + hre.network.name + "/")) {
+    fs.mkdirSync("./scripts/config/" + hre.network.name + "/")
+  }
 
+// Deploy shared facets
+  console.log("Deploying shared facets")
   // deploy DiamondCutFacet
   const DiamondCutFacet = await ethers.getContractFactory('DiamondCutFacet')
   const diamondCutFacet = await DiamondCutFacet.deploy({gasLimit: 3000000})
   await diamondCutFacet.deployed()
   console.log('DiamondCutFacet deployed:', diamondCutFacet.address)
 
+  // deploy DiamondLoupeFacet
+  const DiamondLoupeFacet = await ethers.getContractFactory('DiamondLoupeFacet')
+  const diamondLoupeFacet = await DiamondLoupeFacet.deploy({gasLimit: 3000000})
+  await diamondLoupeFacet.deployed()
+  console.log('DiamondLoupeFacet deployed:', diamondLoupeFacet.address)
+
+  // deploy OwnershipFacet
+  const OwnershipFacet = await ethers.getContractFactory('OwnershipFacet')
+  const ownershipFacet = await OwnershipFacet.deploy({gasLimit: 3000000})
+  await ownershipFacet.deployed()
+  console.log('OwnershipFacet deployed:', ownershipFacet.address)
+
+  // write thier addresses in the config file
+  fs.writeFileSync('./scripts/config/'+hre.network.name+'/shared-facets.ts', `
+  export const diamondCutFacetAddress = "${diamondCutFacet.address}"
+  export const DiamondLoupeFacetAddress = "${diamondLoupeFacet.address}"
+  export const OwnershipFacetAddress = "${ownershipFacet.address}"
+  `,
+  { flag: 'w' })
+
+//Deploy main contracts entry points
+  console.log("Deploying main contracts")
   // deploy StableBattleDiamond
   const StableBattleDiamond = await ethers.getContractFactory('Diamond')
   const SBD = await StableBattleDiamond.deploy(contractOwner.address, diamondCutFacet.address, {gasLimit: 3000000})
   await SBD.deployed()
-  console.log('StableBattleDiamond deployed:', SBD.address)
+  console.log('StableBattle Diamond deployed:', SBD.address)
 
   // deploy StableBattleToken
-  const StableBattleToken = await ethers.getContractFactory('Diamond')
-  const SBT = await StableBattleToken.deploy(contractOwner.address, diamondCutFacet.address, {gasLimit: 3000000})
-  await SBT.deployed()
-  console.log('StableBattleToken deployed:', SBT.address)
+  const SBTProxy = await ethers.getContractFactory('SBTProxy');
+  const SBTImplementation = await ethers.getContractFactory('SBTImplementation');
+  const implementationSBT = await SBTImplementation.deploy();
+  await implementationSBT.deployed();
+  const SBT = await SBTProxy.deploy(implementationSBT.address, contractOwner.address);
+  await SBT.deployed();
+  console.log('StableBattle Token deployed:', SBT.address)
 
   // deploy StableBattleVillages
-  const StableBattleVillages = await ethers.getContractFactory('Diamond')
-  const SBV = await StableBattleVillages.deploy(contractOwner.address, diamondCutFacet.address, {gasLimit: 3000000})
-  await SBV.deployed()
-  console.log('StableBattleVillages deployed:', SBV.address)
+  const SBVProxy = await ethers.getContractFactory('SBVProxy');
+  const SBVImplementation = await ethers.getContractFactory('SBVImplementation');
+  const implementationSBV = await SBVImplementation.deploy();
+  await implementationSBV.deployed();
+  const SBV = await SBVProxy.deploy(implementationSBV.address, contractOwner.address);
+  await SBV.deployed();
+  console.log('StableBattle Villages deployed:', SBV.address)
   
-  if (fs.existsSync("./scripts/dep_args/facet_addresses.txt")) {
-    fs.unlinkSync("./scripts/dep_args/facet_addresses.txt")
-  }
-  const predeployBlock = await initSBD(SBD.address, SBT.address, SBV.address)
-  await initSBT(SBD.address, SBT.address)
-  await initSBV(SBD.address, SBV.address)
-  console.log('StableBattle deployed!')
+  // write their addresses in the config file
+  fs.writeFileSync('./scripts/config/'+hre.network.name+'/main-contracts.ts', `
+  export const SBD = "${SBD.address}"
+  export const SBT = "${SBT.address}"
+  export const SBV = "${SBV.address}"
+  `,
+  { flag: 'w' })
   
-  if (fs.existsSync("./scripts/dep_args/diamond_addresses.txt")) {
-    fs.unlinkSync("./scripts/dep_args/diamond_addresses.txt")
-  }  
-  if (fs.existsSync("./scripts/dep_args/DiamondCutFacet_address.txt")) {
-    fs.unlinkSync("./scripts/dep_args/DiamondCutFacet_address.txt")
-  }
+  fs.writeFileSync('./scripts/config/'+hre.network.name+'/main-contracts.txt', SBD.address, { flag: 'w' })
 
-  fs.writeFileSync(
-    "./scripts/dep_args/diamond_addresses.txt",
-    SBD.address + "\n" +
-    SBT.address + "\n" +
-    SBV.address,
-    {flag: "a"})
-  fs.writeFileSync("./scripts/dep_args/DiamondCutFacet_address.txt",
-                   diamondCutFacet.address,
-                   {flag: "a"})
+  //initialize StableBattle Diamond
+  initSBD()
+
+  //remember deploy block for tests that rely on block.timestamp/block.number calculation
+  const predeployBlock = await ethers.provider.getBlock("latest")
+
+  console.log('StableBattle deployed!')
   return[SBD.address, SBT.address, SBV.address, predeployBlock]
 }
 

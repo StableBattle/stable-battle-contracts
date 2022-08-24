@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import { StorageSlot } from "@openzeppelin/contracts/utils/StorageSlot.sol";
 import { Address } from "@openzeppelin/contracts/utils/Address.sol";
-import { LibDiamond } from "../../shared/libraries/LibDiamond.sol";
+import { LibDiamond } from "../../../shared/libraries/LibDiamond.sol";
 
 contract EtherscanFacet {
 

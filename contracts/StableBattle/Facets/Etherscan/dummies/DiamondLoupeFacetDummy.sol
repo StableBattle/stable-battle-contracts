@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import { LibDiamond } from  "../../../shared/libraries/LibDiamond.sol";
-import { IDiamondLoupe } from "../../../shared/interfaces/IDiamondLoupe.sol";
-import { IERC165 } from "../../../shared/interfaces/IERC165.sol";
+import { LibDiamond } from  "../../../../shared/libraries/LibDiamond.sol";
+import { IDiamondLoupe } from "../../../../shared/interfaces/IDiamondLoupe.sol";
+import { IERC165 } from "../../../../shared/interfaces/IERC165.sol";
 
 contract DiamondLoupeFacetDummy is IDiamondLoupe, IERC165 {
     function facets() external override view returns (Facet[] memory facets_) {}

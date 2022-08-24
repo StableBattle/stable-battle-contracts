@@ -25,6 +25,7 @@ library MetaStorage {
 
     mapping (Pool => address) pool;
     mapping (Coin => address) coin;
+    mapping (Coin => address) acoin;
     mapping (Pool => mapping (Coin => bool)) compatible;
   }
 

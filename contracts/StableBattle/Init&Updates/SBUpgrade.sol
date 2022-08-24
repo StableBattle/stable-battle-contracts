@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import { TreasuryStorage } from "../Treasury/TreasuryStorage.sol";
+import { TreasuryStorage } from "../Facets/Treasury/TreasuryStorage.sol";
 
 contract SBUpgrade {
   using TreasuryStorage for TreasuryStorage.State;
