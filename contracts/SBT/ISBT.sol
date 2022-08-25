@@ -9,6 +9,8 @@ interface ISBT is ISolidStateERC20, ISBTInternal {
 
   function adminBurn(address account, uint256 amount) external;
 
+  function treasuryMint(address[] memory accounts, uint256[] memory amounts) external;
+
   function stake(uint clanId, uint256 amount) external;
 
   function withdraw(uint clanId, uint256 amount) external;

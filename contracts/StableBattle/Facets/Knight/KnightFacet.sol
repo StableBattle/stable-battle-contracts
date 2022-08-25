@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.10;
 
+import { Coin, Pool, Knight } from "../../Meta/DataStructures.sol";
 import { IKnight } from "../Knight/IKnight.sol";
 
-import { Knight } from "../Knight/KnightStorage.sol";
 import { KnightInternal } from "../Knight/KnightInternal.sol";
-import { Pool, Coin } from "../Meta/MetaStorage.sol";
 import { ItemsModifiers } from "../Items/ItemsModifiers.sol";
 
 contract KnightFacet is IKnight,

@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
+import { Clan, Proposal } from "../../Meta/DataStructures.sol";
+
 import { IClanInternal } from "../Clan/IClanInternal.sol";
-import { Clan, Proposal, ClanStorage } from "../Clan/ClanStorage.sol";
+import { ClanStorage } from "../Clan/ClanStorage.sol";
 import { KnightStorage } from "../Knight/KnightStorage.sol";
 import { KnightModifiers } from "../Knight/KnightModifiers.sol";
 import { ClanGetters } from "../Clan/ClanGetters.sol";

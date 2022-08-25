@@ -1,24 +1,21 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.10;
 
-import { IERC165 } from "../../shared/interfaces/IERC165.sol";
-import { IERC173 } from "../../shared/interfaces/IERC173.sol";
-import { LibDiamond } from "../../shared/libraries/LibDiamond.sol";
-import { IDiamondCut } from "../../shared/interfaces/IDiamondCut.sol";
-import { IDiamondLoupe } from "../../shared/interfaces/IDiamondLoupe.sol";
-import { IERC1155 } from "../../shared/interfaces/IERC1155.sol";
+import { LibDiamond } from "../Diamond/LibDiamond.sol";
+import { Coin, Pool } from "../Meta/DataStructures.sol";
 
-import { ClanStorage, Clan } from "../Facets/Clan/ClanStorage.sol";
-import { KnightStorage, Knight} from "../Facets/Knight/KnightStorage.sol";
-import { Coin, Pool, MetaStorage } from "../Facets/Meta/MetaStorage.sol";
+import { ClanStorage } from "../Facets/Clan/ClanStorage.sol";
+import { KnightStorage } from "../Facets/Knight/KnightStorage.sol";
+import { MetaStorage } from "../Meta/MetaStorage.sol";
 import { TournamentStorage } from "../Facets/Tournament/TournamentStorage.sol";
 import { TreasuryStorage } from "../Facets/Treasury/TreasuryStorage.sol";
-import { GearStorage, gearSlot } from "../Facets/Gear/GearStorage.sol";
+import { GearStorage } from "../Facets/Gear/GearStorage.sol";
 
-import { IERC20 } from "../../shared/interfaces/IERC20.sol";
-import { ISBV } from "../../shared/interfaces/ISBV.sol";
-import { IPool } from "@aave/core-v3/contracts/interfaces/IPool.sol";
-import { ISBT } from "../../shared/interfaces/ISBT.sol";
+import { IERC1155 } from "@openzeppelin/contracts/interfaces/IERC1155.sol";
+import { IERC165 } from "@openzeppelin/contracts/interfaces/IERC165.sol";
+import { IERC173 } from "../Facets/Ownership/IERC173.sol";
+import { IDiamondCut } from "../Facets/DiamondCut/IDiamondCut.sol";
+import { IDiamondLoupe } from "../Facets/DiamondLoupe/IDiamondLoupe.sol";
 
 contract SBInit {
   using ClanStorage for ClanStorage.State;

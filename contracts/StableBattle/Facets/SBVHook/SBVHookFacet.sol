@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import { ISBVHook } from "../SBVHook/ISBVHook.sol";
-import { MetaModifiers } from "../Meta/MetaModifiers.sol";
+import { MetaModifiers } from "../../Meta/MetaModifiers.sol";
 import { TreasuryStorage } from "../Treasury/TreasuryStorage.sol";
 import { TreasuryGetters } from "../Treasury/TreasuryGetters.sol";
 

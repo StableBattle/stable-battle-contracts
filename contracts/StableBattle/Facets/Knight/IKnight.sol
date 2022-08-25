@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
+import { Coin, Pool, Knight } from "../../Meta/DataStructures.sol";
 import { IKnightInternal } from "../Knight/IKnightInternal.sol";
 import { Knight } from "../Knight/KnightStorage.sol";
-import { Coin, Pool } from "../Meta/MetaStorage.sol";
 
 interface IKnight is IKnightInternal {
 

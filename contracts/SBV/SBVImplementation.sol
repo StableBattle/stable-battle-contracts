@@ -34,5 +34,4 @@ contract SBVImplementation is
         super._beforeTokenTransfer(from, to, tokenId);
         SBVHook().SBV_hook(tokenId, to, (from == address(0)));
     }
-
 }

@@ -2,14 +2,7 @@
 
 pragma solidity ^0.8.0;
 
-import { Pool, Coin } from "../Meta/MetaStorage.sol";
-
-struct Knight {
-  Pool pool;
-  Coin coin;
-  address owner;
-  uint256 inClan;
-}
+import { Pool, Coin, Knight } from "../../Meta/DataStructures.sol";
 
 library KnightStorage {
   struct State {

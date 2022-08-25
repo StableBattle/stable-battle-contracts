@@ -13,17 +13,28 @@ contract SBTImplementation is
   OwnableInternal
 {
   function adminMint(address account, uint256 amount)
-  external
+    external
   //onlyOwner
   {
     _mint(account, amount);
   }
 
   function adminBurn(address account, uint256 amount)
-  external
+    external
   //onlyOwner
   {
     _burn(account, amount);
+  }
+
+  function treasuryMint(address[] memory accounts, uint256[] memory amounts)
+    external
+  //onlySBD
+  {
+    require(accounts.length == amounts.length,
+      "SBT: arrays are of different sizes");
+    for(uint i; i < accounts.length; i++) {
+      _mint (accounts[i], amounts[i]);
+    }
   }
 
   function stake(uint clanId, uint256 amount) external {

@@ -2,19 +2,7 @@
 
 pragma solidity ^0.8.0;
 
-enum gearSlot {
-  NONE,
-  WEAPON,
-  SHIELD,
-  HELMET,
-  ARMOR,
-  PANTS,
-  SLEEVES,
-  GLOVES,
-  BOOTS,
-  JEWELRY,
-  CLOAK
-}
+import { gearSlot } from "../../Meta/DataStructures.sol";
 
 library GearStorage {
   struct State {

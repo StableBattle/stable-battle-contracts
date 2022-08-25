@@ -2,14 +2,15 @@
 
 pragma solidity ^0.8.10;
 
+import { Coin, Pool, Knight } from "../../Meta/DataStructures.sol";
+
 import { IKnightInternal } from "../Knight/IKnightInternal.sol";
-import { Knight, KnightStorage } from "../Knight/KnightStorage.sol";
+import { KnightStorage } from "../Knight/KnightStorage.sol";
 import { KnightGetters } from "../Knight/KnightGetters.sol";
 import { KnightModifiers } from "../Knight/KnightModifiers.sol";
 import { ClanInternal } from "../Clan/ClanInternal.sol";
-import { Pool, Coin } from "../Meta/MetaStorage.sol";
-import { MetaModifiers } from "../Meta/MetaModifiers.sol";
-import { ExternalCalls } from "../Meta/ExternalCalls.sol";
+import { MetaModifiers } from "../../Meta/MetaModifiers.sol";
+import { ExternalCalls } from "../../Meta/ExternalCalls.sol";
 import { ERC1155BaseInternal } from "@solidstate/contracts/token/ERC1155/base/ERC1155BaseInternal.sol";
 
 abstract contract KnightInternal is

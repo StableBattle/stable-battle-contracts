@@ -7,10 +7,6 @@ const { getSelectors, FacetCutAction } = require("./libraries/diamond.js");
 
 async function initSBD () {
   const { SBD, SBT, SBV } = require("./config/"+hre.network.name+"/main-contracts.ts");
-  const { DiamondLoupeFacetAddress,
-          OwnershipFacetAddress } = require("./config/"+hre.network.name+"/shared-facets.ts");
-    const DiamondLoupeFacet = await ethers.getContractFactory('DiamondLoupeFacet')
-    const OwnershipFacet = await ethers.getContractFactory('OwnershipFacet')
 
   // deploy SBInit
   // SBInit provides a function that is called when the diamond is upgraded to initialize state variables
@@ -24,6 +20,8 @@ async function initSBD () {
   console.log('')
   console.log('Deploying facets')
   const FacetNames = [
+    'DiamondLoupeFacet',
+    'OwnershipFacet',
     'ItemsFacet',
     'ClanFacet',
     'KnightFacet',
@@ -34,18 +32,6 @@ async function initSBD () {
     'EtherscanFacet'
   ]
   const cut = []
-  //Add DiamondLoupeFacet
-  cut.push({
-    facetAddress: DiamondLoupeFacetAddress,
-    action: FacetCutAction.Add,
-    functionSelectors: getSelectors(DiamondLoupeFacet)
-  })
-  //Add OwnershipFacet
-  cut.push({
-    facetAddress: OwnershipFacetAddress,
-    action: FacetCutAction.Add,
-    functionSelectors: getSelectors(OwnershipFacet)
-  })
   //Clear config files if they exist
   if (fs.existsSync("./scripts/config/"+hre.network.name+"/sb-facets.ts")) {
     fs.unlinkSync("./scripts/config/"+hre.network.name+"/sb-facets.ts")
@@ -53,17 +39,25 @@ async function initSBD () {
   if (fs.existsSync("./scripts/config/"+hre.network.name+"/sb-facets.txt")) {
     fs.unlinkSync("./scripts/config/"+hre.network.name+"/sb-facets.txt")
   }
-  //Deploy the rest of the facets
+  //Deploy the facets
   for (const FacetName of FacetNames) {
     const Facet = await ethers.getContractFactory(FacetName)
     const facet = await Facet.deploy({gasLimit: 5000000})
     await facet.deployed()
     console.log(`${FacetName} deployed: ${facet.address}`)
+    if (FacetName === 'ItemsFacet') {
+      cut.push({
+        facetAddress: facet.address,
+        action: FacetCutAction.Add,
+        functionSelectors: getSelectors(facet).remove(['0x01ffc9a7'])
+      })
+    } else {
       cut.push({
         facetAddress: facet.address,
         action: FacetCutAction.Add,
         functionSelectors: getSelectors(facet)
       })
+    }
     
     //Catalog deployment addresses in the config file
     fs.writeFileSync

@@ -12,31 +12,17 @@ async function deployStableBattle () {
     fs.mkdirSync("./scripts/config/" + hre.network.name + "/")
   }
 
-// Deploy shared facets
-  console.log("Deploying shared facets")
+// Deploy DiamondCut
+  console.log("Deploying DiamondCut")
   // deploy DiamondCutFacet
   const DiamondCutFacet = await ethers.getContractFactory('DiamondCutFacet')
   const diamondCutFacet = await DiamondCutFacet.deploy({gasLimit: 3000000})
   await diamondCutFacet.deployed()
   console.log('DiamondCutFacet deployed:', diamondCutFacet.address)
 
-  // deploy DiamondLoupeFacet
-  const DiamondLoupeFacet = await ethers.getContractFactory('DiamondLoupeFacet')
-  const diamondLoupeFacet = await DiamondLoupeFacet.deploy({gasLimit: 3000000})
-  await diamondLoupeFacet.deployed()
-  console.log('DiamondLoupeFacet deployed:', diamondLoupeFacet.address)
-
-  // deploy OwnershipFacet
-  const OwnershipFacet = await ethers.getContractFactory('OwnershipFacet')
-  const ownershipFacet = await OwnershipFacet.deploy({gasLimit: 3000000})
-  await ownershipFacet.deployed()
-  console.log('OwnershipFacet deployed:', ownershipFacet.address)
-
   // write thier addresses in the config file
   fs.writeFileSync('./scripts/config/'+hre.network.name+'/shared-facets.ts', `
   export const diamondCutFacetAddress = "${diamondCutFacet.address}"
-  export const DiamondLoupeFacetAddress = "${diamondLoupeFacet.address}"
-  export const OwnershipFacetAddress = "${ownershipFacet.address}"
   `,
   { flag: 'w' })
 

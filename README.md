@@ -1,2 +1,2 @@
 # StableBattle Typescript branch
-Switching from more js to ts
+Switching from js to ts

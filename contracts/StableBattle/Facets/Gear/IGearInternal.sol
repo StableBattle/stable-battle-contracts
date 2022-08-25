@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import { gearSlot } from "../Gear/GearStorage.sol";
+import { gearSlot } from "../../Meta/DataStructures.sol";
 
 interface IGearInternal {
   event GearCreated(uint256 id, gearSlot slot, string name);

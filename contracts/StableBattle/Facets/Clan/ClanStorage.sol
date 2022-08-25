@@ -2,19 +2,7 @@
 
 pragma solidity ^0.8.0;
 
-enum Proposal {
-  NONE,
-  JOIN,
-  LEAVE,
-  INVITE
-}
-
-struct Clan {
-  uint256 leader;
-  uint256 stake;
-  uint totalMembers;
-  uint level;
-}
+import { Clan, Proposal } from "../../Meta/DataStructures.sol";
 
 library ClanStorage {
   struct State {

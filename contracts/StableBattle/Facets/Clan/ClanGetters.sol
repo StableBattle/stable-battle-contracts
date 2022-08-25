@@ -2,7 +2,8 @@
 
 pragma solidity ^0.8.0;
 
-import { Clan, Proposal, ClanStorage } from "../Clan/ClanStorage.sol";
+import { Clan, Proposal } from "../../Meta/DataStructures.sol";
+import { ClanStorage } from "../Clan/ClanStorage.sol";
 
 abstract contract ClanGetters {
   using ClanStorage for ClanStorage.State;

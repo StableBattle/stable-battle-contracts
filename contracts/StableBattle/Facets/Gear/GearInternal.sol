@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
+import { gearSlot } from "../../Meta/DataStructures.sol";
+
 import { IGearInternal } from "../Gear/IGearInternal.sol";
-import { GearStorage, gearSlot } from "../Gear/GearStorage.sol";
+import { GearStorage } from "../Gear/GearStorage.sol";
 import { GearGetters } from "../Gear/GearGetters.sol";
 import { GearModifiers } from "../Gear/GearModifiers.sol";
 import { ItemsModifiers } from "../Items/ItemsModifiers.sol";

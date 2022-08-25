@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import { Proposal } from "../Clan/ClanStorage.sol";
+import { Proposal } from "../../Meta/DataStructures.sol";
 import { IClanInternal } from "../Clan/IClanInternal.sol";
 
 interface IClan is IClanInternal{

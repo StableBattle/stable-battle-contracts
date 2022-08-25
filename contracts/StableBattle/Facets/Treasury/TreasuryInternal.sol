@@ -7,14 +7,14 @@ import { TreasuryGetters } from "../Treasury/TreasuryGetters.sol";
 import { KnightGetters } from "../Knight/KnightGetters.sol";
 import { ClanGetters } from "../Clan/ClanGetters.sol";
 import { TournamentGetters } from "../Tournament/TournamentGetters.sol";
-import { ExternalCalls } from "../Meta/ExternalCalls.sol";
+import { ExternalCalls } from "../../Meta/ExternalCalls.sol";
 
 contract TreasuryInternal is
-  ITreasuryInternal, 
-  TreasuryGetters, 
+  ITreasuryInternal,
+  TreasuryGetters,
   ClanGetters,
   TournamentGetters,
-  KnightGetters, 
+  KnightGetters,
   ExternalCalls
 {
   using TreasuryStorage for TreasuryStorage.State;
@@ -37,7 +37,7 @@ contract TreasuryInternal is
     rewards[villageAmount] = reward * _castleTax();
     //Mint reward tokens
     TreasuryStorage.state().lastBlock = block.number;
-    SBT().mintBatch(owners, rewards);
+    SBT().treasuryMint(owners, rewards);
   }
 
   function _setTax(uint8 tax) internal {

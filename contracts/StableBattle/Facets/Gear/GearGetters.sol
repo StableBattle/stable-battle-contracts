@@ -2,7 +2,8 @@
 
 pragma solidity ^0.8.0;
 
-import { GearStorage, gearSlot } from "../Gear/GearStorage.sol";
+import { gearSlot } from "../../Meta/DataStructures.sol";
+import { GearStorage } from "../Gear/GearStorage.sol";
 import { ERC1155BaseInternal } from "@solidstate/contracts/token/ERC1155/base/ERC1155BaseInternal.sol";
 
 abstract contract GearGetters is ERC1155BaseInternal {

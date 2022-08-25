@@ -2,8 +2,9 @@
 
 pragma solidity ^0.8.0;
 
-import { Knight, KnightStorage } from "../Knight/KnightStorage.sol";
-import { Pool, Coin } from "../Meta/MetaStorage.sol";
+import { Coin, Pool, Knight } from "../../Meta/DataStructures.sol";
+
+import { KnightStorage } from "../Knight/KnightStorage.sol";
 
 abstract contract KnightGetters {
   using KnightStorage for KnightStorage.State;

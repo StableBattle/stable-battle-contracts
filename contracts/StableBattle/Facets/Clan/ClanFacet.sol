@@ -2,11 +2,13 @@
 
 pragma solidity ^0.8.0;
 
+import { Clan, Proposal } from "../../Meta/DataStructures.sol";
+
 import { IClan } from "../Clan/IClan.sol";
-import { ClanStorage, Clan, Proposal } from "../Clan/ClanStorage.sol";
+import { ClanStorage } from "../Clan/ClanStorage.sol";
 import { ClanInternal } from "../Clan/ClanInternal.sol";
 import { ItemsModifiers } from "../Items/ItemsModifiers.sol";
-import { MetaModifiers } from "../Meta/MetaModifiers.sol";
+import { MetaModifiers } from "../../Meta/MetaModifiers.sol";
 
 contract ClanFacet is
   IClan,
