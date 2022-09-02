@@ -49,6 +49,7 @@ async function initSBD () {
       cut.push({
         facetAddress: facet.address,
         action: FacetCutAction.Add,
+        //Remove excessive supportsInterface(bytes4) inherited from OZ ERC1155
         functionSelectors: getSelectors(facet).remove(['0x01ffc9a7'])
       })
     } else {
@@ -82,46 +83,16 @@ async function initSBD () {
   let tx
   let receipt
 
-  let AAVE_address = ethers.constants.AddressZero
-  let USDT_address = ethers.constants.AddressZero
-  let USDC_address = ethers.constants.AddressZero
-  let EURS_address = ethers.constants.AddressZero
-  let AAVE_USDT_address = ethers.constants.AddressZero
-  let AAVE_USDC_address = ethers.constants.AddressZero
-  let AAVE_EURS_address = ethers.constants.AddressZero
-
-  if (hre.network.name === 'mumbai') {
-    AAVE_address = conf.AAVE_address.mumbai;
-
-    USDT_address = conf.USDT_address.mumbai;
-    USDC_address = conf.USDC_address.mumbai;
-    EURS_address = conf.EURS_address.mumbai;
-    
-    AAVE_USDT_address = conf.AAVE_USDT_address.mumbai;
-    AAVE_USDC_address = conf.AAVE_USDC_address.mumbai;
-    AAVE_EURS_address = conf.AAVE_EURS_address.mumbai;
-  } else if (hre.network.name === 'hardhat' || hre.network.name === 'goerli') {
-    AAVE_address = conf.AAVE_address.goerli;
-
-    USDT_address = conf.USDT_address.goerli;
-    USDC_address = conf.USDC_address.goerli;
-    EURS_address = conf.EURS_address.goerli;
-    
-    AAVE_USDT_address = conf.AAVE_USDT_address.goerli;
-    AAVE_USDC_address = conf.AAVE_USDC_address.goerli;
-    AAVE_EURS_address = conf.AAVE_EURS_address.goerli;
-  }
-
   let args = {
-    AAVE_address: AAVE_address,
+    AAVE_address: conf.AAVE[hre.network.name],
 
-    USDT_address: USDT_address,
-    USDC_address: USDC_address,
-    EURS_address: EURS_address,
+    USDT_address: conf.USDT[hre.network.name],
+    USDC_address: conf.USDC[hre.network.name],
+    EURS_address: conf.EURS[hre.network.name],
 
-    AAVE_USDT_address: AAVE_USDT_address,
-    AAVE_USDC_address: AAVE_USDC_address,
-    AAVE_EURS_address: AAVE_EURS_address,
+    AAVE_USDT_address: conf.AUSDT[hre.network.name],
+    AAVE_USDC_address: conf.AUSDC[hre.network.name],
+    AAVE_EURS_address: conf.AEURS[hre.network.name],
 
     SBT_address: SBT,
     SBV_address: SBV

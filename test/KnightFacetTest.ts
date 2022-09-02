@@ -1,15 +1,13 @@
-/* global describe it before ethers */
+import { ethers } from "hardhat";
 
 const { deployStableBattle } = require('../scripts/deploy.js')
 
 const { assert, expect } = require('chai')
 
 describe('KnightFacetTest', async function () {
-  let USDT_address = ethers.utils.getAddress("0x21C561e551638401b937b03fE5a0a0652B99B7DD")
-  let USDC_address = ethers.utils.getAddress("0x9aa7fEc87CA69695Dd1f879567CcF49F3ba417E2")
-  let AAVE_address = ethers.utils.getAddress("0x6C9fB0D5bD9429eb9Cd96B85B81d872281771E6B")
+  const { USDT_address, USDC_address, AAVE_address } = require('../scripts/config/sb-init-addresses.ts');
   let knightPrice = { USDT: 1e9, USDC: 1e9, TEST: 0}
-  let COIN = []
+  let COIN
   let numberOfCoins = 2;
   let numberOfPools = 1;
   let owner
@@ -28,10 +26,10 @@ describe('KnightFacetTest', async function () {
 
   before(async function () {
     [owner, user1, user2] = await ethers.getSigners()
-    USDT = await ethers.getContractAt('IERC20Mintable', USDT_address)
-    USDC = await ethers.getContractAt('IERC20Mintable', USDC_address)
+    USDT = await ethers.getContractAt('IERC20Mintable', USDT_address.hardhat)
+    USDC = await ethers.getContractAt('IERC20Mintable', USDC_address.hardhat)
     COIN[1] = USDT; COIN[2] = USDC;
-    AAVE = await ethers.getContractAt('IPool', AAVE_address)
+    AAVE = await ethers.getContractAt('IPool', AAVE_address.hardhat)
     const [SBDAddress, SBTAddress, SBVAddress] = await deployStableBattle()
     SBD = {
       Address: SBDAddress,
