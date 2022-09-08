@@ -34,7 +34,7 @@ module.exports = {
         blockNumber: 7400000,
       },
     },
-    polygonMumbai: {
+    mumbai: {
       url: process.env.MUMBAI_ALCHEMY_URL || "",
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],

@@ -38,10 +38,10 @@ contract DemoFightFacet is KnightGetters, ExternalCalls, DemoFightGetters, MetaM
   //onlyAdmin
   {
     require(reward <= currentYield(pool, coin), 
-      "DemoFightFacet: Can't assign USDT reward bigger than the current yield");
+      "DemoFightFacet: Can't assign reward bigger than the current yield");
     DemoFightStorage.state().userReward[user][pool][coin] += reward;
     DemoFightStorage.state().lockedYield[pool][coin] += reward;
-    emit NewWinner(user, reward);
+    emit NewWinner(user, reward, pool, coin);
   }
 
   function claimReward(address user, Pool pool, Coin coin) public {
@@ -49,7 +49,7 @@ contract DemoFightFacet is KnightGetters, ExternalCalls, DemoFightGetters, MetaM
     DemoFightStorage.state().lockedYield[pool][coin] -= reward;
     DemoFightStorage.state().userReward[user][pool][coin] = 0;
     AAVE().withdraw(address(COIN(coin)), reward, user);
-    emit RewardClaimed(user, reward);
+    emit RewardClaimed(user, reward, pool, coin);
   }
 
 //External getters
@@ -89,8 +89,8 @@ contract DemoFightFacet is KnightGetters, ExternalCalls, DemoFightGetters, MetaM
   
 //Events
 
-  event NewWinner(address user, uint256 reward);
-  event RewardClaimed(address user, uint256 reward);
+  event NewWinner(address user, uint256 reward, Pool pool, Coin coin);
+  event RewardClaimed(address user, uint256 reward, Pool pool, Coin coin);
 }
 
 library DemoFightStorage {
