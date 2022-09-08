@@ -76,7 +76,7 @@ async function initSBD (SBD_address, SBT_address_, SBV_address_) {
   let USDC_address = ethers.constants.AddressZero
   let AAVE_USDT_address = ethers.constants.AddressZero
   let AAVE_USDC_address = ethers.constants.AddressZero
-  if (hre.network.name === 'polygonMumbai') {
+  if (hre.network.name === 'mumbai') {
     AAVE_address = ethers.utils.getAddress("0x6C9fB0D5bD9429eb9Cd96B85B81d872281771E6B")
 
     USDT_address = ethers.utils.getAddress("0x21C561e551638401b937b03fE5a0a0652B99B7DD")

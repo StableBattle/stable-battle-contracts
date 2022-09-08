@@ -1,33 +1,34 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
+import { Pool, Coin } from "../storage/MetaStorage.sol";
+
 contract DemoFightFacetDummy {
 
-//State-affecting operations
+  function battleWonBy(address user, Pool pool, Coin coin, uint256 reward) external {}
 
-  function battleWonBy(address user, uint256 rewardUSDT, uint256 rewardUSDC) public {}
-
-  function claimReward(address user) public {}
+  function claimReward(address user, Pool pool, Coin coin) external {}
 
 //External getters
 
-  function getTotalYield() external view returns(uint256, uint256) {}
+  function getTotalYield(Pool pool, Coin coin) external view returns(uint256) {}
 
-  function getCurrentYield() external view returns(uint256, uint256) {}
+  function getCurrentYield(Pool pool, Coin coin) external view returns(uint256) {}
 
-  function getLockedYield() external view returns(uint256, uint256) {}
+  function getLockedYield(Pool pool, Coin coin) external view returns(uint256) {}
 
-  function getStakedByKnights() external view returns(uint256, uint256) {}
+  function getStakedByKnights(Pool pool, Coin coin) external view returns(uint256) {}
 
-  function getUserReward(address user) external view returns(uint256, uint256) {}
-  function getYieldInfo()
+  function getUserReward(address user, Pool pool, Coin coin) external view returns(uint256) {}
+
+  function getYieldInfo(Pool pool, Coin coin)
     external
     view
-    returns(uint256, uint256, uint256, uint256, uint256, uint256, uint256, uint256)
+    returns(uint256, uint256, uint256, uint256)
   {}
   
 //Events
 
-  event NewWinner(address user, uint256 rewardUSDT, uint256 rewardUSDC);
-  event RewardClaimed(address user, uint256 rewardUSDT, uint256 rewardUSDC);
+  event NewWinner(address user, uint256 reward);
+  event RewardClaimed(address user, uint256 reward);
 }

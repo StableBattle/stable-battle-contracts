@@ -30,27 +30,12 @@ module.exports = {
         blockNumber: 26681409,
       },*/
       forking: {
-        url: process.env.GOERLI_URL || "",
+        url: process.env.GOERLI_ALCHEMY_URL || "",
         blockNumber: 7400000,
       },
     },
     polygonMumbai: {
       url: process.env.MUMBAI_ALCHEMY_URL || "",
-      accounts:
-        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
-    },
-    rinkeby: {
-      url: process.env.RINKEBY_ALCHEMY_URL || "",
-      accounts:
-        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
-    },
-    ropsten: {
-      url: process.env.ROPSTEN_URL || "",
-      accounts:
-        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
-    },
-    arbitrumTestnet: {
-      url: process.env.ARBITRUM_RINKEBY_URL || "",
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
