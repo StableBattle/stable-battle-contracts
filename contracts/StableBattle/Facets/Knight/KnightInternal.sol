@@ -11,11 +11,9 @@ import { KnightModifiers } from "../Knight/KnightModifiers.sol";
 import { ClanInternal } from "../Clan/ClanInternal.sol";
 import { MetaModifiers } from "../../Meta/MetaModifiers.sol";
 import { ExternalCalls } from "../../Meta/ExternalCalls.sol";
-import { ERC1155BaseInternal } from "@solidstate/contracts/token/ERC1155/base/ERC1155BaseInternal.sol";
 
 abstract contract KnightInternal is
   IKnightInternal,
-  //ERC1155BaseInternal,
   KnightGetters,
   KnightModifiers,
   ClanInternal,

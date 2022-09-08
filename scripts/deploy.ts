@@ -1,11 +1,11 @@
-import { ethers } from "hardhat";
 import hre from "hardhat";
+import "@nomiclabs/hardhat-ethers";
 import * as fs from "fs";
 
 const { initSBD } = require('./initSBD.ts');
 
 async function deployStableBattle () {
-  const accounts = await ethers.getSigners();
+  const accounts = await hre.ethers.getSigners();
   const contractOwner = accounts[0];
   //Check that config folder exists for this network & create one if not
   if (!fs.existsSync("./scripts/config/" + hre.network.name + "/")) {
@@ -15,7 +15,7 @@ async function deployStableBattle () {
 // Deploy DiamondCut
   console.log("Deploying DiamondCut");
   // deploy DiamondCutFacet
-  const DiamondCutFacet = await ethers.getContractFactory('DiamondCutFacet');
+  const DiamondCutFacet = await hre.ethers.getContractFactory('DiamondCutFacet');
   const diamondCutFacet = await DiamondCutFacet.deploy({gasLimit: 3000000});
   await diamondCutFacet.deployed();
   console.log('DiamondCutFacet deployed:', diamondCutFacet.address);
@@ -29,14 +29,14 @@ async function deployStableBattle () {
 //Deploy main contracts entry points
   console.log("Deploying main contracts");
   // deploy StableBattleDiamond
-  const StableBattleDiamond = await ethers.getContractFactory('Diamond');
+  const StableBattleDiamond = await hre.ethers.getContractFactory('Diamond');
   const SBD = await StableBattleDiamond.deploy(contractOwner.address, diamondCutFacet.address, {gasLimit: 3000000});
   await SBD.deployed();
   console.log('StableBattle Diamond deployed:', SBD.address);
 
   // deploy StableBattleToken
-  const SBTProxy = await ethers.getContractFactory('SBTProxy');
-  const SBTImplementation = await ethers.getContractFactory('SBTImplementation');
+  const SBTProxy = await hre.ethers.getContractFactory('SBTProxy');
+  const SBTImplementation = await hre.ethers.getContractFactory('SBTImplementation');
   const implementationSBT = await SBTImplementation.deploy();
   await implementationSBT.deployed();
   const SBT = await SBTProxy.deploy(implementationSBT.address, contractOwner.address);
@@ -44,8 +44,8 @@ async function deployStableBattle () {
   console.log('StableBattle Token deployed:', SBT.address);
 
   // deploy StableBattleVillages
-  const SBVProxy = await ethers.getContractFactory('SBVProxy');
-  const SBVImplementation = await ethers.getContractFactory('SBVImplementation');
+  const SBVProxy = await hre.ethers.getContractFactory('SBVProxy');
+  const SBVImplementation = await hre.ethers.getContractFactory('SBVImplementation');
   const implementationSBV = await SBVImplementation.deploy();
   await implementationSBV.deployed();
   const SBV = await SBVProxy.deploy(implementationSBV.address, contractOwner.address);
@@ -66,7 +66,7 @@ async function deployStableBattle () {
   initSBD();
 
   //remember deploy block for tests that rely on block.timestamp/block.number calculation
-  const predeployBlock = await ethers.provider.getBlock("latest");
+  const predeployBlock = await hre.ethers.provider.getBlock("latest");
 
   console.log('StableBattle deployed!');
   return[SBD.address, SBT.address, SBV.address, predeployBlock];

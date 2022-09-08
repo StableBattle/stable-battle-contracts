@@ -1,65 +1,30 @@
-import { ethers } from "hardhat";
+import hre from "hardhat";
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
 const { deployStableBattle } = require('../scripts/deploy.js')
 
-const { assert, expect } = require('chai')
+import { assert, expect } from "chai"
+
+import { SBDInterface, SBDFromAddress } from "./libraries/SBDFromAddress";
+import { IPool, ISBT, ISBV } from "../typechain-types";
+import { AAVE as AAVE_address } from "../scripts/config/sb-init-addresses";
 
 describe('KnightFacetTest', async function () {
-  const { USDT_address, USDC_address, AAVE_address } = require('../scripts/config/sb-init-addresses.ts');
-  let knightPrice = { USDT: 1e9, USDC: 1e9, TEST: 0}
-  let COIN
-  let numberOfCoins = 2;
-  let numberOfPools = 1;
-  let owner
-  let user1
-  let user2
-  let USDT
-  let USDC
-  let AAVE
-  let SBD
-  let SBT
-  let SBV
-  let tx
-  let receipt
-  let result
-  //const addresses = []
+  let owner : SignerWithAddress;
+  let user1 : SignerWithAddress;
+  let user2 : SignerWithAddress;
+  let AAVE : IPool;
+  let SBD : SBDInterface;
+  let SBT : ISBT;
+  let SBV : ISBV;
 
   before(async function () {
-    [owner, user1, user2] = await ethers.getSigners()
-    USDT = await ethers.getContractAt('IERC20Mintable', USDT_address.hardhat)
-    USDC = await ethers.getContractAt('IERC20Mintable', USDC_address.hardhat)
-    COIN[1] = USDT; COIN[2] = USDC;
-    AAVE = await ethers.getContractAt('IPool', AAVE_address.hardhat)
+    [owner, user1, user2] = await hre.ethers.getSigners()
+    AAVE = await hre.ethers.getContractAt('IPool', AAVE_address[hre.network.name])
     const [SBDAddress, SBTAddress, SBVAddress] = await deployStableBattle()
-    SBD = {
-      Address: SBDAddress,
-      CutFacet: await ethers.getContractAt('DiamondCutFacet', SBDAddress),
-      LoupeFacet: await ethers.getContractAt('DiamondLoupeFacet', SBDAddress),
-      OwnershipFacet: await ethers.getContractAt('OwnershipFacet', SBDAddress),
-      ClanFacet: await ethers.getContractAt('ClanFacet', SBDAddress),
-      ItemsFacet: await ethers.getContractAt('ItemsFacet', SBDAddress),
-      KnightFacet: await ethers.getContractAt('KnightFacet', SBDAddress),
-      TournamentFacet: await ethers.getContractAt('TournamentFacet', SBDAddress),
-      TreasuryFacet: await ethers.getContractAt('TreasuryFacet', SBDAddress),
-      SBVHookFacet: await ethers.getContractAt('SBVHookFacet', SBDAddress),
-      addresses: []
-    }
-    SBT = {
-      Address: SBTAddress,
-      CutFacet: await ethers.getContractAt('DiamondCutFacet', SBTAddress),
-      LoupeFacet: await ethers.getContractAt('DiamondLoupeFacet', SBTAddress),
-      OwnershipFacet: await ethers.getContractAt('OwnershipFacet', SBTAddress),
-      SBTFacet: await ethers.getContractAt('SBTFacet', SBTAddress),
-      addresses: []
-    }
-    SBV = {
-      Address: SBVAddress,
-      CutFacet: await ethers.getContractAt('DiamondCutFacet', SBVAddress),
-      LoupeFacet: await ethers.getContractAt('DiamondLoupeFacet', SBVAddress),
-      OwnershipFacet: await ethers.getContractAt('OwnershipFacet', SBVAddress),
-      SBVFacet: await ethers.getContractAt('SBVFacet', SBVAddress),
-      addresses: []
-    }
+    SBD = await SBDFromAddress(SBDAddress);
+    SBT = await hre.ethers.getContractAt("ISBT", SBTAddress);
+    SBV = await hre.ethers.getContractAt("ISBV", SBVAddress);
   })
 
   it('knight price should be correct', async () => {
@@ -86,9 +51,9 @@ describe('KnightFacetTest', async function () {
     }
   })
 
-  //mintKnight(1, 1) == mint AAVE USDT
-  //mintKnight(1, 2) = mint AAVE USDC
-  //mintKnight(2, 3) = mint TEST TEST
+  //mintKnight(1, 1) == mint TEST TEST
+  //mintKnight(2, 2) = mint AAVE USDT
+  //mintKnight(2, 3) = mint AAVE USDC
 
   it('should mint a knight correctly for all valid combinations of Pool and Coin', async () => {
     for(let p = 1; p < numberOfPools + 1; p++) {
@@ -134,7 +99,7 @@ describe('KnightFacetTest', async function () {
           let knightInfo = await SBD.KnightFacet.getKnightInfo(knightId)
           expect(knightInfo.pool).to.equal(0)
           expect(knightInfo.coin).to.equal(0)
-          expect(knightInfo.owner).to.equal(ethers.constants.AddressZero)
+          expect(knightInfo.owner).to.equal(hre.ethers.constants.AddressZero)
         }
       }
     }

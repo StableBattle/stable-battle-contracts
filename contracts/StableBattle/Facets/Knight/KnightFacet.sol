@@ -7,9 +7,10 @@ import { IKnight } from "../Knight/IKnight.sol";
 import { KnightInternal } from "../Knight/KnightInternal.sol";
 import { ItemsModifiers } from "../Items/ItemsModifiers.sol";
 
-contract KnightFacet is IKnight,
-                        ItemsModifiers,
-                        KnightInternal
+contract KnightFacet is 
+  IKnight,
+  ItemsModifiers,
+  KnightInternal
 {
   function mintKnight(Pool p, Coin c)
     external
