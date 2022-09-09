@@ -5,92 +5,85 @@ import { KnightModifiers, KnightGetters} from "../storage/KnightStorage.sol";
 import { Pool, Coin, ExternalCalls, MetaModifiers } from "../storage/MetaStorage.sol";
 
 abstract contract DemoFightGetters is KnightGetters, ExternalCalls {
-  function currentYield(Pool pool, Coin coin) internal view returns(uint256) {
-    return totalYield(pool, coin) - stakedByKnights(pool, coin) - lockedYield(pool, coin);
+  function currentYield() internal view returns(uint256) {
+    return totalYield() - stakedByKnights() - lockedYield();
   }
 
-  function totalYield(Pool pool, Coin coin) internal view returns(uint256) {
-    return pool == Pool.AAVE ? ACOIN(coin).balanceOf(address(this)) : 0;
+  function totalYield() internal view returns(uint256) {
+    return ACOIN(Coin.USDT).balanceOf(address(this));
   }
   
-  function lockedYield(Pool pool, Coin coin) internal view virtual returns (uint256) {
-    return DemoFightStorage.state().lockedYield[pool][coin];
+  function lockedYield() internal view virtual returns (uint256) {
+    return DemoFightStorage.state().lockedYield[Pool.AAVE][Coin.USDT];
   }
 
-  function stakedByKnights(Pool pool, Coin coin) internal view returns(uint256) {
-    return knightPrice(coin) * (knightsMinted(pool, coin) - knightsBurned(pool, coin));
+  function stakedByKnights() internal view returns(uint256) {
+    return knightPrice(Coin.USDT) * (knightsMinted(Pool.AAVE, Coin.USDT) - knightsBurned(Pool.AAVE, Coin.USDT));
   }
 
-  function userReward(address user, Pool pool, Coin coin) internal view virtual returns (uint256) {
-    return DemoFightStorage.state().userReward[user][pool][coin];
+  function userReward(address user) internal view virtual returns (uint256) {
+    return DemoFightStorage.state().userReward[user][Pool.AAVE][Coin.USDT];
   }
 }
 
 contract DemoFightFacet is KnightGetters, ExternalCalls, DemoFightGetters, MetaModifiers {
   using DemoFightStorage for DemoFightStorage.State;
 
-  function battleWonBy(
-    address user, 
-    Pool pool, 
-    Coin coin, 
-    uint256 reward)
-  public
-  //onlyAdmin
-  {
-    require(reward <= currentYield(pool, coin), 
+  function battleWonBy(address user, uint256 reward) public {
+    require(reward <= currentYield(), 
       "DemoFightFacet: Can't assign reward bigger than the current yield");
-    DemoFightStorage.state().userReward[user][pool][coin] += reward;
-    DemoFightStorage.state().lockedYield[pool][coin] += reward;
-    emit NewWinner(user, reward, pool, coin);
+    DemoFightStorage.state().userReward[user][Pool.AAVE][Coin.USDT] += reward;
+    DemoFightStorage.state().lockedYield[Pool.AAVE][Coin.USDT] += reward;
+    emit NewWinner(user, reward);
   }
 
-  function claimReward(address user, Pool pool, Coin coin) public {
-    uint256 reward = userReward(user, pool, coin);
-    DemoFightStorage.state().lockedYield[pool][coin] -= reward;
-    DemoFightStorage.state().userReward[user][pool][coin] = 0;
-    AAVE().withdraw(address(COIN(coin)), reward, user);
-    emit RewardClaimed(user, reward, pool, coin);
+  function claimReward(address user) public {
+    uint256 reward = userReward(user);
+    DemoFightStorage.state().lockedYield[Pool.AAVE][Coin.USDT] -= reward;
+    DemoFightStorage.state().userReward[user][Pool.AAVE][Coin.USDT] = 0;
+    AAVE().withdraw(address(COIN(Coin.USDT)), reward, user);
+    emit RewardClaimed(user, reward);
   }
 
 //External getters
 
-  function getTotalYield(Pool pool, Coin coin) external view returns(uint256) {
-    return totalYield(pool, coin);
+  function getTotalYield() external view returns(uint256) {
+    return totalYield();
   }
 
-  function getCurrentYield(Pool pool, Coin coin) external view returns(uint256) {
-    return currentYield(pool, coin);
+  function getCurrentYield() external view returns(uint256) {
+    return currentYield();
   }
 
-  function getLockedYield(Pool pool, Coin coin) external view returns(uint256) {
-    return lockedYield(pool, coin);
+  function getLockedYield() external view returns(uint256) {
+    return lockedYield();
   }
 
-  function getStakedByKnights(Pool pool, Coin coin) external view returns(uint256) {
-    return stakedByKnights(pool, coin);
+  function getStakedByKnights() external view returns(uint256) {
+    return stakedByKnights();
   }
 
-  function getUserReward(address user, Pool pool, Coin coin) external view returns(uint256) {
-    return userReward(user, pool, coin);
+  function getUserReward(address user) external view returns(uint256) {
+    return userReward(user);
   }
 
-  function getYieldInfo(Pool pool, Coin coin)
+  function getYieldInfo()
     external
     view
     returns(uint256, uint256, uint256, uint256)
   {
     return(
-      currentYield(pool, coin),
-      totalYield(pool, coin),
-      lockedYield(pool, coin),
-      stakedByKnights(pool, coin)
+      currentYield(),
+      totalYield(),
+      lockedYield(),
+      stakedByKnights()
     );
   }
   
 //Events
 
-  event NewWinner(address user, uint256 reward, Pool pool, Coin coin);
-  event RewardClaimed(address user, uint256 reward, Pool pool, Coin coin);
+  event NewWinner(address user, uint256 reward);
+  event RewardClaimed(address user, uint256 reward);
 }
 
 library DemoFightStorage {

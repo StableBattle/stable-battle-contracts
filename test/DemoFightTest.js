@@ -87,7 +87,7 @@ describe('DemoFightFacetTest', async function () {
 
       await USDT[i].mint(knightPrice.USDT)
       await USDT[i].approve(SBD.Address, knightPrice.USDT)
-      console.log(await USDT[i].allowance(user[i].address, SBD.Address))
+    //console.log(await USDT[i].allowance(user[i].address, SBD.Address))
       await KnightFacet[i].mintKnight(2, 2)
       
     //await USDC[i].mint(knightPrice.USDC)
@@ -100,68 +100,68 @@ describe('DemoFightFacetTest', async function () {
     knightId[0] = eventsKnightMinted[0].args.knightId
     knightId[1] = eventsKnightMinted[1].args.knightId
     knightId[2] = eventsKnightMinted[2].args.knightId
-    console.log("---------------------");
+  //console.log("---------------------");
   })
 
   it('Should show correct stake values', async () => {
-    let totalYield = await SBD.DemoFightFacet.getTotalYield(Pool.AAVE, Coin.USDT);
-    let stakedByKnights = await SBD.DemoFightFacet.getStakedByKnights(Pool.AAVE, Coin.USDT);
-    preTimeskipReward = await SBD.DemoFightFacet.getCurrentYield(Pool.AAVE, Coin.USDT);
-    console.log("totalYield: ", totalYield);
-    console.log("stakedByKnights: ", stakedByKnights);
-    console.log("currentReward: ", preTimeskipReward);
+    let totalYield = await SBD.DemoFightFacet.getTotalYield();
+    let stakedByKnights = await SBD.DemoFightFacet.getStakedByKnights();
+    preTimeskipReward = await SBD.DemoFightFacet.getCurrentYield();
+  //console.log("totalYield: ", totalYield);
+  //console.log("stakedByKnights: ", stakedByKnights);
+  //console.log("currentReward: ", preTimeskipReward);
     expect(stakedByKnights).to.be.equal(3e9);
     expect(totalYield).to.be.at.least(stakedByKnights);
-    console.log("---------------------");
+  //console.log("---------------------");
   })
 
   it('Should incerase stake as time passes', async () => {
     //0x64 = 10 blocks, 0x3c = 60 seconds
-    console.log("Timeskip 10 blocks, 60 seconds each")
+  //console.log("Timeskip 10 blocks, 60 seconds each")
     await hre.network.provider.send("hardhat_mine", ["0x3e8", "0x3c"]);
-    afterTimeskipReward = await SBD.DemoFightFacet.getCurrentYield(Pool.AAVE, Coin.USDT);
-    console.log("currentYield", afterTimeskipReward);
+    afterTimeskipReward = await SBD.DemoFightFacet.getCurrentYield();
+  //console.log("currentYield", afterTimeskipReward);
     expect(afterTimeskipReward).to.be.above(preTimeskipReward);
-    console.log("---------------------");
+  //console.log("---------------------");
   })
 
   it('Should properly update battle results', async () => {
-    let currentYield = await SBD.DemoFightFacet.getCurrentYield(Pool.AAVE, Coin.USDT);
-    await SBD.DemoFightFacet.battleWonBy(user[0].address, Pool.AAVE, Coin.USDT, currentYield);
-    let lockedYield = await SBD.DemoFightFacet.getLockedYield(Pool.AAVE, Coin.USDT);
-    let userReward = await SBD.DemoFightFacet.getUserReward(user[0].address, Pool.AAVE, Coin.USDT);
-    currentYield = await SBD.DemoFightFacet.getCurrentYield(Pool.AAVE, Coin.USDT);
-    console.log("lockedYield: ", lockedYield);
-    console.log("userReward: ", userReward);
-    console.log("currentYield: ", currentYield);
+    let currentYield = await SBD.DemoFightFacet.getCurrentYield();
+    await SBD.DemoFightFacet.battleWonBy(user[0].address, currentYield);
+    let lockedYield = await SBD.DemoFightFacet.getLockedYield();
+    let userReward = await SBD.DemoFightFacet.getUserReward(user[0].address);
+    currentYield = await SBD.DemoFightFacet.getCurrentYield();
+  //console.log("lockedYield: ", lockedYield);
+  //console.log("userReward: ", userReward);
+  //console.log("currentYield: ", currentYield);
     expect(lockedYield).to.be.at.least(afterTimeskipReward);
     expect(userReward).to.be.equal(lockedYield);
     expect(currentYield).to.at.least(0);
-    console.log("---------------------");
+  //console.log("---------------------");
   })
 
   it('Should be able to claim reward correctly', async () => {
-    let userReward = await SBD.DemoFightFacet.getUserReward(user[0].address, Pool.AAVE, Coin.USDT);
+    let userReward = await SBD.DemoFightFacet.getUserReward(user[0].address);
     let balanceBefore = await USDT[0].balanceOf(user[0].address);
-    await SBD.DemoFightFacet.claimReward(user[0].address, Pool.AAVE, Coin.USDT);
+    await SBD.DemoFightFacet.claimReward(user[0].address);
     let balanceAfter = await USDT[0].balanceOf(user[0].address);
     expect(balanceAfter - balanceBefore).to.be.equal(userReward)
-    let lockedYield = await SBD.DemoFightFacet.getLockedYield(Pool.AAVE, Coin.USDT);
-    userReward = await SBD.DemoFightFacet.getUserReward(user[0].address, Pool.AAVE, Coin.USDT);
-    console.log("lockedYield: ", lockedYield);
-    console.log("userReward: ", userReward);
+    let lockedYield = await SBD.DemoFightFacet.getLockedYield();
+    userReward = await SBD.DemoFightFacet.getUserReward(user[0].address);
+  //console.log("lockedYield: ", lockedYield);
+  //console.log("userReward: ", userReward);
     expect(lockedYield).to.be.equal(0);
     expect(userReward).to.be.equal(0);
-    console.log("---------------------");
+  //console.log("---------------------");
   })
 
   it('Stake should not dip below 3000 USDC after reward claim', async () => {
-    let totalYield = await SBD.DemoFightFacet.getTotalYield(Pool.AAVE, Coin.USDT);
-    let stakedByKnights = await SBD.DemoFightFacet.getStakedByKnights(Pool.AAVE, Coin.USDT);
-    console.log("totalYield: ", totalYield);
-    console.log("stakedByKnights", stakedByKnights);
+    let totalYield = await SBD.DemoFightFacet.getTotalYield();
+    let stakedByKnights = await SBD.DemoFightFacet.getStakedByKnights();
+  //console.log("totalYield: ", totalYield);
+  //console.log("stakedByKnights", stakedByKnights);
     expect(totalYield).to.be.at.least(stakedByKnights);
-    console.log("---------------------");
+  //console.log("---------------------");
   })
 
 })
