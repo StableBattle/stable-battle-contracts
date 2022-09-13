@@ -5,7 +5,7 @@ import * as conf from "./config/sb-init-addresses";
 
 const { getSelectors, FacetCutAction } = require("./libraries/diamond.js");
 
-async function initSBD () {
+export async function initSBD () {
   const { SBD, SBT, SBV } = require("./config/"+hre.network.name+"/main-contracts.ts");
 
   // deploy SBInit
@@ -61,16 +61,14 @@ async function initSBD () {
     }
     
     //Catalog deployment addresses in the config file
-    fs.writeFileSync
-    (
-      "./scripts/config/"+hre.network.name+"/sb-facets.ts",
-      "export const " + FacetName + " = " + facet.address + ";\n",
+    fs.writeFileSync(
+      `./scripts/config/${hre.network.name}/sb-facets.ts`,
+      `export const ${FacetName} = "${facet.address}";` + "\n",
       {flag: "a"}
     )
 
-    fs.writeFileSync
-    (
-      "./scripts/config/"+hre.network.name+"/sb-facets.txt",
+    fs.writeFileSync(
+      `./scripts/config/${hre.network.name}/sb-facets.txt`,
       facet.address + "\n",
       {flag: "a"}
     )

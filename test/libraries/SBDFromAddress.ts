@@ -27,7 +27,7 @@ export interface SBDInterface {
   TreasuryFacet: TreasuryFacet;
 }
 
-export async function SBDFromAddress(SBDAddress: string) : Promise<SBDInterface> {
+export default async function SBDFromAddress(SBDAddress: string) : Promise<SBDInterface> {
   return {
     CutFacet: await hre.ethers.getContractAt('DiamondCutFacet', SBDAddress),
     LoupeFacet: await hre.ethers.getContractAt('DiamondLoupeFacet', SBDAddress),

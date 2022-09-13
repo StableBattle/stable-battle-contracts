@@ -19,12 +19,12 @@ async function deployDummy () {
 
   //Write down deployment parameters
   fs.writeFileSync(
-    './scripts/config/'+hre.network.name+'/dummy-address.ts',
+    `./scripts/config/${hre.network.name}/dummy-address.ts`,
     `export const dummy_address = "${dummy.address}"`,
     { flag: 'w' }
   );
   fs.writeFileSync(
-    './scripts/config/'+hre.network.name+'/dummy-address.txt',
+    `./scripts/config/${hre.network.name}/dummy-address.txt`,
     dummy.address,
     { flag: 'w' }
   );
