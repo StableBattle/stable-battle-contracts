@@ -6,7 +6,7 @@ export interface CoinInterface {
   readonly [index: string]: IPool
 }
 
-export default async function useCoin() : Promise<CoinInterface> {
+export default async function PoolSetup() : Promise<CoinInterface> {
   return {
     AAVE: await hre.ethers.getContractAt("IPool", AAVEAddress[hre.network.name]),
   }

@@ -1,5 +1,5 @@
 import hre from "hardhat";
-import { IERC20Mintable, IERC20Mintable__factory } from "../../typechain-types";
+import { IERC20Mintable } from "../../typechain-types";
 import {
   USDT as USDTAddress,
   USDC as USDCAddress,
@@ -10,7 +10,7 @@ export interface CoinInterface {
   readonly [index: string]: IERC20Mintable
 }
 
-export default async function useCoin() : Promise<CoinInterface> {
+export default async function CoinSetup() : Promise<CoinInterface> {
   return {
     USDT: await hre.ethers.getContractAt("IERC20Mintable", USDTAddress[hre.network.name]),
     USDC: await hre.ethers.getContractAt("IERC20Mintable", USDCAddress[hre.network.name]),

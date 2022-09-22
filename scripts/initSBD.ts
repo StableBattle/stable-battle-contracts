@@ -5,7 +5,7 @@ import * as conf from "./config/sb-init-addresses";
 
 const { getSelectors, FacetCutAction } = require("./libraries/diamond.js");
 
-export async function initSBD () {
+export default async function initSBD() {
   const { SBD, SBT, SBV } = require("./config/"+hre.network.name+"/main-contracts.ts");
 
   // deploy SBInit
@@ -103,7 +103,7 @@ export async function initSBD () {
   if (!receipt.status) {
     throw Error(`SBD upgrade failed: ${tx.hash}`)
   }
-  console.log('Completed SB diamond cut')
+  console.log('Completed StableBattle diamond cut')
 }
 
 exports.initSBD = initSBD

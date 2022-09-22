@@ -25,6 +25,7 @@ export interface SBDInterface {
   SBVHookFacet: SBVHookFacet;
   TournamentFacet: TournamentFacet;
   TreasuryFacet: TreasuryFacet;
+  Address: string
 }
 
 export default async function SBDFromAddress(SBDAddress: string) : Promise<SBDInterface> {
@@ -39,6 +40,7 @@ export default async function SBDFromAddress(SBDAddress: string) : Promise<SBDIn
     KnightFacet: await hre.ethers.getContractAt('KnightFacet', SBDAddress),
     TournamentFacet: await hre.ethers.getContractAt('TournamentFacet', SBDAddress),
     TreasuryFacet: await hre.ethers.getContractAt('TreasuryFacet', SBDAddress),
-    SBVHookFacet: await hre.ethers.getContractAt('SBVHookFacet', SBDAddress)
+    SBVHookFacet: await hre.ethers.getContractAt('SBVHookFacet', SBDAddress),
+    Address: SBDAddress
   }
 }

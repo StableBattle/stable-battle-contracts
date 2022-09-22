@@ -2,7 +2,7 @@ import hre from "hardhat";
 import "@nomiclabs/hardhat-ethers";
 import * as fs from "fs";
 
-import { initSBD } from "./initSBD";
+import initSBD from "./initSBD";
 
 export default async function deployStableBattle() : 
   Promise<[string, string, string, number]>
@@ -17,9 +17,7 @@ export default async function deployStableBattle() :
 // Deploy DiamondCut
   console.log("Deploying DiamondCut");
   // deploy DiamondCutFacet
-console.log("pook");
   const DiamondCutFacet = await hre.ethers.getContractFactory("DiamondCutFacet");
-console.log("pook");
   const diamondCutFacet = await DiamondCutFacet.deploy({gasLimit: 3000000});
   await diamondCutFacet.deployed();
   console.log('DiamondCutFacet deployed:', diamondCutFacet.address);
@@ -62,7 +60,7 @@ console.log("pook");
   await SBV.deployed();
   console.log('StableBattle Villages deployed:', SBV.address);
   
-  // write their addresses in the config file
+  // write their addresses in the config files
   fs.writeFileSync(
     `./scripts/config/${hre.network.name}/main-contracts.ts`,
     `export const SBD = "${SBD.address}"
@@ -80,7 +78,7 @@ ${SBV.address}`,
   );
 
   //initialize StableBattle Diamond
-  initSBD();
+  await initSBD();
 
   //remember deploy block for tests that rely on block.timestamp/block.number calculation
   const predeployBlock = await hre.ethers.provider.getBlock("latest");

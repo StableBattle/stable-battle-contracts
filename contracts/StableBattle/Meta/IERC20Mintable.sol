@@ -5,4 +5,5 @@ import { IERC20Base } from "@solidstate/contracts/token/ERC20/base/IERC20Base.so
 
 interface IERC20Mintable is IERC20Base {
   function mint(address account, uint256 amount) external;
+  function decimals() external view returns(uint8);
 }
