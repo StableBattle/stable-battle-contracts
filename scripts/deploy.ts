@@ -4,9 +4,8 @@ import * as fs from "fs";
 
 import initSBD from "./initSBD";
 
-export default async function deployStableBattle() : 
-  Promise<[string, string, string, number]>
-{
+export default async function deployStableBattle():
+  Promise<[string, string, string, number]> {
   const accounts = await hre.ethers.getSigners();
   const contractOwner = accounts[0];
   //Check that config folder exists for this network & create one if not
@@ -14,11 +13,11 @@ export default async function deployStableBattle() :
     fs.mkdirSync(`./scripts/config/${hre.network.name}/`);
   }
 
-// Deploy DiamondCut
+  // Deploy DiamondCut
   console.log("Deploying DiamondCut");
   // deploy DiamondCutFacet
   const DiamondCutFacet = await hre.ethers.getContractFactory("DiamondCutFacet");
-  const diamondCutFacet = await DiamondCutFacet.deploy({gasLimit: 3000000});
+  const diamondCutFacet = await DiamondCutFacet.deploy({ gasLimit: 3000000 });
   await diamondCutFacet.deployed();
   console.log('DiamondCutFacet deployed:', diamondCutFacet.address);
 
@@ -34,11 +33,11 @@ export default async function deployStableBattle() :
     { flag: 'w' }
   );
 
-//Deploy main contracts entry points
+  //Deploy main contracts entry points
   console.log("Deploying main contracts");
   // deploy StableBattleDiamond
   const StableBattleDiamond = await hre.ethers.getContractFactory('Diamond');
-  const SBD = await StableBattleDiamond.deploy(contractOwner.address, diamondCutFacet.address, {gasLimit: 3000000});
+  const SBD = await StableBattleDiamond.deploy(contractOwner.address, diamondCutFacet.address, { gasLimit: 3000000 });
   await SBD.deployed();
   console.log('StableBattle Diamond deployed:', SBD.address);
 
@@ -59,7 +58,7 @@ export default async function deployStableBattle() :
   const SBV = await SBVProxy.deploy(implementationSBV.address, contractOwner.address);
   await SBV.deployed();
   console.log('StableBattle Villages deployed:', SBV.address);
-  
+
   // write their addresses in the config files
   fs.writeFileSync(
     `./scripts/config/${hre.network.name}/main-contracts.ts`,
@@ -68,9 +67,9 @@ export const SBT = "${SBT.address}"
 export const SBV = "${SBV.address}"`,
     { flag: 'w' }
   );
-  
+
   fs.writeFileSync(
-    `./scripts/config/${hre.network.name}/main-contracts.txt`, 
+    `./scripts/config/${hre.network.name}/main-contracts.txt`,
     `${SBD.address}
 ${SBT.address}
 ${SBV.address}`,
@@ -84,14 +83,14 @@ ${SBV.address}`,
   const predeployBlock = await hre.ethers.provider.getBlock("latest");
 
   console.log('StableBattle deployed!');
-  return[SBD.address, SBT.address, SBV.address, predeployBlock.number];
+  return [SBD.address, SBT.address, SBV.address, predeployBlock.number];
 }
 
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
-deployStableBattle().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+// deployStableBattle().catch((error) => {
+//   console.error(error);
+//   process.exitCode = 1;
+// });
 
-exports.deployStableBattle = deployStableBattle
+// exports.deployStableBattle = deployStableBattle
