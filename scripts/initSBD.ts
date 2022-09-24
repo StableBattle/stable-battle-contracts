@@ -32,6 +32,7 @@ export default async function initSBD() {
     'EtherscanFacet'
   ]
   const cut = []
+  const facetData : { address : string, name: string }[] = []
   //Clear config files if they exist
   if (fs.existsSync("./scripts/config/"+hre.network.name+"/sb-facets.ts")) {
     fs.unlinkSync("./scripts/config/"+hre.network.name+"/sb-facets.ts")
@@ -44,6 +45,7 @@ export default async function initSBD() {
     const Facet = await ethers.getContractFactory(FacetName)
     const facet = await Facet.deploy({gasLimit: 5000000})
     await facet.deployed()
+    facetData.push({ address: facet.address, name: FacetName });
     console.log(`${FacetName} deployed: ${facet.address}`)
     if (FacetName === 'ItemsFacet') {
       cut.push({
@@ -104,6 +106,8 @@ export default async function initSBD() {
     throw Error(`SBD upgrade failed: ${tx.hash}`)
   }
   console.log('Completed StableBattle diamond cut')
+
+  return {facets: facetData, address: diamondInit.address};
 }
 
 exports.initSBD = initSBD

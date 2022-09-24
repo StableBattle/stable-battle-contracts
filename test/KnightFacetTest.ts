@@ -1,46 +1,39 @@
 import hre from "hardhat";
 import { expect } from "chai";
+import "@nomicfoundation/hardhat-chai-matchers";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
-import deployStableBattle from "../scripts/deploy";
 
-import { COIN, POOL } from "./libraries/coinsAndPools";
+import { COIN, CoinInterface, POOL } from "./libraries/DataStructures";
 import SBFixture, { SBFixtureInterface } from "./libraries/SBFixture";
-import CoinSetup, { CoinInterface } from "./libraries/CoinSetup";
-import SBDFromAddress from "./libraries/SBDFromAddress";
+import CoinSetup from "./libraries/CoinSetup";
 
 describe('KnightFacetTest', async function () {
-  let SB: SBFixtureInterface;
-  let Coin: CoinInterface;
-  let SBDAddress : string;
-  let SBTAddress : string;
-  let SBVAddress : string;
-  let Diamond;
-  let SBT;
-  let SBV;
+
+  let SB : SBFixtureInterface;
+  let Coin : CoinInterface;
+  let mints = 0;
 
   before(async () => {
-    await deployStableBattle();
-    Diamond = await SBDFromAddress(SBDAddress)
-    SBT = await hre.ethers.getContractAt("ISBT", SBTAddress)
-    SBV = await hre.ethers.getContractAt("ISBV", SBVAddress)
+    SB = await loadFixture(SBFixture);
+    Coin = await loadFixture(CoinSetup);
   })
 
   it('knight price should be correct', async () => {
-    expect(SB.knightPrice.TEST).to.be.equal(await SB.Diamond.KnightFacet.getKnightPrice(1));
+    expect(SB.knightPrice.TEST).to.equal(await SB.Diamond.KnightFacet.getKnightPrice(1));
 
-    expect(SB.knightPrice.USDT).to.be.equal(await SB.Diamond.KnightFacet.getKnightPrice(2));
+    expect(SB.knightPrice.USDT).to.equal(await SB.Diamond.KnightFacet.getKnightPrice(2));
 
-    expect(SB.knightPrice.USDC).to.be.equal(await SB.Diamond.KnightFacet.getKnightPrice(3));
+    expect(SB.knightPrice.USDC).to.equal(await SB.Diamond.KnightFacet.getKnightPrice(3));
   })
 
   it('check that USDT work alright', async () => {
     for (const [coinName, coinNumber] of Object.entries(COIN)) {
-      if (coinNumber >= 2) {
+      if (coinNumber == 2) {
         let price = SB.knightPrice[coinName]
         let balance_before = await Coin[coinName].balanceOf(SB.owner.address)
         await Coin[coinName].mint(SB.owner.address, price)
         let balance_after = await Coin[coinName].balanceOf(SB.owner.address)
-        expect(balance_after.sub(balance_before)).to.be.equal(price)
+        expect(balance_after.sub(balance_before)).to.equal(price)
         await Coin[coinName].approve(SB.Diamond.Address, price)
         let allowance = await Coin[coinName].allowance(SB.owner.address, SB.Diamond.Address)
         expect(allowance).to.equal(price)
@@ -53,16 +46,14 @@ describe('KnightFacetTest', async function () {
   //mintKnight(2, 3) = mint AAVE USDC
 
   it('should mint a knight correctly for all valid combinations of Pool and Coin', async () => {
-    let mints = 0;
     for(const [poolName, poolNumber] of Object.entries(POOL)) {
       for(const [coinName, coinNumber] of Object.entries(COIN)) {
         if (await SB.Diamond.KnightFacet.getPoolAndCoinCompatibility(poolNumber, coinNumber) && 
-            poolNumber > 1 && coinNumber > 1)
+            poolNumber == 2 && coinNumber == 2)
         {
-          let eventCount = (coinNumber - 2) + (poolNumber - 2) * mints;
           await SB.Diamond.KnightFacet.mintKnight(poolNumber, coinNumber);
           let eventsKnightMinted = await SB.Diamond.KnightFacet.queryFilter(SB.Diamond.KnightFacet.filters.KnightMinted());
-          let [knightId, knightOwner, knightPool, KnightCoin] = eventsKnightMinted[eventCount].args
+          let [knightId, knightOwner, knightPool, KnightCoin] = eventsKnightMinted[mints].args
           expect(knightOwner).to.equal(SB.owner.address)
           expect(knightPool).to.equal(poolNumber)
           expect(KnightCoin).to.equal(coinNumber)
@@ -79,11 +70,10 @@ describe('KnightFacetTest', async function () {
   })
 
   it('should burn a knight correctly for all valid combinations of Pool and Coin', async () => {
-    let mints = 0;
     for(const [poolName, poolNumber] of Object.entries(POOL)) {
       for(const [coinName, coinNumber] of Object.entries(COIN)) {
         if (await SB.Diamond.KnightFacet.getPoolAndCoinCompatibility(poolNumber, coinNumber) && 
-            poolNumber > 1 && coinNumber > 1)
+            poolNumber == 2 && coinNumber == 2)
         {
           let eventCount = (coinNumber - 2) + (poolNumber - 2) * mints;
           let eventsKnightMinted = await SB.Diamond.KnightFacet.queryFilter(SB.Diamond.KnightFacet.filters.KnightMinted())

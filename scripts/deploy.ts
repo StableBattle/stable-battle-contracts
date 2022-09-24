@@ -3,6 +3,7 @@ import "@nomiclabs/hardhat-ethers";
 import * as fs from "fs";
 
 import initSBD from "./initSBD";
+import verify from "./verify";
 
 export default async function deployStableBattle():
   Promise<[string, string, string, number]> {
@@ -46,7 +47,7 @@ export default async function deployStableBattle():
   const SBTImplementation = await hre.ethers.getContractFactory('SBTImplementation');
   const implementationSBT = await SBTImplementation.deploy();
   await implementationSBT.deployed();
-  const SBT = await SBTProxy.deploy(implementationSBT.address, contractOwner.address);
+  const SBT = await SBTProxy.deploy(implementationSBT.address, contractOwner.address, SBD.address);
   await SBT.deployed();
   console.log('StableBattle Token deployed:', SBT.address);
 
@@ -55,7 +56,7 @@ export default async function deployStableBattle():
   const SBVImplementation = await hre.ethers.getContractFactory('SBVImplementation');
   const implementationSBV = await SBVImplementation.deploy();
   await implementationSBV.deployed();
-  const SBV = await SBVProxy.deploy(implementationSBV.address, contractOwner.address);
+  const SBV = await SBVProxy.deploy(implementationSBV.address, contractOwner.address, SBD.address);
   await SBV.deployed();
   console.log('StableBattle Villages deployed:', SBV.address);
 
@@ -77,20 +78,40 @@ ${SBV.address}`,
   );
 
   //initialize StableBattle Diamond
-  await initSBD();
+  const initData = await initSBD()
+  const facetData = [...[{address: diamondCutFacet.address, name: "DiamondCutFacet"}], ...(initData.facets)];
 
   //remember deploy block for tests that rely on block.timestamp/block.number calculation
   const predeployBlock = await hre.ethers.provider.getBlock("latest");
 
   console.log('StableBattle deployed!');
+  if (hre.network.name != "hardhat") { 
+    console.log("Verifying StableBattle:");
+  
+    console.log("  Diamond");
+    await verify(SBD.address, [contractOwner.address, diamondCutFacet.address]);
+
+    console.log("  Facets:");
+    for (const facet of facetData) {
+      console.log(`    ${facet.name}`)
+      await verify(facet.address);
+    }
+
+    console.log("  Initializer");
+    await verify(initData.address);
+
+    console.log("  Token:");
+    console.log("    Proxy");
+    await verify(SBT.address, [implementationSBT.address, contractOwner.address, SBD.address]);
+    console.log("    Implementation");
+    await verify(implementationSBT.address);
+
+    console.log("  Vilages:");
+    console.log("    Proxy");
+    await verify(SBV.address, [implementationSBV.address, contractOwner.address, SBD.address]);
+    console.log("    Implementation");
+    await verify(implementationSBV.address);
+  }
+
   return [SBD.address, SBT.address, SBV.address, predeployBlock.number];
 }
-
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
-// deployStableBattle().catch((error) => {
-//   console.error(error);
-//   process.exitCode = 1;
-// });
-
-// exports.deployStableBattle = deployStableBattle
