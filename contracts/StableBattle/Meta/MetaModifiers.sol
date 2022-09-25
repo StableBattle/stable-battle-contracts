@@ -2,7 +2,8 @@
 
 pragma solidity ^0.8.0;
 
-import { Pool, Coin, MetaStorage } from "./MetaStorage.sol";
+import { Coin, Pool } from "../Meta/DataStructures.sol";
+import { MetaStorage } from "../Meta/MetaStorage.sol";
 
 abstract contract MetaModifiers {
   using MetaStorage for MetaStorage.State;

@@ -1,24 +1,21 @@
 // SPDX-License-Identifier: Unlicensed
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.10;
 
-import { IERC165 } from "../../shared/interfaces/IERC165.sol";
-import { IERC173 } from "../../shared/interfaces/IERC173.sol";
-import { LibDiamond } from "../../shared/libraries/LibDiamond.sol";
-import { IDiamondCut } from "../../shared/interfaces/IDiamondCut.sol";
-import { IDiamondLoupe } from "../../shared/interfaces/IDiamondLoupe.sol";
-import { IERC1155 } from "../../shared/interfaces/IERC1155.sol";
+import { LibDiamond } from "../Diamond/LibDiamond.sol";
+import { Coin, Pool } from "../Meta/DataStructures.sol";
 
-import { ClanStorage, Clan } from "../Clan/ClanStorage.sol";
-import { KnightStorage, Knight} from "../Knight/KnightStorage.sol";
-import { Coin, Pool, MetaStorage } from "../Meta/MetaStorage.sol";
-import { TournamentStorage } from "../Tournament/TournamentStorage.sol";
-import { TreasuryStorage } from "../Treasury/TreasuryStorage.sol";
-import { GearStorage, gearSlot } from "../Gear/GearStorage.sol";
+import { ClanStorage } from "../Facets/Clan/ClanStorage.sol";
+import { KnightStorage } from "../Facets/Knight/KnightStorage.sol";
+import { MetaStorage } from "../Meta/MetaStorage.sol";
+import { TournamentStorage } from "../Facets/Tournament/TournamentStorage.sol";
+import { TreasuryStorage } from "../Facets/Treasury/TreasuryStorage.sol";
+import { GearStorage } from "../Facets/Gear/GearStorage.sol";
 
-import { IERC20 } from "../../shared/interfaces/IERC20.sol";
-import { ISBV } from "../../shared/interfaces/ISBV.sol";
-import { IPool } from "@aave/core-v3/contracts/interfaces/IPool.sol";
-import { ISBT } from "../../shared/interfaces/ISBT.sol";
+import { IERC1155 } from "@openzeppelin/contracts/interfaces/IERC1155.sol";
+import { IERC165 } from "@openzeppelin/contracts/interfaces/IERC165.sol";
+import { IERC173 } from "../Facets/Ownership/IERC173.sol";
+import { IDiamondCut } from "../Facets/DiamondCut/IDiamondCut.sol";
+import { IDiamondLoupe } from "../Facets/DiamondLoupe/IDiamondLoupe.sol";
 
 contract SBInit {
   using ClanStorage for ClanStorage.State;
@@ -35,6 +32,10 @@ contract SBInit {
     address USDC_address;
     address EURS_address;
 
+    address AAVE_USDT_address;
+    address AAVE_USDC_address;
+    address AAVE_EURS_address;
+
     address SBT_address;
     address SBV_address;
   }
@@ -49,17 +50,22 @@ contract SBInit {
     ds.supportedInterfaces[type(IERC1155).interfaceId] = true;
 
   // Assign Meta Storage
+    // Token & Villages
+      MetaStorage.state().SBT = _args.SBT_address;
+      MetaStorage.state().SBV = _args.SBV_address;
     //AAVE
     MetaStorage.state().pool[Pool.AAVE] = _args.AAVE_address;
     
     MetaStorage.state().coin[Coin.USDT] = _args.USDT_address;
     MetaStorage.state().coin[Coin.USDC] = _args.USDC_address;
     MetaStorage.state().coin[Coin.EURS] = _args.EURS_address;
-    MetaStorage.state().SBT = _args.SBT_address;
-    MetaStorage.state().SBV = _args.SBV_address;
+    
+    MetaStorage.state().acoin[Coin.USDT] = _args.AAVE_USDT_address;
+    MetaStorage.state().acoin[Coin.USDC] = _args.AAVE_USDC_address;
+    MetaStorage.state().acoin[Coin.EURS] = _args.AAVE_EURS_address;
+
     MetaStorage.state().compatible[Pool.AAVE][Coin.USDT] = true;
     MetaStorage.state().compatible[Pool.AAVE][Coin.USDC] = true;
-    MetaStorage.state().compatible[Pool.AAVE][Coin.EURS] = true;
     //Test
     MetaStorage.state().compatible[Pool.TEST][Coin.TEST] = true;
 
@@ -68,7 +74,6 @@ contract SBInit {
     ///for better compactibility with adding new item types in the future
     KnightStorage.state().knightPrice[Coin.USDT] = 1e9;
     KnightStorage.state().knightPrice[Coin.USDC] = 1e9;
-    KnightStorage.state().knightPrice[Coin.EURS] = 1e9;
 
   //Gear Facet
     //all items in [256, 1e12) are gear

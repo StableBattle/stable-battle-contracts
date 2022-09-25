@@ -2,19 +2,7 @@
 
 pragma solidity ^0.8.0;
 
-enum Pool {
-  NONE,
-  TEST,
-  AAVE
-}
-
-enum Coin {
-  NONE,
-  TEST,
-  USDT,
-  USDC,
-  EURS
-}
+import { Coin, Pool } from "../Meta/DataStructures.sol";
 
 library MetaStorage {
   struct State {
@@ -25,6 +13,7 @@ library MetaStorage {
 
     mapping (Pool => address) pool;
     mapping (Coin => address) coin;
+    mapping (Coin => address) acoin;
     mapping (Pool => mapping (Coin => bool)) compatible;
   }
 
