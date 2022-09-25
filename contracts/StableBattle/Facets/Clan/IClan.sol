@@ -2,9 +2,10 @@
 pragma solidity ^0.8.0;
 
 import { Proposal } from "../../Meta/DataStructures.sol";
-import { IClanInternal } from "../Clan/IClanInternal.sol";
+import { IClanEvents } from "../Clan/IClanEvents.sol";
+import { IClanErrors } from "../Clan/IClanErrors.sol";
 
-interface IClan is IClanInternal{
+interface IClan is IClanEvents, IClanErrors {
   function create(uint256 knightId) external returns(uint clanId);
 
   function abandon(uint256 clanId) external;

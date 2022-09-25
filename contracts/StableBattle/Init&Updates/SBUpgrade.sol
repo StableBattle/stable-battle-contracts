@@ -4,8 +4,6 @@ pragma solidity ^0.8.0;
 import { TreasuryStorage } from "../Facets/Treasury/TreasuryStorage.sol";
 
 contract SBUpgrade {
-  using TreasuryStorage for TreasuryStorage.State;
-
   struct Args {
     uint8 castleTax;
     uint256 rewardPerBlock;

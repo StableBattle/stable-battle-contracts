@@ -2,9 +2,10 @@
 pragma solidity ^0.8.0;
 
 import { gearSlot } from "../../Meta/DataStructures.sol";
-import { IGearInternal } from "../Gear/IGearInternal.sol";
+import { IGearEvents } from "../Gear/IGearEvents.sol";
+import { IGearErrors } from "../Gear/IGearErrors.sol";
 
-interface IGear is IGearInternal {
+interface IGear is IGearEvents, IGearErrors {
 
 //Gear Facet
   function createGear(uint id, gearSlot slot, string memory name) external;

@@ -18,13 +18,6 @@ import { IDiamondCut } from "../Facets/DiamondCut/IDiamondCut.sol";
 import { IDiamondLoupe } from "../Facets/DiamondLoupe/IDiamondLoupe.sol";
 
 contract SBInit {
-  using ClanStorage for ClanStorage.State;
-  using KnightStorage for KnightStorage.State;
-  using MetaStorage for MetaStorage.State;
-  using TournamentStorage for TournamentStorage.State;
-  using TreasuryStorage for TreasuryStorage.State;
-  using GearStorage for GearStorage.State;
-
   struct Args {
     address AAVE_address;
 

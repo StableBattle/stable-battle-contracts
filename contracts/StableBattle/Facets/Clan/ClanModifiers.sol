@@ -4,17 +4,17 @@ pragma solidity ^0.8.0;
 
 import { Clan, Proposal } from "../../Meta/DataStructures.sol";
 import { ClanStorage } from "../Clan/ClanStorage.sol";
+import { IClanErrors } from "../Clan/IClanErrors.sol";
 
-abstract contract ClanModifiers {
-  using ClanStorage for ClanStorage.State;
-  
+abstract contract ClanModifiers is IClanErrors {
   function clanExists(uint256 clanId) internal view returns(bool) {
     return ClanStorage.state().clan[clanId].leader != 0;
   }
 
   modifier ifClanExists(uint256 clanId) {
-    require(clanExists(clanId),
-      "ClanModifiers: This clan doesn't exist");
+    if(!clanExists(clanId)) {
+      revert ClanModifiers_ClanDoesntExist(clanId);
+    }
     _;
   }
 
@@ -23,8 +23,9 @@ abstract contract ClanModifiers {
   }
 
   modifier ifIsClanLeader(uint256 knightId, uint clanId) {
-    require(isClanLeader(knightId, clanId), 
-      "ClanModifiers: This knight is doesn't own this clan");
+    if(!isClanLeader(knightId, clanId)) {
+      revert ClanModifiers_KnightIsNotClanLeader(knightId, clanId);
+    }
     _;
   }
 
@@ -33,8 +34,9 @@ abstract contract ClanModifiers {
   }
 
   modifier ifIsNotClanLeader(uint256 knightId, uint clanId) {
-    require(isNotClanLeader(knightId, clanId), 
-      "ClanModifiers: This knight is already owns this clan");
+    if(!isNotClanLeader(knightId, clanId)) {
+      revert ClanModifiers_KnightIsClanLeader(knightId, clanId);
+    }
     _;
   }
 }

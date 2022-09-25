@@ -2,10 +2,11 @@
 pragma solidity ^0.8.0;
 
 import { Coin, Pool, Knight } from "../../Meta/DataStructures.sol";
-import { IKnightInternal } from "../Knight/IKnightInternal.sol";
+import { IKnightEvents } from "../Knight/IKnightEvents.sol";
+import { IKnightErrors } from "../Knight/IKnightErrors.sol";
 import { Knight } from "../Knight/KnightStorage.sol";
 
-interface IKnight is IKnightInternal {
+interface IKnight is IKnightEvents, IKnightErrors {
 
 //Knight Facet
   function mintKnight(Pool p, Coin c) external;

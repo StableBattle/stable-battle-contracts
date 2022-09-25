@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import { IDemoFightInternal } from "./IDemoFightInternal.sol";
+import { IDemoFightEvents } from "./IDemoFightEvents.sol";
+import { IDemoFightErrors } from "./IDemoFightErrors.sol";
 
-interface IDemoFight is IDemoFightInternal {
+interface IDemoFight is IDemoFightEvents, IDemoFightErrors {
 
   function battleWonBy(address user, uint256 reward) external;
 

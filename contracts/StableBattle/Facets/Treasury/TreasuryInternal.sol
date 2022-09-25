@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.10;
 
-import { ITreasuryInternal } from "../Treasury/ITreasuryInternal.sol";
+import { ITreasuryEvents } from "../Treasury/ITreasuryEvents.sol";
+import { ITreasuryErrors } from "../Treasury/ITreasuryErrors.sol";
 import { TreasuryStorage } from "../Treasury/TreasuryStorage.sol";
 import { TreasuryGetters } from "../Treasury/TreasuryGetters.sol";
 import { KnightGetters } from "../Knight/KnightGetters.sol";
@@ -10,15 +11,14 @@ import { TournamentGetters } from "../Tournament/TournamentGetters.sol";
 import { ExternalCalls } from "../../Meta/ExternalCalls.sol";
 
 contract TreasuryInternal is
-  ITreasuryInternal,
+  ITreasuryEvents,
+  ITreasuryErrors,
   TreasuryGetters,
   ClanGetters,
   TournamentGetters,
   KnightGetters,
   ExternalCalls
 {
-  using TreasuryStorage for TreasuryStorage.State;
-
   function _claimRewards() internal {
     uint256 villageAmount = _villageAmount();
 
@@ -41,7 +41,9 @@ contract TreasuryInternal is
   }
 
   function _setTax(uint8 tax) internal {
-    require(tax <= 90, "TreasuryFacet: Can't set a tax above 90%");
+    if (tax > 90) {
+      revert TreasuryFacet_CantSetTaxAboveThreshold(90);
+    }
     TreasuryStorage.state().castleTax = tax;
     emit NewTaxSet(tax);
   }

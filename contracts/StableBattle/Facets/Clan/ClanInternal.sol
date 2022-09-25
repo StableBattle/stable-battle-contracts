@@ -3,24 +3,23 @@ pragma solidity ^0.8.0;
 
 import { Clan, Proposal } from "../../Meta/DataStructures.sol";
 
-import { IClanInternal } from "../Clan/IClanInternal.sol";
+import { IClanEvents } from "../Clan/IClanEvents.sol";
 import { ClanStorage } from "../Clan/ClanStorage.sol";
 import { KnightStorage } from "../Knight/KnightStorage.sol";
 import { KnightModifiers } from "../Knight/KnightModifiers.sol";
 import { ClanGetters } from "../Clan/ClanGetters.sol";
 import { ClanModifiers } from "../Clan/ClanModifiers.sol";
 import { ItemsModifiers } from "../Items/ItemsModifiers.sol";
+import { IClanErrors } from "../Clan/IClanErrors.sol";
 
 abstract contract ClanInternal is 
-  IClanInternal, 
+  IClanEvents,
+  IClanErrors,
   ClanGetters, 
   KnightModifiers, 
   ClanModifiers,
   ItemsModifiers 
 {
-  using ClanStorage for ClanStorage.State;
-  using KnightStorage for KnightStorage.State;
-
 //Creation, Abandonment and Leader Change
   function _create(uint256 knightId)
     internal
@@ -69,7 +68,13 @@ abstract contract ClanInternal is
     internal
     ifClanExists(clanId)
   {
-    require(_stakeOf(benefactor, clanId) >= amount, "ClanFacet: Not enough SBT staked");
+    uint256 stake = _stakeOf(benefactor, clanId);
+    if (stake < amount) {
+      revert ClanFacet_InsufficientStake({
+        stakeAvalible: stake,
+        withdrawAmount: amount
+      });
+    }
     
     ClanStorage.state().stake[benefactor][clanId] -= amount;
     ClanStorage.state().clan[clanId].stake -= amount;
@@ -101,8 +106,11 @@ abstract contract ClanInternal is
     ifIsKnight(knightId)
     ifClanExists(clanId)
   {
-    require(!clanExists(_knightClan(knightId)) || notInClan(knightId),
-      "ClanFacet: Leave your clan before joining a new one");
+    uint256 knightClan = _knightClan(knightId);
+    if (clanExists(knightClan)) {
+      revert ClanFacet_CantJoinAlreadyInClan(knightId, knightClan);
+    }
+
     if (_proposal(knightId, clanId) == Proposal.INVITE) {
       //join clan immediately if invited
       ClanStorage.state().clan[clanId].totalMembers++;

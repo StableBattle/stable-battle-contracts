@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import { gearSlot } from "../../Meta/DataStructures.sol";
 
-import { IGearInternal } from "../Gear/IGearInternal.sol";
+import { IGearEvents } from "../Gear/IGearEvents.sol";
 import { GearStorage } from "../Gear/GearStorage.sol";
 import { GearGetters } from "../Gear/GearGetters.sol";
 import { GearModifiers } from "../Gear/GearModifiers.sol";
@@ -12,15 +12,13 @@ import { KnightModifiers } from "../Knight/KnightModifiers.sol";
 import { ERC1155BaseInternal } from "@solidstate/contracts/token/ERC1155/base/ERC1155BaseInternal.sol";
 
 contract GearInternal is 
-  IGearInternal,
+  IGearEvents,
   ERC1155BaseInternal,
   GearGetters,
   GearModifiers,
   KnightModifiers,
   ItemsModifiers
 {
-  using GearStorage for GearStorage.State;
-
   //Add a transfer hook to unequip sold or lended item
   //Or forbid selling equipped items
   //Preferably the former

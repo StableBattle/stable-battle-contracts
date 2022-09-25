@@ -6,9 +6,9 @@ import { TreasuryModifiers } from "../Treasury/TreasuryModifiers.sol";
 import { TreasuryGetters } from "../Treasury/TreasuryGetters.sol";
 import { TreasuryInternal } from "../Treasury/TreasuryInternal.sol";
 
-contract TreasuryFacet is ITreasury, 
-                          TreasuryModifiers, 
-                          TreasuryGetters, 
+contract TreasuryFacet is ITreasury,
+                          TreasuryModifiers,
+                          TreasuryGetters,
                           TreasuryInternal
 {
   function claimRewards() external {
@@ -20,7 +20,6 @@ contract TreasuryFacet is ITreasury,
   }
 
 //Public Getters
-
   function getCastleTax() public view returns(uint) {
     return _castleTax();
   }

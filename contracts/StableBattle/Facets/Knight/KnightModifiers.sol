@@ -3,15 +3,18 @@
 pragma solidity ^0.8.0;
 
 import { KnightGetters } from "./KnightGetters.sol";
+import { IKnightErrors } from "./IKnightErrors.sol";
 
-abstract contract KnightModifiers is KnightGetters {
+abstract contract KnightModifiers is KnightGetters, IKnightErrors {
+
   function isKnight(uint256 knightId) internal view virtual returns(bool) {
     return knightId >= type(uint256).max - _knightsMintedTotal();
   }
   
   modifier ifIsKnight(uint256 knightId) {
-    require(isKnight(knightId),
-      "KnightModifiers: Wrong id for knight");
+    if(!isKnight(knightId)) {
+      revert KnightModifiers_WrongKnightId(knightId);
+    }
     _;
   }
 
@@ -20,8 +23,9 @@ abstract contract KnightModifiers is KnightGetters {
   }
 
   modifier ifIsInAnyClan(uint256 knightId) {
-    require(isInAnyClan(knightId),
-      "KnightModifiers: This knight don't belong to any clan");
+    if(!isInAnyClan(knightId)) {
+      revert KnightModifiers_KnightNotInAnyClan(knightId);
+    }
     _;
   }
 
@@ -30,8 +34,14 @@ abstract contract KnightModifiers is KnightGetters {
   }
 
   modifier ifIsInClan(uint256 knightId, uint256 clanId) {
-    require(isInClan(knightId, clanId),
-      "KnightModifiers: This knight don't belong to this clan");
+    uint256 knightClan = _knightClan(knightId);
+    if(knightClan != clanId) {
+      revert KnightModifiers_KnightNotInClan({
+        knightId: knightId,
+        wrongClanId: clanId,
+        correctClanId: knightClan
+      });
+    }
     _;
   }
 
@@ -40,8 +50,10 @@ abstract contract KnightModifiers is KnightGetters {
   }
 
   modifier ifNotInClan(uint256 knightId) {
-    require(notInClan(knightId),
-      "KnightModifiers: This knight already belongs to some clan");
+    uint256 clanId = _knightClan(knightId);
+    if (clanId != 0) {
+      revert KnightModifiers_KnightInSomeClan(knightId, clanId);
+    }
     _;
   }
 }

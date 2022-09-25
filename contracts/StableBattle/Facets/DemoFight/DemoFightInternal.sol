@@ -3,14 +3,17 @@ pragma solidity ^0.8.0;
 
 import { Pool, Coin } from "../../Meta/DataStructures.sol";
 
-import { IDemoFightInternal } from "./IDemoFightInternal.sol";
+import { IDemoFightEvents } from "./IDemoFightEvents.sol";
+import { IDemoFightErrors } from "./IDemoFightErrors.sol";
 import { DemoFightGetters } from "./DemoFightGetters.sol";
 import { DemoFightStorage } from "./DemoFightStorage.sol";
 
-abstract contract DemoFightInternal is IDemoFightInternal, DemoFightGetters {
+abstract contract DemoFightInternal is IDemoFightEvents, IDemoFightErrors, DemoFightGetters {
   function _battleWonBy(address user, uint256 reward) public {
-    require(reward <= _currentYield(), 
-      "DemoFightFacet: Can't assign reward bigger than the current yield");
+    uint256 currentYield = _currentYield();
+    if(reward > currentYield) {
+      revert DemoFightFacet_RewardBiggerThanYield(reward, currentYield);
+    }
     DemoFightStorage.state().userReward[user][Pool.AAVE][Coin.USDT] += reward;
     DemoFightStorage.state().lockedYield[Pool.AAVE][Coin.USDT] += reward;
     emit NewWinner(user, reward);

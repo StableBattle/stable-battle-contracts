@@ -4,7 +4,8 @@ pragma solidity ^0.8.10;
 
 import { Coin, Pool, Knight } from "../../Meta/DataStructures.sol";
 
-import { IKnightInternal } from "../Knight/IKnightInternal.sol";
+import { IKnightEvents } from "../Knight/IKnightEvents.sol";
+import { IKnightErrors } from "../Knight/IKnightErrors.sol";
 import { KnightStorage } from "../Knight/KnightStorage.sol";
 import { KnightGetters } from "../Knight/KnightGetters.sol";
 import { KnightModifiers } from "../Knight/KnightModifiers.sol";
@@ -13,15 +14,13 @@ import { MetaModifiers } from "../../Meta/MetaModifiers.sol";
 import { ExternalCalls } from "../../Meta/ExternalCalls.sol";
 
 abstract contract KnightInternal is
-  IKnightInternal,
+  IKnightEvents,
   KnightGetters,
   KnightModifiers,
   ClanInternal,
   MetaModifiers, 
   ExternalCalls
 {
-  using KnightStorage for KnightStorage.State;
-
   function _mintKnight(Pool p, Coin c)
     internal
     ifIsValidCoin(c)
@@ -30,8 +29,14 @@ abstract contract KnightInternal is
   {
     if (c != Coin.TEST) {
       // Check if user gave its approval for enough COIN
-      require(COIN(c).allowance(msg.sender, address(this)) >= _knightPrice(c), 
-        "KnightFacet: User allocated insufficient amount of funds");
+      uint256 allowance = COIN(c).allowance(msg.sender, address(this));
+      uint256 knightPrice = _knightPrice(c);
+      if (allowance < knightPrice) {
+        revert KnightFacet_InsufficientFunds({
+          avalible: allowance,
+          required: knightPrice
+        });
+      }
       // Transfer enough COIN from user to contract
       COIN(c).transferFrom(msg.sender, address(this), _knightPrice(c));
       // Approve COIN for Pool

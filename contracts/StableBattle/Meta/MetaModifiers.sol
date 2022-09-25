@@ -7,59 +7,82 @@ import { MetaStorage } from "../Meta/MetaStorage.sol";
 
 abstract contract MetaModifiers {
   using MetaStorage for MetaStorage.State;
+
+  error InvalidPool(Pool pool);
   
   function isVaildPool(Pool pool) internal view virtual returns(bool) {
     return pool != Pool.NONE ? true : false;
   }
 
   modifier ifIsVaildPool(Pool pool) {
-    require(isVaildPool(pool), "MetaModifiers: This is not a valid pool");
+    if (!isVaildPool(pool)) {
+      revert InvalidPool(pool);
+    }
     _;
   }
+
+  error InvalidCoin(Coin coin);
 
   function isValidCoin(Coin coin) internal view virtual returns(bool) {
     return coin != Coin.NONE ? true : false;
   }
 
   modifier ifIsValidCoin(Coin coin) {
-    require(isValidCoin(coin), "MetaModifiers: This is not a valid coin");
+    if (!isValidCoin(coin)) {
+      revert InvalidCoin(coin);
+    }
     _;
   }
 
-  function isCompatible(Pool p, Coin c) internal view virtual returns(bool) {
-    return MetaStorage.state().compatible[p][c];
+  error IncompatiblePoolCoin(Pool pool, Coin coin);
+
+  function isCompatible(Pool pool, Coin coin) internal view virtual returns(bool) {
+    return MetaStorage.state().compatible[pool][coin];
   }
 
-  modifier ifIsCompatible(Pool p, Coin c) {
-    require(isCompatible(p, c), "MetaModifiers: This token is incompatible with this pool");
+  modifier ifIsCompatible(Pool pool, Coin coin) {
+    if (!isCompatible(pool, coin)) {
+      revert IncompatiblePoolCoin(pool, coin);
+    }
     _;
   }
+
+  error CallerNotSBV();
 
   function isSBV() internal view virtual returns(bool) {
     return MetaStorage.state().SBV == msg.sender;
   }
 
   modifier ifIsSBV {
-    require(isSBV(), "MetaModifiers: can only be called by SBV");
+    if (!isSBV()) {
+      revert CallerNotSBV();
+    }
     _;
   }
+
+  error CallerNotSBT();
 
   function isSBT() internal view virtual returns(bool) {
     return MetaStorage.state().SBT == msg.sender;
   }
 
   modifier ifIsSBT {
-    require(isSBT(),
-      "MetaModifiers: can only be called by SBT");
+    if (!isSBT()) {
+      revert CallerNotSBT();
+    }
     _;
   }
+
+  error CallerNotSBD();
 
   function isSBD() internal view virtual returns(bool) {
     return address(this) == msg.sender;
   }
 
   modifier ifIsSBD {
-    require(isSBD(), "MetaModifiers: can only be called by StableBattle");
+    if (!isSBD()) {
+      revert CallerNotSBD();
+    }
     _;
   }
 }

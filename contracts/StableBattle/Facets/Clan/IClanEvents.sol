@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-interface IClanInternal {
+interface IClanEvents {
   event ClanCreated(uint clanId, uint256 knightId);
   event ClanAbandoned(uint clanId, uint256 knightId);
   event ClanLeaderChanged(uint clanId, uint256 knightId);

@@ -8,7 +8,7 @@ abstract contract TreasuryGetters {
   function _castleTax() internal view virtual returns(uint) {
     return TreasuryStorage.state().castleTax;
   }
-  
+
   function _lastBlock() internal view virtual returns(uint) {
     return TreasuryStorage.state().lastBlock;
   }

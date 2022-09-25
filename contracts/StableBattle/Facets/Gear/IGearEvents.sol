@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import { gearSlot } from "../../Meta/DataStructures.sol";
 
-interface IGearInternal {
+interface IGearEvents {
   event GearCreated(uint256 id, gearSlot slot, string name);
   event GearMinted(uint256 id, uint256 amount, address to);
   event GearBurned(uint256 id, uint256 amount, address from);
