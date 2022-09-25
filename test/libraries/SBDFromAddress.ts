@@ -1,6 +1,7 @@
 import hre from "hardhat";
 import { 
   ClanFacet,
+  DemoFightFacet,
   DiamondCutFacet,
   DiamondLoupeFacet,
   EtherscanFacet,
@@ -25,6 +26,7 @@ export interface SBDInterface {
   SBVHookFacet: SBVHookFacet;
   TournamentFacet: TournamentFacet;
   TreasuryFacet: TreasuryFacet;
+  DemoFightFacet: DemoFightFacet;
   Address: string
 }
 
@@ -41,6 +43,7 @@ export default async function SBDFromAddress(SBDAddress: string) : Promise<SBDIn
     TournamentFacet: await hre.ethers.getContractAt('TournamentFacet', SBDAddress),
     TreasuryFacet: await hre.ethers.getContractAt('TreasuryFacet', SBDAddress),
     SBVHookFacet: await hre.ethers.getContractAt('SBVHookFacet', SBDAddress),
+    DemoFightFacet: await hre.ethers.getContractAt('DemoFightFacet', SBDAddress),
     Address: SBDAddress
   }
 }
