@@ -38,13 +38,13 @@ contract Diamond {
             ds.slot := position
         }
         // get facet from function selector
-        address facet = ds.facetAddressAndSelectorPosition[msg.sig].facetAddress;
+        address facet = address(bytes20(ds.facets[msg.sig]));
         require(facet != address(0), "Diamond: Function does not exist");
         // Execute external function from facet using delegatecall and return any value.
         assembly {
             // copy function selector and any arguments
             calldatacopy(0, 0, calldatasize())
-             // execute function call using the facet
+            // execute function call using the facet
             let result := delegatecall(gas(), facet, 0, calldatasize(), 0, 0)
             // get any return value
             returndatacopy(0, 0, returndatasize())
