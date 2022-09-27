@@ -1,0 +1,1 @@
+export const dummy_address = "0x7DA3B304A600f9238FABFe657356B4bC0dfA7f62"

@@ -1,0 +1,39 @@
+{
+  "description": "A StableBattle Knight NFT", 
+  "external_url": "https://stablebattle.io/",
+  "animation_url": "https://ipfs.io/ipfs/QmYTmYr33CgVKsY97jc97534M6Qkwmc4eGWtmy1YgfPnNY?filename=sec512.mp4",
+  "name": "Stablus Battlus IV",
+  "attributes": [
+    {
+      "trait_type": "Level",
+      "value": 8,
+      "max_value": 10
+    },
+    {
+      "trait_type": "Health",
+      "value": 78,
+      "max_value": 100
+    },
+    {
+      "trait_type": "Clan",
+      "value": "Stable Knights"
+    },
+    {
+      "trait_type": "Pool",
+      "value": "AAVE"
+    },
+    {
+      "trait_type": "Coin",
+      "value": "USDT"
+    },
+    {
+      "trait_type": "Value",
+      "value": "$1000"
+    },
+    {
+      "display_type": "date", 
+      "trait_type": "knighthood", 
+      "value": 1659976579
+    }
+  ]
+}

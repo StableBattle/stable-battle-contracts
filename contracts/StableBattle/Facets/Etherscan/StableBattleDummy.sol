@@ -13,6 +13,7 @@ import { TreasuryFacetDummy } from "../Treasury/TreasuryFacetDummy.sol";
 import { GearFacetDummy } from "../Gear/GearFacetDummy.sol";
 import { EtherscanFacetDummy } from "../Etherscan/EtherscanFacetDummy.sol";
 import { DemoFightFacetDummy } from "../DemoFight/DemoFightFacetDummy.sol";
+import { DebugFacetDummy } from "../Debug/DebugFacetDummy.sol";
 
 /*
   This is a dummy implementation of StableBattle contracts.
@@ -34,7 +35,8 @@ contract StableBattleDummy is
   TreasuryFacetDummy,
   GearFacetDummy,
   EtherscanFacetDummy,
-  DemoFightFacetDummy
+  DemoFightFacetDummy,
+  DebugFacetDummy
 {
   function supportsInterface(bytes4 interfaceId)
     external
