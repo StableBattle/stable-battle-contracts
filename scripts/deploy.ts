@@ -81,6 +81,10 @@ ${SBV.address}`,
   const initData = await initSBD()
   const facetData = [...[{address: diamondCutFacet.address, name: "DiamondCutFacet"}], ...(initData.facets)];
 
+  const Dummy = await hre.ethers.getContractFactory("StableBattleDummy");
+  const dummy = await Dummy.deploy({ gasLimit: 3000000 });
+  await dummy.deployed();
+
   //remember deploy block for tests that rely on block.timestamp/block.number calculation
   const predeployBlock = await hre.ethers.provider.getBlock("latest");
 
@@ -100,6 +104,9 @@ ${SBV.address}`,
     console.log("  Initializer");
     await verify(initData.address);
 
+    console.log("  Dummy");
+    await verify(dummy.address);
+
     console.log("  Token:");
     console.log("    Proxy");
     await verify(SBT.address, [implementationSBT.address, contractOwner.address, SBD.address]);
@@ -113,5 +120,15 @@ ${SBV.address}`,
     await verify(implementationSBV.address);
   }
 
+  const EtherscanDummy = await hre.ethers.getContractAt("EtherscanFacet", SBD.address);
+  EtherscanDummy.setDummyImplementation(dummy.address);
+
   return [SBD.address, SBT.address, SBV.address, predeployBlock.number];
 }
+
+// We recommend this pattern to be able to use async/await everywhere
+// and properly handle errors.
+deployStableBattle().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});
