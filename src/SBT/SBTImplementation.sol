@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import { SolidStateERC20 } from "@solidstate/contracts/token/ERC20/SolidStateERC20.sol";
+import { SolidStateERC20 } from "solidstate-solidity/token/ERC20/SolidStateERC20.sol";
 import { ISBT } from "./ISBT.sol";
 import { SBTGetters } from "./SBTGetters.sol";
-import { OwnableInternal } from "@solidstate/contracts/access/ownable/OwnableInternal.sol";
+import { OwnableInternal } from "solidstate-solidity/access/ownable/OwnableInternal.sol";
 
 contract SBTImplementation is 
   ISBT, 

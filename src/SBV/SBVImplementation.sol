@@ -2,9 +2,9 @@
 pragma solidity ^0.8.0;
 
 import { ISBV } from "./ISBV.sol";
-import { SolidStateERC721 } from "@solidstate/contracts/token/ERC721/SolidStateERC721.sol";
+import { SolidStateERC721 } from "solidstate-solidity/token/ERC721/SolidStateERC721.sol";
 import { SBVGetters } from "./SBVGetters.sol";
-import { OwnableInternal } from "@solidstate/contracts/access/ownable/OwnableInternal.sol";
+import { OwnableInternal } from "solidstate-solidity/access/ownable/OwnableInternal.sol";
 
 contract SBVImplementation is 
   ISBV,

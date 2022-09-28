@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import { Pool, Coin } from "../../Meta/DataStructures.sol";
 
-import { ERC1155MetadataInternal } from "@solidstate/contracts/token/ERC1155/metadata/ERC1155MetadataInternal.sol";
+import { ERC1155MetadataInternal } from "solidstate-solidity/token/ERC1155/metadata/ERC1155MetadataInternal.sol";
 import { MetaStorage } from "../../Meta/MetaStorage.sol";
 import { KnightStorage } from "../Knight/KnightStorage.sol";
 import { ClanStorage } from "../Clan/ClanStorage.sol";

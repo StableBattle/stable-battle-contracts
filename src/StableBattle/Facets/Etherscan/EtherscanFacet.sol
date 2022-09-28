@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import { StorageSlot } from "@openzeppelin/contracts/utils/StorageSlot.sol";
-import { Address } from "@openzeppelin/contracts/utils/Address.sol";
+import { StorageSlot } from "openzeppelin-contracts/utils/StorageSlot.sol";
+import { Address } from "openzeppelin-contracts/utils/Address.sol";
 import { LibDiamond } from "../../Diamond/LibDiamond.sol";
 
 contract EtherscanFacet {

@@ -9,7 +9,7 @@ import { GearGetters } from "../Gear/GearGetters.sol";
 import { GearModifiers } from "../Gear/GearModifiers.sol";
 import { ItemsModifiers } from "../Items/ItemsModifiers.sol";
 import { KnightModifiers } from "../Knight/KnightModifiers.sol";
-import { ERC1155BaseInternal } from "@solidstate/contracts/token/ERC1155/base/ERC1155BaseInternal.sol";
+import { ERC1155BaseInternal } from "solidstate-solidity/token/ERC1155/base/ERC1155BaseInternal.sol";
 
 contract GearInternal is 
   IGearEvents,

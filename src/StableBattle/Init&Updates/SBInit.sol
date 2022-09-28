@@ -11,8 +11,8 @@ import { TournamentStorage } from "../Facets/Tournament/TournamentStorage.sol";
 import { TreasuryStorage } from "../Facets/Treasury/TreasuryStorage.sol";
 import { GearStorage } from "../Facets/Gear/GearStorage.sol";
 
-import { IERC1155 } from "@openzeppelin/contracts/interfaces/IERC1155.sol";
-import { IERC165 } from "@openzeppelin/contracts/interfaces/IERC165.sol";
+import { IERC1155 } from "openzeppelin-contracts//interfaces/IERC1155.sol";
+import { IERC165 } from "openzeppelin-contracts//interfaces/IERC165.sol";
 import { IERC173 } from "../Facets/Ownership/IERC173.sol";
 import { IDiamondCut } from "../Facets/DiamondCut/IDiamondCut.sol";
 import { IDiamondLoupe } from "../Facets/DiamondLoupe/IDiamondLoupe.sol";

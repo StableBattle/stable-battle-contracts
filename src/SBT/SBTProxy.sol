@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import { UpgradeableProxyOwnable } from "@solidstate/contracts/proxy/upgradeable/UpgradeableProxyOwnable.sol";
-import { ERC20MetadataStorage } from "@solidstate/contracts/token/ERC20/metadata/ERC20MetadataStorage.sol";
+import { UpgradeableProxyOwnable } from "solidstate-solidity/proxy/upgradeable/UpgradeableProxyOwnable.sol";
+import { ERC20MetadataStorage } from "solidstate-solidity/token/ERC20/metadata/ERC20MetadataStorage.sol";
 import { SBTStorage } from "./SBTStorage.sol";
 
 contract SBTProxy is UpgradeableProxyOwnable {

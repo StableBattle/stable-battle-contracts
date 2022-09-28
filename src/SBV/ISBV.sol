@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import { ISolidStateERC721 } from "@solidstate/contracts/token/ERC721/ISolidStateERC721.sol";
+import { ISolidStateERC721 } from "solidstate-solidity/token/ERC721/ISolidStateERC721.sol";
 import { ISBVInternal } from "./ISBVInternal.sol";
 
 interface ISBV is ISolidStateERC721, ISBVInternal {

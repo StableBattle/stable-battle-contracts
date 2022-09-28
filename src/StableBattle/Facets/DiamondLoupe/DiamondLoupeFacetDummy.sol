@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import { IDiamondLoupe } from "./IDiamondLoupe.sol";
-import { IERC165 } from "@openzeppelin/contracts/interfaces/IERC165.sol";
+import { IERC165 } from "openzeppelin-contracts/interfaces/IERC165.sol";
 
 contract DiamondLoupeFacetDummy is IDiamondLoupe, IERC165 {
     function facets() external override view returns (Facet[] memory facets_) {}

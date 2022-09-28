@@ -4,8 +4,8 @@ pragma solidity ^0.8.10;
 
 import { Coin, Pool } from "../Meta/DataStructures.sol";
 
-import { IERC20 } from "@solidstate/contracts/token/ERC20/IERC20.sol";
-import { IPool } from "@aave/core-v3/contracts/interfaces/IPool.sol";
+import { IERC20 } from "openzeppelin-contracts/token/ERC20/IERC20.sol";
+import { IPool } from "aave-v3-core/interfaces/IPool.sol";
 import { ISBT } from "../../SBT/ISBT.sol";
 import { ISBV } from "../../SBV/ISBV.sol";
 

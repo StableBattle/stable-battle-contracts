@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import { ERC1155BaseInternal } from "@solidstate/contracts/token/ERC1155/base/ERC1155BaseInternal.sol";
+import { ERC1155BaseInternal } from "solidstate-solidity/token/ERC1155/base/ERC1155BaseInternal.sol";
 import { IItemsErrors } from "../Items/IItemsErrors.sol";
 
 abstract contract ItemsModifiers is ERC1155BaseInternal, IItemsErrors {
