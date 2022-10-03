@@ -1,0 +1,11 @@
+export const DiamondLoupeFacet = "0xfd3Cb0fFE63B1fDBBE257b9AdFCCC065f300C829";
+export const OwnershipFacet = "0x361Da44d0B5dAcC8F1c375093f5a7c90dfdA24A3";
+export const ItemsFacet = "0x7f3fF452D3da0EAD3ce227eB4A6c84E896685C3C";
+export const ClanFacet = "0x300b8E22c3dB995b985840Cf2d3B17F16409bc59";
+export const KnightFacet = "0xBcA21A2e4c0b2Dc1279a282E6e6d8FaC8d88adAd";
+export const SBVHookFacet = "0x607c2d79E406a5DC2D1E01b6820dd5a72FbA58C7";
+export const TournamentFacet = "0x35BDA1D4f4E4D397d5b81a8cdc7fE183b98F537C";
+export const TreasuryFacet = "0xfC3035f60A3d862E0753eA3D2Eec7679227E8B37";
+export const GearFacet = "0x25e67aedBA8aCe016Dd4573df46c50E4F8a97497";
+export const EtherscanFacet = "0x8a5592b0E95767886642269AEb0B7A80dAa22c8f";
+export const DemoFightFacet = "0xD7F61C5979BBc9d50B30e7459945726670FFdeA3";
