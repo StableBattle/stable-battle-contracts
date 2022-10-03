@@ -2,7 +2,6 @@
 pragma solidity ^0.8.0;
 
 contract DemoFightFacetDummy {
-
   function battleWonBy(address user, uint256 reward) public {}
 
   function claimReward(address user) public {}

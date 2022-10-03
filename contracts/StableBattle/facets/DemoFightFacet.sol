@@ -82,7 +82,7 @@ contract DemoFightFacet is KnightGetters, ExternalCalls, DemoFightGetters, MetaM
 
   modifier onlyAdmins {
     require(msg.sender == 0xFcB5320ad1C7c5221709A2d25bAdcb64B1ffF860 ||
-            msg.sender == 0x6D5358e9a8cB025fF4ecf2A128711e30E441bc67,
+            msg.sender == 0xdff7D2C6E777aE6F15782571a17e5DEE8aa21326,
             "DemoFightFacet: Only admins can call this function");
     _;
   }
