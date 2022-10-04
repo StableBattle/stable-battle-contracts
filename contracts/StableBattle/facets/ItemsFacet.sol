@@ -7,6 +7,8 @@ import { IItems } from "../../shared/interfaces/IItems.sol";
 import { ItemsStorage as ITEM } from "../storage/ItemsStorage.sol";
 //import { KnightStorage as KNHT, knightType } from "../storage/KnightStorage.sol";
 
+import { LibDiamond } from "../../shared/libraries/LibDiamond.sol";
+
 contract ItemsFacet is ERC1155Supply, IItems {
   using ITEM for ITEM.State;
 //using KNHT for KNHT.State;
@@ -37,5 +39,10 @@ contract ItemsFacet is ERC1155Supply, IItems {
       }
     }
     */
+  }
+
+  function setURI(string memory uri) external {
+    LibDiamond.enforceIsContractOwner();
+    ITEM.state()._uri = uri;
   }
 }

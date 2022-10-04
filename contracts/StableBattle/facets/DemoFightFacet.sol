@@ -29,7 +29,7 @@ abstract contract DemoFightGetters is KnightGetters, ExternalCalls {
 contract DemoFightFacet is KnightGetters, ExternalCalls, DemoFightGetters, MetaModifiers {
   using DemoFightStorage for DemoFightStorage.State;
 
-  function battleWonBy(address user, uint256 reward) public onlyAdmins {
+  function battleWonBy(address user, uint256 reward) public ifIsAdmin {
     require(reward <= currentYield(), 
       "DemoFightFacet: Can't assign reward bigger than the current yield");
     DemoFightStorage.state().userReward[user][Pool.AAVE][Coin.USDT] += reward;
@@ -78,13 +78,6 @@ contract DemoFightFacet is KnightGetters, ExternalCalls, DemoFightGetters, MetaM
       lockedYield(),
       stakedByKnights()
     );
-  }
-
-  modifier onlyAdmins {
-    require(msg.sender == 0xFcB5320ad1C7c5221709A2d25bAdcb64B1ffF860 ||
-            msg.sender == 0xdff7D2C6E777aE6F15782571a17e5DEE8aa21326,
-            "DemoFightFacet: Only admins can call this function");
-    _;
   }
   
 //Events

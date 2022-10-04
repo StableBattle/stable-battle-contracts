@@ -14,6 +14,7 @@ import { TreasuryFacetDummy } from "../dummies/TreasuryFacetDummy.sol";
 import { GearFacetDummy } from "../dummies/GearFacetDummy.sol";
 import { EtherscanFacetDummy } from "../dummies/EtherscanFacetDummy.sol";
 import { DemoFightFacetDummy } from "../dummies/DemoFightFacetDummy.sol";
+import { AdminFacetDummy } from "../dummies/AdminFacetDummy.sol";
 
 /*
   This is a dummy implementation of StableBattle contracts.
@@ -33,4 +34,5 @@ contract StableBattleDummy is DiamondCutFacetDummy,
                               TreasuryFacetDummy,
                               GearFacetDummy,
                               EtherscanFacetDummy,
-                              DemoFightFacetDummy {}
+                              DemoFightFacetDummy,
+                              AdminFacetDummy {}

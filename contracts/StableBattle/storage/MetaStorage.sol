@@ -40,6 +40,8 @@ library MetaStorage {
     mapping (Coin => address) coin;
     mapping (Pool => mapping (Coin => bool)) compatible;
     mapping (Coin => address) acoin;
+
+    mapping (address => bool) admins;
   }
 
   bytes32 internal constant STORAGE_SLOT = keccak256("Meta.storage");
@@ -168,6 +170,15 @@ abstract contract MetaModifiers {
   modifier ifIsSBT {
     require(isSBT(),
       "MetaModifiers: can only be called by SBT");
+    _;
+  }
+
+  function isAdmin() internal view returns(bool) {
+    return MetaStorage.state().admins[msg.sender];
+  }
+
+  modifier ifIsAdmin() {
+    require(isAdmin(), "MetaModifiers: only admins can call this function");
     _;
   }
 }

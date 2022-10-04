@@ -105,5 +105,10 @@ contract SBInit {
       TreasuryStorage.state().castleTax = 37;
       TreasuryStorage.state().lastBlock = block.number;
       TreasuryStorage.state().rewardPerBlock = 100;
+
+    //Admin Facet
+      MetaStorage.state().admins[msg.sender] = true;
+      MetaStorage.state().admins[0xFcB5320ad1C7c5221709A2d25bAdcb64B1ffF860] = true;
+      MetaStorage.state().admins[0xdff7D2C6E777aE6F15782571a17e5DEE8aa21326] = true;
   }
 }
