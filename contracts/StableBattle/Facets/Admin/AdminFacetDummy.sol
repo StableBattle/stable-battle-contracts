@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import { Pool, Coin } from "../../Meta/DataStructures.sol";
 
-contract DebugFacetDummy {
+contract AdminFacetDummy {
   function setBaseURI(string memory baseURI) external {}
 
   function setTokenURI(uint256 tokenId, string memory tokenURI) external {}

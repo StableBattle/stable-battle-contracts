@@ -8,7 +8,7 @@ import { MetaStorage } from "../../Meta/MetaStorage.sol";
 import { KnightStorage } from "../Knight/KnightStorage.sol";
 import { ClanStorage } from "../Clan/ClanStorage.sol";
 
-contract DebugFacet is ERC1155MetadataInternal {
+contract AdminFacet is ERC1155MetadataInternal {
   function debugSetBaseURI(string memory baseURI) external {
     _setBaseURI(baseURI);
   }
