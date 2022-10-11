@@ -23,3 +23,8 @@ struct Clan {
   uint totalMembers;
   uint level;
 }
+
+enum Role {
+  NONE,
+  ADMIN
+}
