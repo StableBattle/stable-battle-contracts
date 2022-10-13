@@ -31,7 +31,8 @@ export default async function initSBD() {
     'GearFacet',
     'EtherscanFacet',
     'DemoFightFacet',
-    'DebugFacet'
+    'AdminFacet',
+    'AccessControlFacet'
   ]
   const cut = []
   const facetData : { address : string, name: string }[] = []

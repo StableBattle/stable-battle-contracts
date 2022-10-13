@@ -3,10 +3,11 @@ pragma solidity ^0.8.0;
 
 import { IDemoFight } from "./IDemoFight.sol";
 import { DemoFightInternal } from "./DemoFightInternal.sol";
+import { AccessControlModifiers } from "../AccessControl/AccessControlModifiers.sol";
 
-contract DemoFightFacet is IDemoFight, DemoFightInternal {
+contract DemoFightFacet is IDemoFight, DemoFightInternal, AccessControlModifiers {
 
-  function battleWonBy(address user, uint256 reward) public {
+  function battleWonBy(address user, uint256 reward) public ifCallerIsAdmin {
     _battleWonBy(user, reward);
   }
 
