@@ -81,10 +81,6 @@ ${SBV.address}`,
   const initData = await initSBD()
   const facetData = [...[{address: diamondCutFacet.address, name: "DiamondCutFacet"}], ...(initData.facets)];
 
-  const Dummy = await hre.ethers.getContractFactory("StableBattleDummy");
-  const dummy = await Dummy.deploy({ gasLimit: 3000000 });
-  await dummy.deployed();
-
   console.log('StableBattle deployed!');
   if (hre.network.name != "hardhat") {
     console.log("Verifying StableBattle:");
@@ -113,7 +109,7 @@ ${SBV.address}`,
     console.log("    Implementation");
     await verify(implementationSBV.address);
   }
-  
+
   await deployDummy(SBD.address);
 }
 
