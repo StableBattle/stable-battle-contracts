@@ -2,8 +2,7 @@ import { ethers } from "hardhat";
 import hre from "hardhat";
 import * as fs from "fs";
 import * as conf from "./config/sb-init-addresses";
-
-const { getSelectors, FacetCutAction } = require("./libraries/diamond.js");
+import { DiamondSelectors, FacetCutAction } from "./libraries/diamond";
 
 export default async function initSBD() {
   const { SBD, SBT, SBV } = require("./config/"+hre.network.name+"/main-contracts.ts");
@@ -55,13 +54,13 @@ export default async function initSBD() {
         facetAddress: facet.address,
         action: FacetCutAction.Add,
         //Remove excessive supportsInterface(bytes4) inherited from OZ ERC1155
-        functionSelectors: getSelectors(facet).remove(['0x01ffc9a7'])
+        functionSelectors: (new DiamondSelectors(facet)).removeBySignature(['supportsInterface']).selectors
       })
     } else {
       cut.push({
         facetAddress: facet.address,
         action: FacetCutAction.Add,
-        functionSelectors: getSelectors(facet)
+        functionSelectors: (new DiamondSelectors(facet)).selectors
       })
     }
     
@@ -85,7 +84,7 @@ export default async function initSBD() {
   const diamondCut = await ethers.getContractAt('IDiamondCut', SBD)
   let tx
   let receipt
-
+  
   let args = {
     AAVE_address: conf.AAVE[hre.network.name],
 

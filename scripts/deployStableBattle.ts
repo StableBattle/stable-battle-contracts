@@ -3,9 +3,10 @@ import "@nomiclabs/hardhat-ethers";
 import * as fs from "fs";
 
 import initSBD from "./initSBD";
+import verify from "./verify";
+import deployDummy from "./deployDummy";
 
-export default async function deploy():
-  Promise<[string, string, string, number]> {
+export default async function deployStableBattle() {
   const accounts = await hre.ethers.getSigners();
   const contractOwner = accounts[0];
   //Check that config folder exists for this network & create one if not
@@ -77,12 +78,48 @@ ${SBV.address}`,
   );
 
   //initialize StableBattle Diamond
-  await initSBD()
+  const initData = await initSBD()
+  const facetData = [...[{address: diamondCutFacet.address, name: "DiamondCutFacet"}], ...(initData.facets)];
 
-  //remember deploy block for tests that rely on block.timestamp/block.number calculation
-  const predeployBlock = await hre.ethers.provider.getBlock("latest");
+  const Dummy = await hre.ethers.getContractFactory("StableBattleDummy");
+  const dummy = await Dummy.deploy({ gasLimit: 3000000 });
+  await dummy.deployed();
 
   console.log('StableBattle deployed!');
+  if (hre.network.name != "hardhat") {
+    console.log("Verifying StableBattle:");
+  
+    console.log("  Diamond");
+    await verify(SBD.address, [contractOwner.address, diamondCutFacet.address]);
 
-  return [SBD.address, SBT.address, SBV.address, predeployBlock.number];
+    console.log("  Facets:");
+    for (const facet of facetData) {
+      console.log(`    ${facet.name}`)
+      await verify(facet.address);
+    }
+
+    console.log("  Initializer");
+    await verify(initData.address);
+
+    console.log("  Token:");
+    console.log("    Proxy");
+    await verify(SBT.address, [implementationSBT.address, contractOwner.address, SBD.address]);
+    console.log("    Implementation");
+    await verify(implementationSBT.address);
+
+    console.log("  Vilages:");
+    console.log("    Proxy");
+    await verify(SBV.address, [implementationSBV.address, contractOwner.address, SBD.address]);
+    console.log("    Implementation");
+    await verify(implementationSBV.address);
+  }
+  
+  await deployDummy(SBD.address);
 }
+
+// We recommend this pattern to be able to use async/await everywhere
+// and properly handle errors.
+deployStableBattle().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});

@@ -1,9 +1,9 @@
 import hre from "hardhat";
-import deployStableBattle from "../../scripts/deploy";
 import SBDFromAddress, { SBDInterface } from "./SBDFromAddress";
 import { ISBT, ISBV } from "../../typechain-types";
 import { BigNumber } from "ethers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import deploy from "../../scripts/deploy";
 
 
 export interface knightPriceInterface {
@@ -30,7 +30,7 @@ export interface SBFixtureInterface {
 export default async function SBFixture() : Promise<SBFixtureInterface> {
   const users = await hre.ethers.getSigners();
   const owner = users[0];
-  const [SBDAddress, SBTAddress, SBVAddress, predeployBlock] = await deployStableBattle();
+  const [SBDAddress, SBTAddress, SBVAddress, predeployBlock] = await deploy();
   return {
     Diamond : await SBDFromAddress(SBDAddress),
     SBT : await hre.ethers.getContractAt("ISBT", SBTAddress),
