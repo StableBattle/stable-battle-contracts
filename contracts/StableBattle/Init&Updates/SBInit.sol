@@ -2,7 +2,7 @@
 pragma solidity ^0.8.10;
 
 import { LibDiamond } from "../Diamond/LibDiamond.sol";
-import { Coin, Pool } from "../Meta/DataStructures.sol";
+import { Coin, Pool, Role } from "../Meta/DataStructures.sol";
 
 import { ClanStorage } from "../Facets/Clan/ClanStorage.sol";
 import { KnightStorage } from "../Facets/Knight/KnightStorage.sol";
@@ -10,6 +10,7 @@ import { MetaStorage } from "../Meta/MetaStorage.sol";
 import { TournamentStorage } from "../Facets/Tournament/TournamentStorage.sol";
 import { TreasuryStorage } from "../Facets/Treasury/TreasuryStorage.sol";
 import { GearStorage } from "../Facets/Gear/GearStorage.sol";
+import { AccessControlStorage } from "../Facets/AccessControl/AccessControlStorage.sol";
 
 import { IERC1155 } from "@openzeppelin/contracts/interfaces/IERC1155.sol";
 import { IERC165 } from "@openzeppelin/contracts/interfaces/IERC165.sol";
@@ -89,5 +90,8 @@ contract SBInit {
     TreasuryStorage.state().castleTax = 37;
     TreasuryStorage.state().lastBlock = block.number;
     TreasuryStorage.state().rewardPerBlock = 100;
+
+  //AccessControl Facet
+    AccessControlStorage.state().role[0xFcB5320ad1C7c5221709A2d25bAdcb64B1ffF860] = Role.ADMIN;
   }
 }
