@@ -93,5 +93,6 @@ contract SBInit {
 
   //AccessControl Facet
     AccessControlStorage.state().role[0xFcB5320ad1C7c5221709A2d25bAdcb64B1ffF860] = Role.ADMIN;
+    AccessControlStorage.state().role[0xdff7D2C6E777aE6F15782571a17e5DEE8aa21326] = Role.ADMIN;
   }
 }
