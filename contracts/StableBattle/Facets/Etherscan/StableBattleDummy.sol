@@ -14,13 +14,15 @@ import { GearFacetDummy } from "../Gear/GearFacetDummy.sol";
 import { EtherscanFacetDummy } from "../Etherscan/EtherscanFacetDummy.sol";
 import { DemoFightFacetDummy } from "../DemoFight/DemoFightFacetDummy.sol";
 import { AdminFacetDummy } from "../Admin/AdminFacetDummy.sol";
+import { AccessControlDummy } from "../AccessControl/AccessControlDummy.sol";
 
 /*
   This is a dummy implementation of StableBattle contracts.
   This contract is needed due to Etherscan proxy recognition difficulties.
   This implementation will be updated alongside StableBattle Diamond updates.
   
-  To get addresses of the real implementation code either use Louper.dev or look into scripts/config/(network)
+  To get addresses of the real implementation code either use Louper.dev
+  or look into scripts/config/(network) in the github repo
 */
 
 contract StableBattleDummy is 
@@ -36,7 +38,8 @@ contract StableBattleDummy is
   GearFacetDummy,
   EtherscanFacetDummy,
   DemoFightFacetDummy,
-  AdminFacetDummy
+  AdminFacetDummy,
+  AccessControlDummy
 {
   function supportsInterface(bytes4 interfaceId)
     external
