@@ -1,5 +1,5 @@
 import exp from "constants"
-import { IERC20Mintable } from "../../typechain-types"
+import { IERC20Mintable } from "../../../typechain-types"
 
 export interface CoinInterface {
   readonly [index: string]: IERC20Mintable

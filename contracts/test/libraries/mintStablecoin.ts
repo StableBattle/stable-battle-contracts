@@ -1,7 +1,7 @@
 import hre from "hardhat";
 import "@nomiclabs/hardhat-ethers";
-import { IERC20Mintable, IERC20Metadata } from "../../typechain-types";
-import { USDT as USDT_address, USDC as USDC_address, AAVE } from "../../scripts/config/sb-init-addresses";
+import { IERC20Mintable, IERC20Metadata } from "../../../typechain-types";
+import { USDT as USDT_address, USDC as USDC_address, AAVE } from "../../../scripts/config/sb-init-addresses";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
 interface CoinInterface {

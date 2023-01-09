@@ -1,9 +1,9 @@
 import hre from "hardhat";
 import SBDFromAddress, { SBDInterface } from "./SBDFromAddress";
-import { ISBT, ISBV } from "../../typechain-types";
+import { ISBT, ISBV } from "../../../typechain-types";
 import { BigNumber } from "ethers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import deploy from "../../scripts/deploy";
+import deploy from "../../../scripts/deploy";
 
 
 export interface knightPriceInterface {

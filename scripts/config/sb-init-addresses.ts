@@ -41,6 +41,7 @@ export const AUSDT : AddressPerNetwork = {
     return this[testnet];
   }
 }
+
 export const AUSDC : AddressPerNetwork = {
   goerli: "0x1Ee669290939f8a8864497Af3BC83728715265FF",
   mumbai: "0xCdc2854e97798AfDC74BC420BD5060e022D14607",

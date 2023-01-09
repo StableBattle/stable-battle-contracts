@@ -12,7 +12,7 @@ import {
   SBVHookFacet,
   TournamentFacet,
   TreasuryFacet
-} from "../../typechain-types";
+} from "../../../typechain-types";
 
 export interface SBDInterface {
   ClanFacet: ClanFacet;

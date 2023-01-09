@@ -1,13 +1,56 @@
-import { HardhatUserConfig } from "hardhat/config";
+import { HardhatUserConfig, task } from "hardhat/config";
+import * as tdly from "@tenderly/hardhat-tenderly";
 import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-waffle";
-import "@typechain/hardhat";
+import "@nomicfoundation/hardhat-chai-matchers";
+import "hardhat-contract-sizer";
+import "hardhat-abi-exporter";
 import "hardhat-gas-reporter";
+import "@typechain/hardhat";
 import "solidity-coverage";
 import "dotenv/config";
+import "xdeployer";
+
+// Turning off the automatic Tenderly verification
+tdly.setup({ automaticVerifications: false });
+
+task("accounts", "Prints the list of accounts", async (_, hre) => {
+  const accounts = await hre.ethers.getSigners();
+
+  for (const account of accounts) {
+    console.log(account.address);
+  }
+});
+
+task(
+  "balances",
+  "Prints the list of accounts and their balances",
+  async (_, hre) => {
+    const accounts = await hre.ethers.getSigners();
+
+    for (const account of accounts) {
+      console.log(
+        account.address +
+          " " +
+          (await hre.ethers.provider.getBalance(account.address))
+      );
+    }
+  }
+);
 
 const config: HardhatUserConfig = {
-  solidity: "0.8.10",
+  paths: {
+    sources: "./contracts/src",
+  },
+  solidity: {
+    version: "0.8.17",
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 999999,
+      },
+    },
+  },
   networks: {
     hardhat: {
       /*
@@ -36,12 +79,28 @@ const config: HardhatUserConfig = {
     enabled: process.env.REPORT_GAS !== undefined,
     currency: "USD",
   },
+  contractSizer: {
+    alphaSort: true,
+    runOnCompile: true,
+    disambiguatePaths: false,
+    strict: true,
+    only: [],
+    except: [],
+  },
+  abiExporter: {
+    path: "./abis",
+    runOnCompile: true,
+    clear: true,
+    flat: false,
+    only: [],
+    spacing: 2,
+    pretty: true,
+  },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY,
-    /*{
-      mumbai: process.env.POLYGONSCAN_API_KEY,
-      goerli: process.env.ETHERSCAN_API_KEY
-    }*/
+    apiKey: {
+      mumbai: process.env.POLYGONSCAN_API_KEY || "",
+      goerli: process.env.ETHERSCAN_API_KEY || ""
+    }
   }
 };
 

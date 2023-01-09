@@ -1,10 +1,10 @@
 import hre from "hardhat";
-import { IERC20Mintable } from "../../typechain-types";
+import { IERC20Mintable } from "../../../typechain-types";
 import {
   USDT as USDTAddress,
   USDC as USDCAddress,
   EURS as EURSAddress
-} from "../../scripts/config/sb-init-addresses";
+} from "../../../scripts/config/sb-init-addresses";
 
 export interface CoinInterface {
   readonly [index: string]: IERC20Mintable

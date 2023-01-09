@@ -1,0 +1,7 @@
+hardhat/=node_modules/hardhat/
+xdeployer/=node_modules/xdeployer/
+@openzeppelin/=node_modules/@openzeppelin/
+@solidstate/=node_modules/@solidstate/
+@aave/=node_modules/@aave/
+ds-test/=contracts/lib/forge-std/lib/ds-test/src/
+forge-std/=contracts/lib/forge-std/src/
