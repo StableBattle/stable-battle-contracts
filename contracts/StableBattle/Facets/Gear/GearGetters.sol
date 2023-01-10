@@ -2,13 +2,12 @@
 
 pragma solidity ^0.8.0;
 
+import { IGearGetters } from "../Gear/IGear.sol";
 import { gearSlot } from "../../Meta/DataStructures.sol";
 import { GearStorage } from "../Gear/GearStorage.sol";
 import { ERC1155BaseInternal } from "@solidstate/contracts/token/ERC1155/base/ERC1155BaseInternal.sol";
 
 abstract contract GearGetters is ERC1155BaseInternal {
-  using GearStorage for GearStorage.State;
-  
   function _gearSlotOf(uint256 itemId) internal view virtual returns(gearSlot) {
     return GearStorage.state().gearSlot[itemId];
   }
@@ -31,5 +30,27 @@ abstract contract GearGetters is ERC1155BaseInternal {
 
   function _gearEquipable(uint256 itemId) internal view returns(uint256) { 
     return _balanceOf(msg.sender, itemId) - _notEquippable(msg.sender, itemId);
+  }
+}
+
+abstract contract GearGettersExternal is IGearGetters, GearGetters {
+  function getGearSlotOf(uint256 itemId) external view returns(gearSlot) {
+    return _gearSlotOf(itemId);
+  }
+
+  function getGearName(uint256 itemId) external view returns(string memory) {
+    return _gearName(itemId);
+  }
+
+  function getEquipmentInSlot(uint256 knightId, gearSlot slot) external view returns(uint256) {
+    return _equipmentInSlot(knightId, slot);
+  }
+
+  function getGearEquipable(address account, uint256 itemId) external view returns(uint256) {
+    return _gearEquipable(account, itemId);
+  }
+
+  function getGearEquipable(uint256 itemId) external view returns(uint256) { 
+    return _gearEquipable(itemId); 
   }
 }

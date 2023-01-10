@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.10;
 
-import { ITreasuryEvents } from "../Treasury/ITreasuryEvents.sol";
-import { ITreasuryErrors } from "../Treasury/ITreasuryErrors.sol";
+import { ITreasuryEvents, ITreasuryErrors } from "../Treasury/ITreasury.sol";
 import { TreasuryStorage } from "../Treasury/TreasuryStorage.sol";
 import { TreasuryGetters } from "../Treasury/TreasuryGetters.sol";
 import { KnightGetters } from "../Knight/KnightGetters.sol";

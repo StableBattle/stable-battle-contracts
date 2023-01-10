@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 
 import { Clan, Proposal } from "../../Meta/DataStructures.sol";
 import { ClanStorage } from "../Clan/ClanStorage.sol";
-import { IClanErrors } from "../Clan/IClanErrors.sol";
+import { IClanErrors } from "../Clan/IClan.sol";
 
 abstract contract ClanModifiers is IClanErrors {
   function clanExists(uint256 clanId) internal view returns(bool) {

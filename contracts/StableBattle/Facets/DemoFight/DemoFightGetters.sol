@@ -6,6 +6,7 @@ import { Pool, Coin } from "../../Meta/DataStructures.sol";
 import { KnightGetters } from "../Knight/KnightGetters.sol";
 import { ExternalCalls } from "../../Meta/ExternalCalls.sol";
 import { DemoFightStorage } from "./DemoFightStorage.sol";
+import { IDemoFightGetters } from "../DemoFight/IDemoFight.sol";
 
 abstract contract DemoFightGetters is KnightGetters, ExternalCalls {
   function _currentYield() internal view returns(uint256) {
@@ -26,5 +27,40 @@ abstract contract DemoFightGetters is KnightGetters, ExternalCalls {
 
   function _userReward(address user) internal view virtual returns (uint256) {
     return DemoFightStorage.state().userReward[user][Pool.AAVE][Coin.USDT];
+  }
+}
+
+abstract contract DemoFightGettersExternal is IDemoFightGetters, DemoFightGetters {
+  function getTotalYield() external view returns(uint256) {
+    return _totalYield();
+  }
+
+  function getCurrentYield() external view returns(uint256) {
+    return _currentYield();
+  }
+
+  function getLockedYield() external view returns(uint256) {
+    return _lockedYield();
+  }
+
+  function getStakedByKnights() external view returns(uint256) {
+    return _stakedByKnights();
+  }
+
+  function getUserReward(address user) external view returns(uint256) {
+    return _userReward(user);
+  }
+
+  function getYieldInfo()
+    external
+    view
+    returns(uint256, uint256, uint256, uint256)
+  {
+    return(
+      _currentYield(),
+      _totalYield(),
+      _lockedYield(),
+      _stakedByKnights()
+    );
   }
 }

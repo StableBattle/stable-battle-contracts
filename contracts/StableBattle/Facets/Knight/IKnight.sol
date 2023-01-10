@@ -2,18 +2,21 @@
 pragma solidity ^0.8.0;
 
 import { Coin, Pool, Knight } from "../../Meta/DataStructures.sol";
-import { IKnightEvents } from "../Knight/IKnightEvents.sol";
-import { IKnightErrors } from "../Knight/IKnightErrors.sol";
-import { Knight } from "../Knight/KnightStorage.sol";
 
-interface IKnight is IKnightEvents, IKnightErrors {
+interface IKnightEvents {
+  event KnightMinted (uint knightId, address wallet, Pool c, Coin p);
+  event KnightBurned (uint knightId, address wallet, Pool c, Coin p);
+}
 
-//Knight Facet
-  function mintKnight(Pool p, Coin c) external;
+interface IKnightErrors {
+  error KnightFacet_InsufficientFunds(uint256 avalible, uint256 required);
+  error KnightModifiers_WrongKnightId(uint256 wrongId);
+  error KnightModifiers_KnightNotInAnyClan(uint256 knightId);
+  error KnightModifiers_KnightNotInClan(uint256 knightId, uint256 wrongClanId, uint256 correctClanId);
+  error KnightModifiers_KnightInSomeClan(uint256 knightId, uint256 clanId);
+}
 
-  function burnKnight (uint256 knightId) external;
-
-//Knight Getters
+interface IKnightGetters {
   function getKnightInfo(uint256 knightId) external view returns(Knight memory);
 
   function getKnightPool(uint256 knightId) external view returns(Pool);
@@ -53,4 +56,10 @@ interface IKnight is IKnightEvents, IKnightErrors {
   function getTotalKnightSupply() external view returns (uint256);
 
   function getPoolAndCoinCompatibility(Pool p, Coin c) external view returns (bool);
+}
+
+interface IKnight is IKnightEvents, IKnightErrors, IKnightGetters {
+  function mintKnight(Pool p, Coin c) external;
+
+  function burnKnight (uint256 knightId) external;
 }

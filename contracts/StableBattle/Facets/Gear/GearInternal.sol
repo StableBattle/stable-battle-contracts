@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import { gearSlot } from "../../Meta/DataStructures.sol";
 
-import { IGearEvents } from "../Gear/IGearEvents.sol";
+import { IGearEvents } from "../Gear/IGear.sol";
 import { GearStorage } from "../Gear/GearStorage.sol";
 import { GearGetters } from "../Gear/GearGetters.sol";
 import { GearModifiers } from "../Gear/GearModifiers.sol";

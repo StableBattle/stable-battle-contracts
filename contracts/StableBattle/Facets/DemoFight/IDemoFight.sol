@@ -1,17 +1,16 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import { IDemoFightEvents } from "./IDemoFightEvents.sol";
-import { IDemoFightErrors } from "./IDemoFightErrors.sol";
+interface IDemoFightEvents {
+  event NewWinner(address user, uint256 reward);
+  event RewardClaimed(address user, uint256 reward);
+}
 
-interface IDemoFight is IDemoFightEvents, IDemoFightErrors {
+interface IDemoFightErrors {
+  error DemoFightFacet_RewardBiggerThanYield(uint256 reward, uint256 currentYield);
+}
 
-  function battleWonBy(address user, uint256 reward) external;
-
-  function claimReward(address user) external;
-
-//External getters
-
+interface IDemoFightGetters {
   function getTotalYield() external view returns(uint256);
 
   function getCurrentYield() external view returns(uint256);
@@ -26,4 +25,10 @@ interface IDemoFight is IDemoFightEvents, IDemoFightErrors {
     external
     view
     returns(uint256, uint256, uint256, uint256);
+}
+
+interface IDemoFight is IDemoFightEvents, IDemoFightErrors, IDemoFightGetters {
+  function battleWonBy(address user, uint256 reward) external;
+
+  function claimReward(address user) external;
 }

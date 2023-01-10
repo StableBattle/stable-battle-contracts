@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import { GearStorage } from "../Gear/GearStorage.sol";
-import { IGearErrors } from "../Gear/IGearErrors.sol";
+import { IGearErrors } from "../Gear/IGear.sol";
 
 abstract contract GearModifiers is IGearErrors {
   function isGear(uint256 id) internal view returns(bool) {

@@ -3,8 +3,7 @@ pragma solidity ^0.8.0;
 
 import { Pool, Coin } from "../../Meta/DataStructures.sol";
 
-import { IDemoFightEvents } from "./IDemoFightEvents.sol";
-import { IDemoFightErrors } from "./IDemoFightErrors.sol";
+import { IDemoFightEvents, IDemoFightErrors } from "./IDemoFight.sol";
 import { DemoFightGetters } from "./DemoFightGetters.sol";
 import { DemoFightStorage } from "./DemoFightStorage.sol";
 

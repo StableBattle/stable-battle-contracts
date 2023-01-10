@@ -3,13 +3,15 @@ pragma solidity ^0.8.10;
 
 import { ITreasury } from "../Treasury/ITreasury.sol";
 import { TreasuryModifiers } from "../Treasury/TreasuryModifiers.sol";
-import { TreasuryGetters } from "../Treasury/TreasuryGetters.sol";
+import { TreasuryGetters, TreasuryGettersExternal } from "../Treasury/TreasuryGetters.sol";
 import { TreasuryInternal } from "../Treasury/TreasuryInternal.sol";
 
-contract TreasuryFacet is ITreasury,
-                          TreasuryModifiers,
-                          TreasuryGetters,
-                          TreasuryInternal
+contract TreasuryFacet is 
+  ITreasury,
+  TreasuryModifiers,
+  TreasuryGetters,
+  TreasuryGettersExternal,
+  TreasuryInternal
 {
   function claimRewards() external {
     _claimRewards();
@@ -17,18 +19,5 @@ contract TreasuryFacet is ITreasury,
 
   function setTax(uint8 tax) external ifIsFromAddress(_castleHolderAddress()) {
     _setTax(tax);
-  }
-
-//Public Getters
-  function getCastleTax() public view returns(uint) {
-    return _castleTax();
-  }
-  
-  function getLastBlock() public view returns(uint) {
-    return _lastBlock();
-  }
-
-  function getRewardPerBlock() public view returns(uint) {
-    return _rewardPerBlock();
   }
 }

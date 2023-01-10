@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import { AccessControlStorage } from "./AccessControlStorage.sol";
 import { Role } from "../../Meta/DataStructures.sol";
-import { IAccessControlEvents } from "./IAccessControlEvents.sol";
+import { IAccessControlEvents } from "./IAccessControl.sol";
 
 abstract contract AccessControlInternal is  IAccessControlEvents {
   function _addAdmin(address newAdmin) internal {

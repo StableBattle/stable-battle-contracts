@@ -4,8 +4,7 @@ pragma solidity ^0.8.10;
 
 import { Coin, Pool, Knight } from "../../Meta/DataStructures.sol";
 
-import { IKnightEvents } from "../Knight/IKnightEvents.sol";
-import { IKnightErrors } from "../Knight/IKnightErrors.sol";
+import { IKnightEvents, IKnightErrors } from "../Knight/IKnight.sol";
 import { KnightStorage } from "../Knight/KnightStorage.sol";
 import { KnightGetters } from "../Knight/KnightGetters.sol";
 import { KnightModifiers } from "../Knight/KnightModifiers.sol";
@@ -18,7 +17,7 @@ abstract contract KnightInternal is
   KnightGetters,
   KnightModifiers,
   ClanInternal,
-  MetaModifiers, 
+  MetaModifiers,
   ExternalCalls
 {
   function _mintKnight(Pool p, Coin c)

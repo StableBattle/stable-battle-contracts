@@ -24,7 +24,6 @@ struct Clan {
   uint level;
 }
 
-enum Role {
-  NONE,
-  ADMIN
-}
+enum Role { NONE, ADMIN }
+
+enum ClanRole { NONE, OWNER, ADMIN, MOD }

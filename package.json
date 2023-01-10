@@ -1,4 +1,11 @@
 {
+  "scripts": {
+    "compile": "npx hardhat compile",
+    "clean": "npx hardhat clean",
+    "deploy": "npx hardhat run --network goerli scripts/deploy.ts",
+    "approve": "npx hardhat run --network goerli scripts/helpers/approveUSDT.ts",
+    "test": "npx hardhat test"
+  },
   "dependencies": {
     "@aave/core-v3": "^1.13.1",
     "@nomiclabs/hardhat-waffle": "^2.0.3",

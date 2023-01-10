@@ -6,9 +6,11 @@ import { IKnight } from "../Knight/IKnight.sol";
 
 import { KnightInternal } from "../Knight/KnightInternal.sol";
 import { ItemsModifiers } from "../Items/ItemsModifiers.sol";
+import { KnightGettersExternal } from "../Knight/KnightGetters.sol";
 
 contract KnightFacet is 
   IKnight,
+//KnightGettersExternal,
   ItemsModifiers,
   KnightInternal
 {

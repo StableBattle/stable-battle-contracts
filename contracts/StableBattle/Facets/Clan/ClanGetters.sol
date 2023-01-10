@@ -4,10 +4,9 @@ pragma solidity ^0.8.0;
 
 import { Clan, Proposal } from "../../Meta/DataStructures.sol";
 import { ClanStorage } from "../Clan/ClanStorage.sol";
+import { IClanGetters } from "../Clan/IClan.sol";
 
 abstract contract ClanGetters {
-  using ClanStorage for ClanStorage.State;
-
   function _clanInfo(uint clanId) internal view virtual returns(Clan memory) {
     return ClanStorage.state().clan[clanId];
   }
@@ -46,5 +45,39 @@ abstract contract ClanGetters {
 
   function _clansInTotal() internal view virtual returns(uint256) {
     return ClanStorage.state().clansInTotal;
+  }
+}
+
+abstract contract ClanGettersExternal is IClanGetters, ClanGetters {
+  function getClanLeader(uint clanId) external view returns(uint256) {
+    return _clanLeader(clanId);
+  }
+
+  function getClanTotalMembers(uint clanId) external view returns(uint) {
+    return _clanTotalMembers(clanId);
+  }
+  
+  function getClanStake(uint clanId) external view returns(uint256) {
+    return _clanStake(clanId);
+  }
+
+  function getClanLevel(uint clanId) external view returns(uint) {
+    return _clanLevel(clanId);
+  }
+
+  function getStakeOf(address benefactor, uint clanId) external view returns(uint256) {
+    return _stakeOf(benefactor, clanId);
+  }
+
+  function getClanLevelThreshold(uint level) external view returns (uint) {
+    return _clanLevelThreshold(level);
+  }
+
+  function getClanMaxLevel() external view returns (uint) {
+    return _clanMaxLevel();
+  }
+
+  function getProposal(uint256 knightId, uint256 clanId) external view returns (Proposal) {
+    return _proposal(knightId, clanId);
   }
 }

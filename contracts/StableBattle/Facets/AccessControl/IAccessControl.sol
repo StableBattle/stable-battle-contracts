@@ -1,10 +1,16 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import { IAccessControlErrors } from "./IAccessControlErrors.sol";
-import { IAccessControlEvents } from "./IAccessControlEvents.sol";
+interface IAccessControlEvents {
+  event AdminAdded(address newAdmin);
+  event AdminRemoved(address oldAdmin);
+}
 
-interface IAccessControl is IAccessControlErrors, IAccessControlEvents {
+interface IAccessControlErrors {
+  error AccessControlModifiers_CallerIsNotAdmin(address caller);
+}
+
+interface IAccessControl is IAccessControlEvents, IAccessControlErrors {
   function addAdmin(address newAdmin) external;
 
   function removeAdmin(address oldAdmin) external;

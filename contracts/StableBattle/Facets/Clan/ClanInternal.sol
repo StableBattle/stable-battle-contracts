@@ -3,14 +3,13 @@ pragma solidity ^0.8.0;
 
 import { Clan, Proposal } from "../../Meta/DataStructures.sol";
 
-import { IClanEvents } from "../Clan/IClanEvents.sol";
+import { IClanEvents, IClanErrors } from "../Clan/IClan.sol";
 import { ClanStorage } from "../Clan/ClanStorage.sol";
 import { KnightStorage } from "../Knight/KnightStorage.sol";
 import { KnightModifiers } from "../Knight/KnightModifiers.sol";
 import { ClanGetters } from "../Clan/ClanGetters.sol";
 import { ClanModifiers } from "../Clan/ClanModifiers.sol";
 import { ItemsModifiers } from "../Items/ItemsModifiers.sol";
-import { IClanErrors } from "../Clan/IClanErrors.sol";
 
 abstract contract ClanInternal is 
   IClanEvents,
@@ -139,7 +138,7 @@ abstract contract ClanInternal is
       //leave abandoned clan or allow knight to leave if clan leader
       _kick(knightId);
     } else {
-      revert("ClanFacet: Either proposal already exist or you don't own a clan leader");
+      revert ClanFacet_NoProposalOrNotClanLeader(knightId, clanId);
     }
   }
 

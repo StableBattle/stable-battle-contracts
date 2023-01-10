@@ -3,18 +3,11 @@ pragma solidity ^0.8.10;
 
 import { ITournament } from "../Tournament/ITournament.sol";
 import { TournamentInternal } from "../Tournament/TournamentInternal.sol";
-import { TournamentGetters } from "../Tournament/TournamentGetters.sol";
+import { TournamentGettersExternal } from "../Tournament/TournamentGetters.sol";
 import { TournamentStorage } from "../Tournament/TournamentStorage.sol";
 
-contract TournamentFacet is ITournament, TournamentGetters, TournamentInternal {
-  using  TournamentStorage for TournamentStorage.State;
-
+contract TournamentFacet is ITournament, TournamentInternal, TournamentGettersExternal {
   function updateCastleOwnership(uint clanId) external {
     _updateCastleOwnership(clanId);
-  }
-
-//Public Getters
-  function getCastleHolderClan() external view returns (uint256) {
-    return _castleHolderClan();
   }
 }

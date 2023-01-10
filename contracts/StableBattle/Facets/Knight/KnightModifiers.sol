@@ -3,7 +3,7 @@
 pragma solidity ^0.8.0;
 
 import { KnightGetters } from "./KnightGetters.sol";
-import { IKnightErrors } from "./IKnightErrors.sol";
+import { IKnightErrors } from "./IKnight.sol";
 
 abstract contract KnightModifiers is KnightGetters, IKnightErrors {
 

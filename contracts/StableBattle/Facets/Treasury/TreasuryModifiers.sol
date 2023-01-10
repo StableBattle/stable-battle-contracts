@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import { ITreasuryErrors } from "../Treasury/ITreasuryErrors.sol";
+import { ITreasuryErrors } from "../Treasury/ITreasury.sol";
 
 abstract contract TreasuryModifiers is ITreasuryErrors {
   function isFromAddress(address castleHolderAddress) internal view returns(bool) {

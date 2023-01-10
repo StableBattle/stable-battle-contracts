@@ -2,51 +2,21 @@
 pragma solidity ^0.8.0;
 
 import { IDemoFight } from "./IDemoFight.sol";
-import { DemoFightInternal } from "./DemoFightInternal.sol";
+import { DemoFightInternal } from "../DemoFight/DemoFightInternal.sol";
 import { AccessControlModifiers } from "../AccessControl/AccessControlModifiers.sol";
+import { DemoFightGettersExternal } from "../DemoFight/DemoFightGetters.sol";
 
-contract DemoFightFacet is IDemoFight, DemoFightInternal, AccessControlModifiers {
-
+contract DemoFightFacet is 
+  IDemoFight,
+  DemoFightInternal,
+  AccessControlModifiers,
+  DemoFightGettersExternal
+{
   function battleWonBy(address user, uint256 reward) public ifCallerIsAdmin {
     _battleWonBy(user, reward);
   }
 
   function claimReward(address user) public {
     _claimReward(user);
-  }
-
-//External getters
-
-  function getTotalYield() external view returns(uint256) {
-    return _totalYield();
-  }
-
-  function getCurrentYield() external view returns(uint256) {
-    return _currentYield();
-  }
-
-  function getLockedYield() external view returns(uint256) {
-    return _lockedYield();
-  }
-
-  function getStakedByKnights() external view returns(uint256) {
-    return _stakedByKnights();
-  }
-
-  function getUserReward(address user) external view returns(uint256) {
-    return _userReward(user);
-  }
-
-  function getYieldInfo()
-    external
-    view
-    returns(uint256, uint256, uint256, uint256)
-  {
-    return(
-      _currentYield(),
-      _totalYield(),
-      _lockedYield(),
-      _stakedByKnights()
-    );
   }
 }

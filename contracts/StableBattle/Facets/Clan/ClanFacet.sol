@@ -9,12 +9,14 @@ import { ClanStorage } from "../Clan/ClanStorage.sol";
 import { ClanInternal } from "../Clan/ClanInternal.sol";
 import { ItemsModifiers } from "../Items/ItemsModifiers.sol";
 import { MetaModifiers } from "../../Meta/MetaModifiers.sol";
+import { ClanGettersExternal } from "../Clan/ClanGetters.sol";
 
 contract ClanFacet is
   IClan,
   ItemsModifiers,
   ClanInternal,
-  MetaModifiers
+  MetaModifiers,
+  ClanGettersExternal
 {
 
 //Creation, Abandonment and Leader Change
@@ -62,38 +64,4 @@ contract ClanFacet is
     external
   //ifOwnsItem(clanLeader(clanId))
   { _invite(knightId, clanId); }
-
-//Public getters
-
-  function getClanLeader(uint clanId) external view returns(uint256) {
-    return _clanLeader(clanId);
-  }
-
-  function getClanTotalMembers(uint clanId) external view returns(uint) {
-    return _clanTotalMembers(clanId);
-  }
-  
-  function getClanStake(uint clanId) external view returns(uint256) {
-    return _clanStake(clanId);
-  }
-
-  function getClanLevel(uint clanId) external view returns(uint) {
-    return _clanLevel(clanId);
-  }
-
-  function getStakeOf(address benefactor, uint clanId) external view returns(uint256) {
-    return _stakeOf(benefactor, clanId);
-  }
-
-  function getClanLevelThreshold(uint level) external view returns (uint) {
-    return _clanLevelThreshold(level);
-  }
-
-  function getClanMaxLevel() external view returns (uint) {
-    return _clanMaxLevel();
-  }
-
-  function getProposal(uint256 knightId, uint256 clanId) external view returns (Proposal) {
-    return _proposal(knightId, clanId);
-  }
 }
