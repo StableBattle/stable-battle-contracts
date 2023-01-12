@@ -56,15 +56,4 @@ abstract contract KnightModifiers is KnightGetters, IKnightErrors {
     }
     _;
   }
-
-  function isOnClanActivityCooldown(uint256 knightId) internal view returns(bool) {
-    return _knightClanActivityCooldown(knightId) > block.timestamp;
-  }
-
-  modifier ifIsNotOnClanActivityCooldown(uint256 knightId) {
-    if (isOnClanActivityCooldown(knightId)) {
-      revert KnightModifiers_KnightOnClanActivityCooldown(knightId);
-    }
-    _;
-  }
 }

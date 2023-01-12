@@ -26,4 +26,4 @@ struct Clan {
 
 enum Role { NONE, ADMIN }
 
-enum ClanRole { NONE, OWNER, ADMIN, MOD }
+enum ClanRole { NONE, MOD, ADMIN, OWNER }

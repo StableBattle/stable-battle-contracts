@@ -10,8 +10,6 @@ library KnightStorage {
     mapping(Coin => uint256) knightPrice;
     mapping(Pool => mapping(Coin => uint256)) knightsMinted;
     mapping(Pool => mapping(Coin => uint256)) knightsBurned;
-    //KnightId => end of cooldown
-    mapping(uint256 => uint256) clanActivityCooldown;
   }
 
   bytes32 internal constant STORAGE_SLOT = keccak256("Knight.storage");

@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.0;
 
-import { Clan, Proposal } from "../../Meta/DataStructures.sol";
+import { Clan, Proposal, ClanRole } from "../../Meta/DataStructures.sol";
 import { ClanStorage } from "../Clan/ClanStorage.sol";
 import { IClanGetters } from "../Clan/IClan.sol";
 
@@ -56,6 +56,18 @@ abstract contract ClanGetters {
 
   function _clansInTotal() internal view returns(uint256) {
     return ClanStorage.state().clansInTotal;
+  }
+
+  function _clanActivityCooldown(uint256 knightId) internal view returns(uint256) {
+    return ClanStorage.state().clanActivityCooldown[knightId];
+  }
+
+  function _clanJoinProposalPending(uint256 knightId) internal view returns(bool) {
+    return ClanStorage.state().joinProposalPending[knightId];
+  }
+
+  function _roleInClan(uint256 clanId, uint256 knightId) internal view returns(ClanRole) {
+    return ClanStorage.state().roleInClan[clanId][knightId];
   }
 }
 

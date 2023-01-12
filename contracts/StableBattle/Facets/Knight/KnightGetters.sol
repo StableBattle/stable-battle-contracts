@@ -90,10 +90,6 @@ abstract contract KnightGetters {
   function _totalKnightSupply() internal view virtual returns (uint256) {
     return _knightsMintedTotal() - _knightsBurnedTotal();
   }
-
-  function _knightClanActivityCooldown(uint256 knightId) internal view returns(uint256) {
-    return KnightStorage.state().clanActivityCooldown[knightId];
-  }
 }
 
 abstract contract KnightGettersExternal is IKnightGetters, KnightGetters {
@@ -167,9 +163,5 @@ abstract contract KnightGettersExternal is IKnightGetters, KnightGetters {
 
   function getPoolAndCoinCompatibility(Pool p, Coin c) external view returns (bool) {
     return MetaStorage.state().compatible[p][c];
-  }
-
-  function getKnightClanActivityCooldown(uint256 knightId) external view returns(uint256) {
-    return KnightStorage.state().clanActivityCooldown[knightId];
   }
 }

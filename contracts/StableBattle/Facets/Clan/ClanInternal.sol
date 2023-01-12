@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import { Clan, Proposal } from "../../Meta/DataStructures.sol";
+import { Clan, Proposal, ClanRole } from "../../Meta/DataStructures.sol";
 
 import { IClanEvents, IClanErrors } from "../Clan/IClan.sol";
 import { ClanStorage } from "../Clan/ClanStorage.sol";
@@ -10,6 +10,8 @@ import { KnightModifiers } from "../Knight/KnightModifiers.sol";
 import { ClanGetters } from "../Clan/ClanGetters.sol";
 import { ClanModifiers } from "../Clan/ClanModifiers.sol";
 import { ItemsModifiers } from "../Items/ItemsModifiers.sol";
+
+uint constant TWO_DAYS_IN_SECONDS = 2 * 24 * 60 * 60;
 
 abstract contract ClanInternal is 
   IClanEvents,
@@ -20,7 +22,7 @@ abstract contract ClanInternal is
   ItemsModifiers 
 {
 //Creation, Abandonment and Leader Change
-  function _create(uint256 knightId) internal returns(uint clanId) {
+  function _createClan(uint256 knightId) internal returns(uint clanId) {
     clanId = _clansInTotal() + 1;
     ClanStorage.state().clan[clanId] = Clan(knightId, 0, 1, 0);
     KnightStorage.state().knight[knightId].inClan = clanId;
@@ -35,8 +37,9 @@ abstract contract ClanInternal is
     emit ClanAbandoned(clanId, leaderId);
   }
 
-  function _changeLeader(uint256 clanId, uint256 knightId) internal {
-    ClanStorage.state().clan[clanId].leader = knightId;
+  function _setClanRole(uint256 clanId, uint256 knightId, ClanRole newClanRole) internal {
+    ClanStorage.state().roleInClan[clanId][knightId] = newClanRole;
+    emit NewClanRole(clanId, knightId, newClanRole);
   }
 
 // Clan stakes and leveling
@@ -84,58 +87,53 @@ abstract contract ClanInternal is
   }
 
 //Join, Leave and Invite Proposals
-  //ONLY knight supposed call the join function
   function _join(uint256 knightId, uint256 clanId) internal {
+    //leave old clan before joining a new one
     uint256 knightClan = _knightClan(knightId);
-    if(clanExists(knightClan)) {
-      revert ClanFacet_CantJoinAlreadyInClan(knightId, knightClan);
-    }
+    if(knightClan != 0) { _kick(knightId, knightClan); }
 
-    if (_proposal(knightId, clanId) == Proposal.INVITE) {
-      //join clan immediately if invited
-      ClanStorage.state().clan[clanId].totalMembers++;
-      KnightStorage.state().knight[knightId].inClan = clanId;
-      ClanStorage.state().proposal[knightId][clanId] = Proposal.NONE;
-      emit KnightJoinedClan(clanId, knightId);
-    } else {
-      //create join proposal
-      ClanStorage.state().proposal[knightId][clanId] = Proposal.JOIN;
-      emit KnightAskedToJoin(clanId, knightId);
-    }
+    //create join proposal
+    ClanStorage.state().proposal[knightId][clanId] = Proposal.JOIN;
+    ClanStorage.state().joinProposalPending[knightId] = true;
+    emit KnightAskedToJoin(clanId, knightId);
   }
 
-  //BOTH knights and leaders supposed call the leave function
-  function _leave(uint256 knightId) internal { 
-    uint256 clanId = _knightClan(knightId);
-    if ((clanExists(clanId) && _proposal(knightId, clanId) != Proposal.LEAVE)) {
-      //create leave proposal if clan exist & such proposal doesn't
-      ClanStorage.state().proposal[knightId][clanId] = Proposal.LEAVE;
-      emit KnightAskedToLeave(clanId, knightId);
-    } else if(ownsItem(_clanLeader(clanId)) || !clanExists(clanId)) {
-      //leave abandoned clan or allow knight to leave if clan leader
-      _kick(knightId);
-    } else {
-      revert ClanFacet_NoProposalOrNotClanLeader(knightId, clanId);
-    }
+  function _withdrawJoin(uint256 knightId, uint256 clanId) internal {
+    ClanStorage.state().proposal[knightId][clanId] = Proposal.NONE;
+    ClanStorage.state().joinProposalPending[knightId] = false;
+    emit KnightNoLongerWantsToJoin(clanId, knightId);
   }
 
-  function _kick(uint256 knightId) internal {
-    uint256 clanId = _knightClan(knightId);
+  function _kick(uint256 knightId, uint256 clanId) internal {
     ClanStorage.state().clan[clanId].totalMembers--;
     KnightStorage.state().knight[knightId].inClan = 0;
     ClanStorage.state().proposal[knightId][clanId] = Proposal.NONE;
+    ClanStorage.state().clanActivityCooldown[knightId] = block.timestamp + TWO_DAYS_IN_SECONDS;
     emit KnightLeftClan(clanId, knightId);
   }
 
-  //ONLY leaders supposed call the invite function
-  function _invite(uint256 knightId, uint256 clanId) internal {
-    if (_proposal(knightId, clanId) == Proposal.JOIN && notInClan(knightId)) {
+  function _approveJoinClan(uint256 knightId, uint256 clanId) internal {
+    if (_proposal(knightId, clanId) == Proposal.JOIN) {
       //welcome the knight to join if it already offered it
       ClanStorage.state().clan[clanId].totalMembers++;
       KnightStorage.state().knight[knightId].inClan = clanId;
       ClanStorage.state().proposal[knightId][clanId] = Proposal.NONE;
+      ClanStorage.state().joinProposalPending[knightId] = false;
       emit KnightJoinedClan(clanId, knightId);
-    } else {
+    }
+  }
+
+  function _dismissJoinClan(uint256 knightId, uint256 clanId) internal {
+    if (_proposal(knightId, clanId) == Proposal.JOIN) {
+      //dismiss the knight to join if it already offered it
+      ClanStorage.state().proposal[knightId][clanId] = Proposal.NONE;
+      ClanStorage.state().joinProposalPending[knightId] = false;
+      emit KnightJoinDismissed(clanId, knightId);
+    }
+  }
+
+  function _invite(uint256 knightId, uint256 clanId) internal {
+    if (_proposal(knightId, clanId) == Proposal.NONE) {
       //create invite proposal for the knight
       ClanStorage.state().proposal[knightId][clanId] = Proposal.INVITE;
       emit KnightInvitedToClan(clanId, knightId);

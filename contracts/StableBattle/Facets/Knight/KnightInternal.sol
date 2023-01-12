@@ -67,9 +67,11 @@ abstract contract KnightInternal is
     uint256 clanId = _knightClan(knightId);
     uint256 leaderId = _clanLeader(clanId);
     if (clanId != 0 && leaderId != 0) {
-      knightId == leaderId ?
-        _abandon(clanId) :
-        _kick(knightId);
+      if (knightId == leaderId) {
+        revert KnightFacet_AbandonLeaderRoleBeforeBurning(knightId, clanId);
+      } else {
+        _kick(knightId, clanId);
+      }
     }
     // Null the knight
     KnightStorage.state().knight[knightId] = Knight(Pool.NONE, Coin.NONE, address(0), 0);

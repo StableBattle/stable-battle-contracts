@@ -1,16 +1,13 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import { Proposal } from "../../Meta/DataStructures.sol";
+import { Proposal, ClanRole } from "../../Meta/DataStructures.sol";
 import { IClan } from "./IClan.sol";
 
 contract ClanFacetDummy is IClan {
+  function createClan(uint256 knightId) external returns(uint clanId) {}
 
-  function create(uint256 knightId) external returns(uint clanId) {}
-
-  function abandon(uint256 clanId) external {}
-
-  function changeLeader(uint256 clanId, uint256 knightId) external {}
+  function setClanRole(uint256 clanId, uint256 knightId, ClanRole newRole, uint256 callerId) external {}
 
 // Clan stakes and leveling
   function onStake(address benefactor, uint256 clanId, uint256 amount) external {}
@@ -20,9 +17,8 @@ contract ClanFacetDummy is IClan {
 //Join, Leave and Invite Proposals
   function join(uint256 knightId, uint256 clanId) external {}
 
-  function leave(uint256 knightId) external {}
+  function leave(uint256 knightId, uint256 clanId) external {}
 
-//Public getters
 
   function getClanLeader(uint clanId) external view returns(uint256) {}
 

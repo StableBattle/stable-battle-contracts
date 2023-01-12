@@ -2,11 +2,12 @@
 
 pragma solidity ^0.8.0;
 
-import { Clan, Proposal } from "../../Meta/DataStructures.sol";
+import { Clan, Proposal, ClanRole } from "../../Meta/DataStructures.sol";
 import { ClanStorage } from "../Clan/ClanStorage.sol";
 import { IClanErrors } from "../Clan/IClan.sol";
+import { ClanGetters } from "../Clan/ClanGetters.sol";
 
-abstract contract ClanModifiers is IClanErrors {
+abstract contract ClanModifiers is IClanErrors, ClanGetters {
   function clanExists(uint256 clanId) internal view returns(bool) {
     return ClanStorage.state().clan[clanId].leader != 0;
   }
@@ -38,5 +39,39 @@ abstract contract ClanModifiers is IClanErrors {
       revert ClanModifiers_KnightIsClanLeader(knightId, clanId);
     }
     _;
+  }
+
+  function isOnClanActivityCooldown(uint256 knightId) internal view returns(bool) {
+    return _clanActivityCooldown(knightId) > block.timestamp;
+  }
+
+  modifier ifIsNotOnClanActivityCooldown(uint256 knightId) {
+    if (isOnClanActivityCooldown(knightId)) {
+      revert ClanModifiers_KnightOnClanActivityCooldown(knightId);
+    }
+    _;
+  }
+
+  function isJoinProposalPending(uint256 knightId) internal view returns(bool) {
+    return _clanJoinProposalPending(knightId);
+  }
+
+  modifier ifNoJoinProposalPending(uint256 knightId) {
+    if (isJoinProposalPending(knightId)) {
+      revert ClanModifiers_KnightOnClanActivityCooldown(knightId);
+    }
+    _;
+  }
+
+  function isClanOwner(uint256 knightId, uint256 clanId) internal view returns(bool) {
+    return _roleInClan(clanId, knightId) == ClanRole.OWNER;
+  }
+
+  function isClanAdmin(uint256 knightId, uint256 clanId) internal view returns(bool) {
+    return _roleInClan(clanId, knightId) == ClanRole.ADMIN;
+  }
+
+  function isClanMod(uint256 knightId, uint256 clanId) internal view returns(bool) {
+    return _roleInClan(clanId, knightId) == ClanRole.MOD;
   }
 }
