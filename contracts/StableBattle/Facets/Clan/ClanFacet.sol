@@ -126,9 +126,11 @@ contract ClanFacet is
     external
     ifIsKnight(knightId)
     ifOwnsItem(approverId)
+    ifIsBelowMaxMembers(clanId)
   {
     ClanRole approverRole = _roleInClan(clanId, approverId);
-    if (approverRole == ClanRole.OWNER || approverRole ==  ClanRole.ADMIN) {
+    if ((approverRole == ClanRole.OWNER || approverRole ==  ClanRole.ADMIN) &&
+        _proposal(knightId, clanId) == Proposal.JOIN) {
       _approveJoinClan(knightId, clanId);
     }
   }
@@ -139,7 +141,8 @@ contract ClanFacet is
     ifOwnsItem(callerId)
   {
     ClanRole callerRole = _roleInClan(clanId, callerId);
-    if(callerRole == ClanRole.OWNER || callerRole == ClanRole.ADMIN) {
+    if ((callerRole == ClanRole.OWNER || callerRole ==  ClanRole.ADMIN) &&
+        _proposal(knightId, clanId) == Proposal.JOIN) {
       _dismissJoinClan(knightId, clanId);
     }
   }

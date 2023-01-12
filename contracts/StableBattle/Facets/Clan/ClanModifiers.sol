@@ -74,4 +74,15 @@ abstract contract ClanModifiers is IClanErrors, ClanGetters {
   function isClanMod(uint256 knightId, uint256 clanId) internal view returns(bool) {
     return _roleInClan(clanId, knightId) == ClanRole.MOD;
   }
+
+  function isBelowMaxMembers(uint256 clanId) internal view returns(bool) {
+    return _clanTotalMembers(clanId) < _clanMaxMembers(clanId);
+  }
+
+  modifier ifIsBelowMaxMembers(uint256 clanId) {
+    if (!isBelowMaxMembers(clanId)) {
+      revert ClanModifiers_AboveMaxMembers(clanId);
+    }
+    _;
+  }
 }

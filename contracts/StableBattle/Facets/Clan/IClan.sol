@@ -30,6 +30,7 @@ interface IClanErrors {
   error ClanModifiers_KnightInSomeClan(uint256 knightId, uint256 clanId);
   error ClanModifiers_KnightOnClanActivityCooldown(uint256 knightId);
   error ClanModifiers_KnightNotInThisClan(uint256 knightId, uint256 clanId);
+  error ClanModifiers_AboveMaxMembers(uint256 clanId);
 
   error ClanFacet_InsufficientStake(uint256 stakeAvalible, uint256 withdrawAmount);
   error ClanFacet_CantJoinAlreadyInClan(uint256 knightId, uint256 clanId);

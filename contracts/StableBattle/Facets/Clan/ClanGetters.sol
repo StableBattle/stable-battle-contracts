@@ -69,6 +69,10 @@ abstract contract ClanGetters {
   function _roleInClan(uint256 clanId, uint256 knightId) internal view returns(ClanRole) {
     return ClanStorage.state().roleInClan[clanId][knightId];
   }
+
+  function _clanMaxMembers(uint256 clanId) internal view returns(uint) {
+    return ClanStorage.state().maxMembers[_clanLevel(clanId)];
+  }
 }
 
 abstract contract ClanGettersExternal is IClanGetters, ClanGetters {

@@ -113,23 +113,19 @@ abstract contract ClanInternal is
   }
 
   function _approveJoinClan(uint256 knightId, uint256 clanId) internal {
-    if (_proposal(knightId, clanId) == Proposal.JOIN) {
-      //welcome the knight to join if it already offered it
-      ClanStorage.state().clan[clanId].totalMembers++;
-      KnightStorage.state().knight[knightId].inClan = clanId;
-      ClanStorage.state().proposal[knightId][clanId] = Proposal.NONE;
-      ClanStorage.state().joinProposalPending[knightId] = false;
-      emit KnightJoinedClan(clanId, knightId);
-    }
+    //welcome the knight to join if it already offered it
+    ClanStorage.state().clan[clanId].totalMembers++;
+    KnightStorage.state().knight[knightId].inClan = clanId;
+    ClanStorage.state().proposal[knightId][clanId] = Proposal.NONE;
+    ClanStorage.state().joinProposalPending[knightId] = false;
+    emit KnightJoinedClan(clanId, knightId);
   }
 
   function _dismissJoinClan(uint256 knightId, uint256 clanId) internal {
-    if (_proposal(knightId, clanId) == Proposal.JOIN) {
-      //dismiss the knight to join if it already offered it
-      ClanStorage.state().proposal[knightId][clanId] = Proposal.NONE;
-      ClanStorage.state().joinProposalPending[knightId] = false;
-      emit KnightJoinDismissed(clanId, knightId);
-    }
+    //dismiss the knight to join if it already offered it
+    ClanStorage.state().proposal[knightId][clanId] = Proposal.NONE;
+    ClanStorage.state().joinProposalPending[knightId] = false;
+    emit KnightJoinDismissed(clanId, knightId);
   }
 
   function _invite(uint256 knightId, uint256 clanId) internal {
