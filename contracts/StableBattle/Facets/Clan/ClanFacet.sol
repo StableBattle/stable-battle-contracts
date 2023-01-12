@@ -14,32 +14,39 @@ import { ClanGettersExternal } from "../Clan/ClanGetters.sol";
 contract ClanFacet is
   IClan,
   ItemsModifiers,
-  ClanInternal,
   MetaModifiers,
-  ClanGettersExternal
+  ClanGettersExternal,
+  ClanInternal
 {
 
 //Creation, Abandonment and Leader Change
   function create(uint256 knightId)
     external
-  //ifOwnsItem(knightId)
+    ifOwnsItem(knightId)
+    ifIsNotOnClanActivityCooldown(knightId)
+    ifIsKnight(knightId)
+    ifNotInClan(knightId)
     returns(uint)
   { return _create(knightId); }
 
   function abandon(uint256 clanId) 
     external 
-  //ifOwnsItem(clanLeader(clanId))
+    ifOwnsItem(_clanLeader(clanId))
   { _abandon(clanId); }
 
   function changeLeader(uint256 clanId, uint256 knightId)
     external
-  //ifOwnsItem(clanLeader(clanId))
+    ifOwnsItem(_clanLeader(clanId))
+    ifIsKnight(knightId)
+    ifIsInClan(knightId, clanId)
+    ifIsNotClanLeader(knightId, clanId)
   { _changeLeader(clanId, knightId); }
 
 // Clan stakes and leveling
   function onStake(address benefactor, uint256 clanId, uint256 amount)
     external
   //onlySBT
+    ifClanExists(clanId)
   { _onStake(benefactor, clanId, amount); }
 
   function onWithdraw(address benefactor, uint256 clanId, uint256 amount)
@@ -51,17 +58,27 @@ contract ClanFacet is
   //ONLY knight supposed call the join function
   function join(uint256 knightId, uint256 clanId)
     external
-  //ifOwnsItem(knightId)
+    ifOwnsItem(knightId)
+    ifIsNotOnClanActivityCooldown(knightId)
+    ifIsKnight(knightId)
+    ifClanExists(clanId)
   { _join(knightId, clanId); }
 
   //BOTH knights and leaders supposed call the leave function
   function leave(uint256 knightId)
     external
+    ifIsKnight(knightId)
+    ifIsInAnyClan(knightId)
   { _leave(knightId); }
 
   //ONLY leaders supposed call the invite function
+  //working but restricted until backend catches up
+  /*
   function invite(uint256 knightId, uint256 clanId)
     external
-  //ifOwnsItem(clanLeader(clanId))
+    ifOwnsItem(_clanLeader(clanId))
+    ifIsKnight(knightId)
+    ifNotInClan(knightId)
   { _invite(knightId, clanId); }
+  */
 }

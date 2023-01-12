@@ -7,7 +7,8 @@ import { Coin, Pool, Knight } from "../../Meta/DataStructures.sol";
 import { IKnightGetters } from "../Knight/IKnight.sol";
 
 import { KnightStorage } from "../Knight/KnightStorage.sol";
-import { MetaModifiers } from "../../Meta/MetaModifiers.sol";
+import { MetaStorage } from "../../Meta/MetaStorage.sol";
+
 
 abstract contract KnightGetters {
   function _knightInfo(uint256 knightId) internal view virtual returns(Knight memory) {
@@ -89,9 +90,13 @@ abstract contract KnightGetters {
   function _totalKnightSupply() internal view virtual returns (uint256) {
     return _knightsMintedTotal() - _knightsBurnedTotal();
   }
+
+  function _knightClanActivityCooldown(uint256 knightId) internal view returns(uint256) {
+    return KnightStorage.state().clanActivityCooldown[knightId];
+  }
 }
 
-abstract contract KnightGettersExternal is IKnightGetters, KnightGetters, MetaModifiers {
+abstract contract KnightGettersExternal is IKnightGetters, KnightGetters {
   function getKnightInfo(uint256 knightId) external view returns(Knight memory) {
     return _knightInfo(knightId);
   }
@@ -161,6 +166,10 @@ abstract contract KnightGettersExternal is IKnightGetters, KnightGetters, MetaMo
   }
 
   function getPoolAndCoinCompatibility(Pool p, Coin c) external view returns (bool) {
-    return isCompatible(p, c);
+    return MetaStorage.state().compatible[p][c];
+  }
+
+  function getKnightClanActivityCooldown(uint256 knightId) external view returns(uint256) {
+    return KnightStorage.state().clanActivityCooldown[knightId];
   }
 }

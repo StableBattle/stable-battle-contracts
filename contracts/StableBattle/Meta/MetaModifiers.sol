@@ -6,8 +6,6 @@ import { Coin, Pool } from "../Meta/DataStructures.sol";
 import { MetaStorage } from "../Meta/MetaStorage.sol";
 
 abstract contract MetaModifiers {
-  using MetaStorage for MetaStorage.State;
-
   error InvalidPool(Pool pool);
   
   function isVaildPool(Pool pool) internal view virtual returns(bool) {

@@ -48,7 +48,7 @@ interface IClanGetters {
   function getProposal(uint256 knightId, uint256 clanId) external view returns (Proposal);
 }
 
-interface IClan is IClanEvents, IClanErrors, IClanGetters {
+interface IClan is IClanGetters, IClanEvents, IClanErrors {
   function create(uint256 knightId) external returns(uint clanId);
 
   function abandon(uint256 clanId) external;
@@ -64,6 +64,4 @@ interface IClan is IClanEvents, IClanErrors, IClanGetters {
   function join(uint256 knightId, uint256 clanId) external;
 
   function leave(uint256 knightId) external;
-
-  function invite(uint256 knightId, uint256 clanId) external;
 }

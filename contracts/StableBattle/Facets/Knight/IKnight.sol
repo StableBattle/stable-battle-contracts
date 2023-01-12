@@ -14,6 +14,7 @@ interface IKnightErrors {
   error KnightModifiers_KnightNotInAnyClan(uint256 knightId);
   error KnightModifiers_KnightNotInClan(uint256 knightId, uint256 wrongClanId, uint256 correctClanId);
   error KnightModifiers_KnightInSomeClan(uint256 knightId, uint256 clanId);
+  error KnightModifiers_KnightOnClanActivityCooldown(uint256 knightId);
 }
 
 interface IKnightGetters {

@@ -7,43 +7,54 @@ import { ClanStorage } from "../Clan/ClanStorage.sol";
 import { IClanGetters } from "../Clan/IClan.sol";
 
 abstract contract ClanGetters {
-  function _clanInfo(uint clanId) internal view virtual returns(Clan memory) {
+  function _clanInfo(uint clanId) internal view returns(Clan memory) {
     return ClanStorage.state().clan[clanId];
   }
 
-  function _clanLeader(uint clanId) internal view virtual returns(uint256) {
+  function _clanLeader(uint clanId) internal view returns(uint256) {
     return ClanStorage.state().clan[clanId].leader;
   }
 
-  function _clanTotalMembers(uint clanId) internal view virtual returns(uint) {
+  function _clanTotalMembers(uint clanId) internal view returns(uint) {
     return ClanStorage.state().clan[clanId].totalMembers;
   }
   
-  function _clanStake(uint clanId) internal view virtual returns(uint256) {
+  function _clanStake(uint clanId) internal view returns(uint256) {
     return ClanStorage.state().clan[clanId].stake;
   }
 
-  function _clanLevel(uint clanId) internal view virtual returns(uint) {
+  function _clanLevel(uint clanId) internal view returns(uint) {
     return ClanStorage.state().clan[clanId].level;
   }
 
-  function _stakeOf(address benefactor, uint clanId) internal view virtual returns(uint256) {
+  function _clanLevel2(uint256 clanId) internal view returns(uint) {
+    uint256 stake = _clanStake(clanId);
+    uint[] memory thresholds = ClanStorage.state().levelThresholds;
+    uint maxLevel = thresholds.length;
+    uint newLevel = 0;
+    while(stake > thresholds[newLevel] && newLevel < maxLevel) {
+      newLevel++;
+    }
+    return newLevel;
+  }
+
+  function _stakeOf(address benefactor, uint clanId) internal view returns(uint256) {
     return ClanStorage.state().stake[benefactor][clanId];
   }
 
-  function _clanLevelThreshold(uint level) internal view virtual returns (uint) {
+  function _clanLevelThreshold(uint level) internal view returns (uint) {
     return ClanStorage.state().levelThresholds[level];
   }
 
-  function _clanMaxLevel() internal view virtual returns (uint) {
+  function _clanMaxLevel() internal view returns (uint) {
     return ClanStorage.state().levelThresholds.length;
   }
 
-  function _proposal(uint256 knightId, uint256 clanId) internal view virtual returns(Proposal) {
+  function _proposal(uint256 knightId, uint256 clanId) internal view returns(Proposal) {
     return ClanStorage.state().proposal[knightId][clanId];
   }
 
-  function _clansInTotal() internal view virtual returns(uint256) {
+  function _clansInTotal() internal view returns(uint256) {
     return ClanStorage.state().clansInTotal;
   }
 }

@@ -22,8 +22,6 @@ contract ClanFacetDummy is IClan {
 
   function leave(uint256 knightId) external {}
 
-  function invite(uint256 knightId, uint256 clanId) external {}
-
 //Public getters
 
   function getClanLeader(uint clanId) external view returns(uint256) {}
