@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.0;
 
-import { Clan, Proposal, ClanRole } from "../../Meta/DataStructures.sol";
+import { Clan, ClanRole } from "../../Meta/DataStructures.sol";
 import { ClanStorage } from "../Clan/ClanStorage.sol";
 import { IClanGetters } from "../Clan/IClan.sol";
 
@@ -62,12 +62,16 @@ abstract contract ClanGetters {
     return ClanStorage.state().joinProposal[knightId];
   }
 
-  function _roleInClan(uint256 clanId, uint256 knightId) internal view returns(ClanRole) {
-    return ClanStorage.state().roleInClan[clanId][knightId];
+  function _roleInClan(uint256 knightId) internal view returns(ClanRole) {
+    return ClanStorage.state().roleInClan[knightId];
   }
 
   function _clanMaxMembers(uint256 clanId) internal view returns(uint) {
     return ClanStorage.state().maxMembers[_clanLevel(clanId)];
+  }
+
+  function _clanKickCooldown(uint256 knightId) internal view returns(uint) {
+    return ClanStorage.state().clanKickCooldown[knightId];
   }
 }
 

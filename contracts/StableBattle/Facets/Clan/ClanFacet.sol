@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.0;
 
-import { Clan, Proposal, ClanRole } from "../../Meta/DataStructures.sol";
+import { Clan, ClanRole } from "../../Meta/DataStructures.sol";
 
 import { IClan } from "../Clan/IClan.sol";
 import { ClanStorage } from "../Clan/ClanStorage.sol";
@@ -10,6 +10,8 @@ import { ClanInternal } from "../Clan/ClanInternal.sol";
 import { ItemsModifiers } from "../Items/ItemsModifiers.sol";
 import { MetaModifiers } from "../../Meta/MetaModifiers.sol";
 import { ClanGettersExternal } from "../Clan/ClanGetters.sol";
+
+uint constant ONE_HOUR_IN_SECONDS = 60 * 60;
 
 contract ClanFacet is
   IClan,
@@ -35,14 +37,14 @@ contract ClanFacet is
     ifIsKnight(knightId)
     ifIsInClan(knightId, clanId)
   {
-    ClanRole callerRole = _roleInClan(clanId, callerId);
-    ClanRole knightRole = _roleInClan(clanId, knightId);
+    ClanRole callerRole = _roleInClan(callerId);
+    ClanRole knightRole = _roleInClan(knightId);
     if (newRole == ClanRole.OWNER && callerRole == ClanRole.OWNER) {
-      ClanStorage.state().roleInClan[clanId][callerId] = ClanRole.ADMIN;
-      ClanStorage.state().roleInClan[clanId][knightId] = ClanRole.OWNER;
+      ClanStorage.state().roleInClan[callerId] = ClanRole.ADMIN;
+      ClanStorage.state().roleInClan[knightId] = ClanRole.OWNER;
       ClanStorage.state().clan[clanId].leader = knightId;
     } else if (uint8(callerRole) > uint8(knightRole) && uint8(callerRole) > uint8(newRole)) {
-      ClanStorage.state().roleInClan[clanId][knightId] = newRole;
+      ClanStorage.state().roleInClan[knightId] = newRole;
     } else {
       revert ClanFacet_CantAssignNewRoleToThisCharacter(clanId, knightId, newRole, callerId);
     }
@@ -90,39 +92,45 @@ contract ClanFacet is
     ifIsKnight(knightId)
     ifIsInClan(knightId, clanId)
     ifOwnsItem(knightId)
+    ifNotClanOwner(knightId)
   { 
-    if(_roleInClan(clanId, knightId) != ClanRole.OWNER) {
-      _kick(knightId, clanId);
-    } else {
-      revert ClanFacet_CantLeaveAClanYouOwn(knightId, clanId);
-    }
+    _kick(knightId, clanId);
   }
 
-  function kick(uint256 knightId, uint256 clanId, uint256 kickerId)
+  function kick(uint256 knightId, uint256 clanId, uint256 callerId)
     external
     ifIsKnight(knightId)
     ifIsInClan(knightId, clanId)
-  { 
-    ClanRole kickerRole = _roleInClan(clanId, knightId);
-    ClanRole kickedRole = _roleInClan(clanId, knightId);
+    ifNotOnClanKickCooldown(callerId)
+  {
+    ClanRole callerRole = _roleInClan(knightId);
+    ClanRole knightRole = _roleInClan(knightId);
 
-    if (kickerRole == ClanRole.OWNER || 
-        kickerRole == ClanRole.ADMIN && (kickedRole == ClanRole.MOD || kickedRole == ClanRole.NONE) ||
-        kickerRole == ClanRole.MOD && kickedRole == ClanRole.NONE)
+    if(
+      //Owner can kick anyone besides himself
+      callerRole == ClanRole.OWNER && knightRole != ClanRole.OWNER ||
+      //Admin can kick anyone below himself
+      callerRole == ClanRole.ADMIN && (knightRole == ClanRole.MOD || knightRole == ClanRole.NONE) ||
+      //Moderator can only kick ordinary members
+      callerRole == ClanRole.MOD && knightRole == ClanRole.NONE)
     {
       _kick(knightId, clanId);
+      //Moderators go on one hour cooldown after kick
+      if (callerRole == ClanRole.MOD) {
+        ClanStorage.state().clanKickCooldown[callerId] = ONE_HOUR_IN_SECONDS;
+      }
     } else { 
-      revert ClanFacet_CantKickThisMember(knightId, clanId, kickerId); 
+      revert ClanFacet_CantKickThisMember(knightId, clanId, callerId); 
     }
   }
 
-  function approveJoinClan(uint256 knightId, uint256 clanId, uint256 approverId)
+  function approveJoinClan(uint256 knightId, uint256 clanId, uint256 callerId)
     external
     ifIsKnight(knightId)
-    ifOwnsItem(approverId)
+    ifOwnsItem(callerId)
     ifIsBelowMaxMembers(clanId)
   {
-    ClanRole approverRole = _roleInClan(clanId, approverId);
+    ClanRole approverRole = _roleInClan(callerId);
     if ((approverRole == ClanRole.OWNER || approverRole ==  ClanRole.ADMIN) &&
         _clanJoinProposal(knightId) == clanId) {
       _approveJoinClan(knightId, clanId);
@@ -134,7 +142,7 @@ contract ClanFacet is
     ifIsKnight(knightId)
     ifOwnsItem(callerId)
   {
-    ClanRole callerRole = _roleInClan(clanId, callerId);
+    ClanRole callerRole = _roleInClan(callerId);
     if ((callerRole == ClanRole.OWNER || callerRole ==  ClanRole.ADMIN) &&
         _clanJoinProposal(knightId) == clanId) {
       _dismissJoinClan(knightId, clanId);

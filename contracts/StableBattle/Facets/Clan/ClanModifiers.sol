@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.0;
 
-import { Clan, Proposal, ClanRole } from "../../Meta/DataStructures.sol";
+import { Clan, ClanRole } from "../../Meta/DataStructures.sol";
 import { ClanStorage } from "../Clan/ClanStorage.sol";
 import { IClanErrors } from "../Clan/IClan.sol";
 import { ClanGetters } from "../Clan/ClanGetters.sol";
@@ -64,16 +64,23 @@ abstract contract ClanModifiers is IClanErrors, ClanGetters {
     _;
   }
 
-  function isClanOwner(uint256 knightId, uint256 clanId) internal view returns(bool) {
-    return _roleInClan(clanId, knightId) == ClanRole.OWNER;
+  function isClanOwner(uint256 knightId) internal view returns(bool) {
+    return _roleInClan(knightId) == ClanRole.OWNER;
   }
 
-  function isClanAdmin(uint256 knightId, uint256 clanId) internal view returns(bool) {
-    return _roleInClan(clanId, knightId) == ClanRole.ADMIN;
+  modifier ifNotClanOwner(uint knightId) {
+    if (isClanOwner(knightId)) {
+      revert ClanModifiers_ClanOwnersCantCallThis(knightId);
+    }
+    _;
   }
 
-  function isClanMod(uint256 knightId, uint256 clanId) internal view returns(bool) {
-    return _roleInClan(clanId, knightId) == ClanRole.MOD;
+  function isClanAdmin(uint256 knightId) internal view returns(bool) {
+    return _roleInClan(knightId) == ClanRole.ADMIN;
+  }
+
+  function isClanMod(uint256 knightId) internal view returns(bool) {
+    return _roleInClan(knightId) == ClanRole.MOD;
   }
 
   function isBelowMaxMembers(uint256 clanId) internal view returns(bool) {
@@ -83,6 +90,17 @@ abstract contract ClanModifiers is IClanErrors, ClanGetters {
   modifier ifIsBelowMaxMembers(uint256 clanId) {
     if (!isBelowMaxMembers(clanId)) {
       revert ClanModifiers_AboveMaxMembers(clanId);
+    }
+    _;
+  }
+
+  function isOnClanKickCooldown(uint knightId) internal view returns(bool) {
+    return _clanKickCooldown(knightId) < block.timestamp;
+  }
+
+  modifier ifNotOnClanKickCooldown(uint knightId) {
+    if (isOnClanKickCooldown(knightId)) {
+      revert ClanModifiers_KickingMembersOnCooldownForThisKnight(knightId);
     }
     _;
   }

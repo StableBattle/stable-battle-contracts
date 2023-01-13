@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import { Clan, Proposal, ClanRole } from "../../Meta/DataStructures.sol";
+import { Clan, ClanRole } from "../../Meta/DataStructures.sol";
 
 import { IClanEvents, IClanErrors } from "../Clan/IClan.sol";
 import { ClanStorage } from "../Clan/ClanStorage.sol";
@@ -39,7 +39,10 @@ abstract contract ClanInternal is
   }
 
   function _setClanRole(uint256 clanId, uint256 knightId, ClanRole newClanRole) internal {
-    ClanStorage.state().roleInClan[clanId][knightId] = newClanRole;
+    ClanStorage.state().roleInClan[knightId] = newClanRole;
+    if (newClanRole == ClanRole.OWNER || newClanRole == ClanRole.ADMIN) {
+      ClanStorage.state().clanKickCooldown[knightId] = 0;
+    }
     emit NewClanRole(clanId, knightId, newClanRole);
   }
 
@@ -89,11 +92,6 @@ abstract contract ClanInternal is
 
 //Join, Leave and Invite Proposals
   function _join(uint256 knightId, uint256 clanId) internal {
-    //leave old clan before joining a new one
-    uint256 knightClan = _knightClan(knightId);
-    if(knightClan != 0) { _kick(knightId, knightClan); }
-
-    //create join proposal
     ClanStorage.state().joinProposal[knightId] = clanId;
     emit KnightAskedToJoin(clanId, knightId);
   }
@@ -111,7 +109,6 @@ abstract contract ClanInternal is
   }
 
   function _approveJoinClan(uint256 knightId, uint256 clanId) internal {
-    //welcome the knight to join if it already offered it
     ClanStorage.state().clan[clanId].totalMembers++;
     KnightStorage.state().knight[knightId].inClan = clanId;
     ClanStorage.state().joinProposal[knightId] = 0;
@@ -119,7 +116,6 @@ abstract contract ClanInternal is
   }
 
   function _dismissJoinClan(uint256 knightId, uint256 clanId) internal {
-    //dismiss the knight to join if it already offered it
     ClanStorage.state().joinProposal[knightId] = 0;
     emit KnightJoinDismissed(clanId, knightId);
   }

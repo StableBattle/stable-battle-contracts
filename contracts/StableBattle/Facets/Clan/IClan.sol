@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import { Proposal, ClanRole } from "../../Meta/DataStructures.sol";
+import { ClanRole } from "../../Meta/DataStructures.sol";
 
 interface IClanEvents {
   event ClanCreated(uint clanId, uint256 knightId);
@@ -32,6 +32,8 @@ interface IClanErrors {
   error ClanModifiers_KnightNotInThisClan(uint256 knightId, uint256 clanId);
   error ClanModifiers_AboveMaxMembers(uint256 clanId);
   error ClanModifiers_JoinProposalToSomeClanExists(uint256 knightId, uint256 clanId);
+  error ClanModifiers_KickingMembersOnCooldownForThisKnight(uint256 knightId);
+  error ClanModifiers_ClanOwnersCantCallThis(uint256 knightId);
 
   error ClanFacet_InsufficientStake(uint256 stakeAvalible, uint256 withdrawAmount);
   error ClanFacet_CantJoinAlreadyInClan(uint256 knightId, uint256 clanId);
@@ -40,7 +42,6 @@ interface IClanErrors {
   error ClanFacet_CantJoinOtherClanWhileBeingAClanLeader(uint256 knightId, uint256 clanId, uint256 kickerId);
   error ClanFacet_CantAssignNewRoleToThisCharacter(uint256 clanId, uint256 knightId, ClanRole newRole, uint256 callerId);
   error ClanFacet_NoJoinProposal(uint256 knightId, uint256 clanId);
-  error ClanFacet_CantLeaveAClanYouOwn(uint256 knightId, uint256 clanId);
 }
 
 interface IClanGetters {

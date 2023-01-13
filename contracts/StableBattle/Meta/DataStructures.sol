@@ -15,8 +15,6 @@ struct Knight {
 
 enum gearSlot { NONE, WEAPON, SHIELD, HELMET, ARMOR, PANTS, SLEEVES, GLOVES, BOOTS, JEWELRY, CLOAK }
 
-enum Proposal { NONE, JOIN, LEAVE, INVITE }
-
 struct Clan {
   uint256 leader;
   uint256 stake;

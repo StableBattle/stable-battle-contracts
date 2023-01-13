@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.0;
 
-import { Clan, Proposal, ClanRole } from "../../Meta/DataStructures.sol";
+import { Clan, ClanRole } from "../../Meta/DataStructures.sol";
 
 library ClanStorage {
   struct State {
@@ -21,8 +21,10 @@ library ClanStorage {
     mapping(uint256 => uint256) clanActivityCooldown;
     //Knight => clan join proposal sent
     mapping(uint256 => bool) joinProposalPending;
-    //Clan => knightId => Role in clan
-    mapping(uint256 => mapping(uint256 => ClanRole)) roleInClan;
+    //Kinight => Role in clan
+    mapping(uint256 => ClanRole) roleInClan;
+    //Knight => kick cooldown duration
+    mapping(uint256 => uint) clanKickCooldown;
   }
 
   bytes32 internal constant STORAGE_SLOT = keccak256("Clan.storage");

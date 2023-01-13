@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import { Proposal, ClanRole } from "../../Meta/DataStructures.sol";
+import { ClanRole } from "../../Meta/DataStructures.sol";
 import { IClan } from "./IClan.sol";
 
 contract ClanFacetDummy is IClan {
