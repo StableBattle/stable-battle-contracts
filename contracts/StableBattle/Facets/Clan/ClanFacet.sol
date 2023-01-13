@@ -23,18 +23,11 @@ contract ClanFacet is
   function createClan(uint256 knightId)
     external
     ifOwnsItem(knightId)
-    ifIsNotOnClanActivityCooldown(knightId)
     ifIsKnight(knightId)
     ifNotInClan(knightId)
-    ifNoJoinProposalPending(knightId)
+    ifIsNotOnClanActivityCooldown(knightId)
     returns(uint)
   { return _createClan(knightId); }
-/*
-  function abandon(uint256 clanId) 
-    external 
-    ifOwnsItem(_clanLeader(clanId))
-  { _abandon(clanId); }
-*/
 
   function setClanRole(uint256 clanId, uint256 knightId, ClanRole newRole, uint256 callerId)
     external
@@ -47,6 +40,7 @@ contract ClanFacet is
     if (newRole == ClanRole.OWNER && callerRole == ClanRole.OWNER) {
       ClanStorage.state().roleInClan[clanId][callerId] = ClanRole.ADMIN;
       ClanStorage.state().roleInClan[clanId][knightId] = ClanRole.OWNER;
+      ClanStorage.state().clan[clanId].leader = knightId;
     } else if (uint8(callerRole) > uint8(knightRole) && uint8(callerRole) > uint8(newRole)) {
       ClanStorage.state().roleInClan[clanId][knightId] = newRole;
     } else {
@@ -83,7 +77,7 @@ contract ClanFacet is
     ifIsKnight(knightId)
     ifOwnsItem(knightId)
   {
-    if(_proposal(knightId, clanId) == Proposal.JOIN)
+    if(_clanJoinProposal(knightId) == clanId)
     {
       _withdrawJoin(knightId, clanId);
     } else {
@@ -130,7 +124,7 @@ contract ClanFacet is
   {
     ClanRole approverRole = _roleInClan(clanId, approverId);
     if ((approverRole == ClanRole.OWNER || approverRole ==  ClanRole.ADMIN) &&
-        _proposal(knightId, clanId) == Proposal.JOIN) {
+        _clanJoinProposal(knightId) == clanId) {
       _approveJoinClan(knightId, clanId);
     }
   }
@@ -142,19 +136,8 @@ contract ClanFacet is
   {
     ClanRole callerRole = _roleInClan(clanId, callerId);
     if ((callerRole == ClanRole.OWNER || callerRole ==  ClanRole.ADMIN) &&
-        _proposal(knightId, clanId) == Proposal.JOIN) {
+        _clanJoinProposal(knightId) == clanId) {
       _dismissJoinClan(knightId, clanId);
     }
   }
-
-  //ONLY leaders supposed call the invite function
-  //working but restricted until backend catches up
-  /*
-  function invite(uint256 knightId, uint256 clanId)
-    external
-    ifOwnsItem(_clanLeader(clanId))
-    ifIsKnight(knightId)
-    ifNotInClan(knightId)
-  { _invite(knightId, clanId); }
-  */
 }

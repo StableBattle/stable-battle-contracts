@@ -34,5 +34,5 @@ contract ClanFacetDummy is IClan {
 
   function getClanMaxLevel() external view returns (uint) {}
 
-  function getProposal(uint256 knightId, uint256 clanId) external view returns (Proposal) {}
+  function getClanJoinProposal(uint256 knightId) external view returns(uint256) {}
 }

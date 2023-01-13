@@ -6,13 +6,12 @@ import { Clan, Proposal, ClanRole } from "../../Meta/DataStructures.sol";
 
 library ClanStorage {
   struct State {
-    uint MAX_CLAN_MEMBERS;
     uint[] levelThresholds;
     uint[] maxMembers;
     // clanId => Clan
     mapping(uint256 => Clan) clan;
-    // knightId => clanId => proposalType
-    mapping (uint256 => mapping(uint256 => Proposal)) proposal;
+    // knightId => id of clan where join proposal is sent
+    mapping (uint256 => uint256) joinProposal;
     // address => clanId => amount
     mapping (address => mapping (uint => uint256)) stake;
     

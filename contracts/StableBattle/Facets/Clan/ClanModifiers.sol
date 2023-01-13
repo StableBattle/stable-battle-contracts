@@ -53,12 +53,13 @@ abstract contract ClanModifiers is IClanErrors, ClanGetters {
   }
 
   function isJoinProposalPending(uint256 knightId) internal view returns(bool) {
-    return _clanJoinProposalPending(knightId);
+    return _clanJoinProposal(knightId) != 0;
   }
 
   modifier ifNoJoinProposalPending(uint256 knightId) {
-    if (isJoinProposalPending(knightId)) {
-      revert ClanModifiers_KnightOnClanActivityCooldown(knightId);
+    uint clanId = _clanJoinProposal(knightId);
+    if (clanId != 0) {
+      revert ClanModifiers_JoinProposalToSomeClanExists(knightId, clanId);
     }
     _;
   }

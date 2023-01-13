@@ -37,10 +37,6 @@ contract AdminFacet is ERC1155MetadataInternal {
     KnightStorage.state().knightPrice[coin] = newPrice;
   }
 
-  function adminSetMaxClanMembers(uint newMaxClanMembers) external {
-    ClanStorage.state().MAX_CLAN_MEMBERS = newMaxClanMembers;
-  }
-
   function adminSetLevelThresholds(uint[] memory newThresholds) external {
     ClanStorage.state().levelThresholds = newThresholds;
   }

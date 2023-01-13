@@ -50,10 +50,6 @@ abstract contract ClanGetters {
     return ClanStorage.state().levelThresholds.length;
   }
 
-  function _proposal(uint256 knightId, uint256 clanId) internal view returns(Proposal) {
-    return ClanStorage.state().proposal[knightId][clanId];
-  }
-
   function _clansInTotal() internal view returns(uint256) {
     return ClanStorage.state().clansInTotal;
   }
@@ -62,8 +58,8 @@ abstract contract ClanGetters {
     return ClanStorage.state().clanActivityCooldown[knightId];
   }
 
-  function _clanJoinProposalPending(uint256 knightId) internal view returns(bool) {
-    return ClanStorage.state().joinProposalPending[knightId];
+  function _clanJoinProposal(uint256 knightId) internal view returns(uint256) {
+    return ClanStorage.state().joinProposal[knightId];
   }
 
   function _roleInClan(uint256 clanId, uint256 knightId) internal view returns(ClanRole) {
@@ -96,15 +92,15 @@ abstract contract ClanGettersExternal is IClanGetters, ClanGetters {
     return _stakeOf(benefactor, clanId);
   }
 
-  function getClanLevelThreshold(uint level) external view returns (uint) {
+  function getClanLevelThreshold(uint level) external view returns(uint) {
     return _clanLevelThreshold(level);
   }
 
-  function getClanMaxLevel() external view returns (uint) {
+  function getClanMaxLevel() external view returns(uint) {
     return _clanMaxLevel();
   }
 
-  function getProposal(uint256 knightId, uint256 clanId) external view returns (Proposal) {
-    return _proposal(knightId, clanId);
+  function getClanJoinProposal(uint256 knightId) external view returns(uint256) {
+    return _clanJoinProposal(knightId);
   }
 }

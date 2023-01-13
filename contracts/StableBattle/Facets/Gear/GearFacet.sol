@@ -5,10 +5,9 @@ import { gearSlot } from "../../Meta/DataStructures.sol";
 
 import { IGear } from "../Gear/IGear.sol";
 import { GearInternal } from "../Gear/GearInternal.sol";
-import { GearModifiers } from "../Gear/GearModifiers.sol";
 import { ItemsModifiers } from "../Items/ItemsModifiers.sol";
 
-contract GearFacet is IGear, GearModifiers, GearInternal {
+contract GearFacet is IGear, GearInternal {
 
   //Add a transfer hook to unequip sold or lended item
   //Or forbid selling equipped items

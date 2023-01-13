@@ -31,6 +31,7 @@ interface IClanErrors {
   error ClanModifiers_KnightOnClanActivityCooldown(uint256 knightId);
   error ClanModifiers_KnightNotInThisClan(uint256 knightId, uint256 clanId);
   error ClanModifiers_AboveMaxMembers(uint256 clanId);
+  error ClanModifiers_JoinProposalToSomeClanExists(uint256 knightId, uint256 clanId);
 
   error ClanFacet_InsufficientStake(uint256 stakeAvalible, uint256 withdrawAmount);
   error ClanFacet_CantJoinAlreadyInClan(uint256 knightId, uint256 clanId);
@@ -57,7 +58,7 @@ interface IClanGetters {
 
   function getClanMaxLevel() external view returns (uint);
 
-  function getProposal(uint256 knightId, uint256 clanId) external view returns (Proposal);
+  function getClanJoinProposal(uint256 knightId) external view returns(uint256);
 }
 
 interface IClan is IClanGetters, IClanEvents, IClanErrors {

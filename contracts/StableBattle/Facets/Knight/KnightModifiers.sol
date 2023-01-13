@@ -5,7 +5,7 @@ pragma solidity ^0.8.0;
 import { KnightGetters } from "./KnightGetters.sol";
 import { IKnightErrors } from "./IKnight.sol";
 
-abstract contract KnightModifiers is KnightGetters, IKnightErrors {
+abstract contract KnightModifiers is IKnightErrors, KnightGetters {
 
   function isKnight(uint256 knightId) internal view virtual returns(bool) {
     return knightId >= type(uint256).max - _knightsMintedTotal();

@@ -83,7 +83,6 @@ contract SBInit {
     //ERC1155MetadataStorage.layout()._uri = "ex_uri";
 
   //Clan Facet
-    ClanStorage.state().MAX_CLAN_MEMBERS = 10;
     ClanStorage.state().levelThresholds = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900];
     ClanStorage.state().maxMembers = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50];
 
