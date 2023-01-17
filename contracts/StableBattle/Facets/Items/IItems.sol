@@ -6,7 +6,7 @@ import { ISolidStateERC1155 } from "@solidstate/contracts/token/ERC1155/ISolidSt
 interface IItemsEvents {}
 
 interface IItemsErrors {
-  error ItemsFacet_DontOwnThisItem(uint256 itemId);
+  error ItemsModifiers_DontOwnThisItem(uint256 itemId);
 }
 
 interface IItemsGetters {}

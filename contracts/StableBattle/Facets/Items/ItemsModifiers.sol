@@ -11,7 +11,7 @@ abstract contract ItemsModifiers is ERC1155BaseInternal, IItemsErrors {
 
   modifier ifOwnsItem(uint256 itemId) {
     if(!ownsItem(itemId)) {
-      revert ItemsFacet_DontOwnThisItem(itemId);
+      revert ItemsModifiers_DontOwnThisItem(itemId);
     }
     _;
   }
