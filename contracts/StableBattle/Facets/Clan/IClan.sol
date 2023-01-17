@@ -42,10 +42,13 @@ interface IClanErrors {
   error ClanFacet_CantJoinOtherClanWhileBeingAClanLeader(uint256 knightId, uint256 clanId, uint256 kickerId);
   error ClanFacet_CantAssignNewRoleToThisCharacter(uint256 clanId, uint256 knightId, ClanRole newRole, uint256 callerId);
   error ClanFacet_NoJoinProposal(uint256 knightId, uint256 clanId);
+  error ClanFacet_InsufficientRolePriveleges(uint256 callerId);
 }
 
 interface IClanGetters {
   function getClanLeader(uint clanId) external view returns(uint256);
+
+  function getClanRole(uint knightId) external view returns(ClanRole);
 
   function getClanTotalMembers(uint clanId) external view returns(uint);
   
@@ -55,11 +58,15 @@ interface IClanGetters {
 
   function getStakeOf(address benefactor, uint clanId) external view returns(uint256);
 
-  function getClanLevelThreshold(uint level) external view returns (uint);
+  function getClanLevelThreshold(uint level) external view returns(uint);
 
-  function getClanMaxLevel() external view returns (uint);
+  function getClanMaxLevel() external view returns(uint);
 
   function getClanJoinProposal(uint256 knightId) external view returns(uint256);
+
+  function getClanInfo(uint clanId) external view returns(uint256, uint256, uint256, uint256);
+
+  function getClanKnightInfo(uint knightId) external view returns(uint256, uint256, ClanRole, uint256);
 }
 
 interface IClan is IClanGetters, IClanEvents, IClanErrors {

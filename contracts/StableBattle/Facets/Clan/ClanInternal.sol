@@ -26,9 +26,9 @@ abstract contract ClanInternal is
     ClanStorage.state().clansInTotal++;
     clanId = _clansInTotal();
     ClanStorage.state().clan[clanId] = Clan(knightId, 0, 0, 0);
-    _approveJoinClan(knightId, clanId);
-    _setClanRole(knightId, clanId, ClanRole.OWNER);
     emit ClanCreated(clanId, knightId);
+    _approveJoinClan(knightId, clanId);
+    _setClanRole(clanId, knightId, ClanRole.OWNER);
   }
 
   function _abandon(uint256 clanId) internal {

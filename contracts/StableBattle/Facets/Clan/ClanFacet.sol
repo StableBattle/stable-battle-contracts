@@ -130,11 +130,14 @@ contract ClanFacet is
     ifOwnsItem(callerId)
     ifIsBelowMaxMembers(clanId)
   {
-    ClanRole approverRole = _roleInClan(callerId);
-    if ((approverRole == ClanRole.OWNER || approverRole ==  ClanRole.ADMIN) &&
-        _clanJoinProposal(knightId) == clanId) {
-      _approveJoinClan(knightId, clanId);
+    ClanRole callerRole = _roleInClan(callerId);
+    if(_clanJoinProposal(knightId) != clanId) {
+      revert ClanFacet_NoJoinProposal(knightId, clanId);
     }
+    if(callerRole != ClanRole.OWNER && callerRole !=  ClanRole.ADMIN) {
+      revert ClanFacet_InsufficientRolePriveleges(callerId);
+    }
+    _approveJoinClan(knightId, clanId);
   }
 
   function dismissJoinClan(uint256 knightId, uint256 clanId, uint256 callerId)
@@ -143,9 +146,12 @@ contract ClanFacet is
     ifOwnsItem(callerId)
   {
     ClanRole callerRole = _roleInClan(callerId);
-    if ((callerRole == ClanRole.OWNER || callerRole ==  ClanRole.ADMIN) &&
-        _clanJoinProposal(knightId) == clanId) {
-      _dismissJoinClan(knightId, clanId);
+    if(_clanJoinProposal(knightId) != clanId) {
+      revert ClanFacet_NoJoinProposal(knightId, clanId);
     }
+    if(callerRole != ClanRole.OWNER && callerRole !=  ClanRole.ADMIN) {
+      revert ClanFacet_InsufficientRolePriveleges(callerId);
+    }
+    _dismissJoinClan(knightId, clanId);
   }
 }

@@ -2,7 +2,7 @@
   "scripts": {
     "compile": "npx hardhat compile",
     "clean": "npx hardhat clean",
-    "deploy": "npx hardhat run --network goerli scripts/deploy.ts",
+    "deploy": "npx hardhat run --network goerli scripts/deployStableBattle.ts",
     "approve": "npx hardhat run --network goerli scripts/helpers/approveUSDT.ts",
     "test": "npx hardhat test"
   },

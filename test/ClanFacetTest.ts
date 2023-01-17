@@ -42,6 +42,7 @@ describe('ClanFacetTest', async function () {
   it('Should create a clan correctly', async () => {
     await SB.Diamond.ClanFacet.createClan(knight[0])
     const eventsClanCreated = await SB.Diamond.ClanFacet.queryFilter(SB.Diamond.ClanFacet.filters.ClanCreated())
+    const eventsKnightJoinedClan = await SB.Diamond.ClanFacet.queryFilter(SB.Diamond.ClanFacet.filters.KnightJoinedClan())
     clanId = eventsClanCreated[0].args.clanId
     expect(eventsClanCreated[0].args.knightId).to.equal(knight[0])
     
@@ -57,6 +58,11 @@ describe('ClanFacetTest', async function () {
     expect(clanLevel).to.equal(0)
 
     expect(await SB.Diamond.KnightFacet.getKnightClan(knight[0])).to.equal(clanId)
+    expect(eventsKnightJoinedClan.length).to.equal(1);
+    expect(eventsKnightJoinedClan[0].args.clanId).to.equal(1);
+    expect(eventsKnightJoinedClan[0].args.knightId).to.equal(knight[0]);
+
+    expect(await SB.Diamond.ClanFacet.getClanRole(knight[0])).to.equal(3);
   })
 
   it('Should stake & level up a clan correctly', async () => {
@@ -104,6 +110,8 @@ describe('ClanFacetTest', async function () {
     await SB.Diamond.ClanFacet.connect(SB.users[2]).join(knight[2], clanId)
     const eventsKnightAskedToJoin = await SB.Diamond.ClanFacet.queryFilter(SB.Diamond.ClanFacet.filters.KnightAskedToJoin())
     
+    expect(eventsKnightAskedToJoin.length).to.equal(2);
+    
     expect(eventsKnightAskedToJoin[0].args.clanId).to.equal(clanId)
     expect(eventsKnightAskedToJoin[0].args.knightId).to.equal(knight[1])
     expect(await SB.Diamond.ClanFacet.getClanJoinProposal(knight[1])).to.equal(clanId)
@@ -114,13 +122,18 @@ describe('ClanFacetTest', async function () {
   })
 
   it('Should accept user1', async () => {
-    await SB.Diamond.ClanFacet.approveJoinClan(knight[1], clanId, knight[0])
-    const eventsKnightJoinedClan = await SB.Diamond.ClanFacet.queryFilter(SB.Diamond.ClanFacet.filters.KnightJoinedClan())
+    await SB.Diamond.ClanFacet.approveJoinClan(knight[1], clanId, knight[0]);
+    const eventsKnightJoinedClan = await SB.Diamond.ClanFacet.queryFilter(SB.Diamond.ClanFacet.filters.KnightJoinedClan());
     expect(eventsKnightJoinedClan.length).to.equal(2);
-    expect(eventsKnightJoinedClan[1].args.clanId).to.equal(clanId)
-    expect(eventsKnightJoinedClan[1].args.knightId).to.equal(knight[1])
-    console.log(await SB.Diamond.ClanFacet.getClanTotalMembers(clanId));
-    expect(await SB.Diamond.ClanFacet.getClanTotalMembers(clanId)).to.equal(BigNumber.from(2));
+    expect(await SB.Diamond.ClanFacet.getClanTotalMembers(clanId)).to.deep.equal(BigNumber.from(2));
     expect(await SB.Diamond.KnightFacet.getKnightClan(knight[1])).to.equal(clanId)
+  })
+
+  it('Should dismiss user2', async () => {
+    await SB.Diamond.ClanFacet.dismissJoinClan(knight[2], clanId, knight[0]);
+    const eventsKnightJoinedClan = await SB.Diamond.ClanFacet.queryFilter(SB.Diamond.ClanFacet.filters.KnightJoinDismissed());
+    expect(eventsKnightJoinedClan.length).to.equal(1);
+    expect(await SB.Diamond.ClanFacet.getClanTotalMembers(clanId)).to.deep.equal(BigNumber.from(2));
+    expect(await SB.Diamond.KnightFacet.getKnightClan(knight[2])).to.equal(0)
   })
 })

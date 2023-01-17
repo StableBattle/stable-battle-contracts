@@ -80,6 +80,10 @@ abstract contract ClanGettersExternal is IClanGetters, ClanGetters {
     return _clanLeader(clanId);
   }
 
+  function getClanRole(uint knightId) external view returns(ClanRole) {
+    return _roleInClan(knightId);
+  }
+
   function getClanTotalMembers(uint clanId) external view returns(uint) {
     return _clanTotalMembers(clanId);
   }
@@ -106,5 +110,23 @@ abstract contract ClanGettersExternal is IClanGetters, ClanGetters {
 
   function getClanJoinProposal(uint256 knightId) external view returns(uint256) {
     return _clanJoinProposal(knightId);
+  }
+
+  function getClanInfo(uint clanId) external view returns(uint256, uint256, uint256, uint256) {
+    return (
+      _clanLeader(clanId),
+      _clanTotalMembers(clanId),
+      _clanStake(clanId),
+      _clanLevel(clanId)
+    );
+  }
+
+  function getClanKnightInfo(uint knightId) external view returns(uint256, uint256, ClanRole, uint256) {
+    return (
+      _clanJoinProposal(knightId),
+      _clanActivityCooldown(knightId),
+      _roleInClan(knightId),
+      _clanKickCooldown(knightId)
+    );
   }
 }
