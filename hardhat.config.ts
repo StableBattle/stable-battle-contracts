@@ -27,7 +27,7 @@ const config: HardhatUserConfig = {
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
     goerli: {
-      url: process.env.GOERLI_ALCHEMY_URL || "",
+      url: process.env.GOERLI_INFURA_URL || "",
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
@@ -37,7 +37,7 @@ const config: HardhatUserConfig = {
     currency: "USD",
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY,
+    apiKey: process.env.POLYGONSCAN_API_KEY,
     /*{
       mumbai: process.env.POLYGONSCAN_API_KEY,
       goerli: process.env.ETHERSCAN_API_KEY
