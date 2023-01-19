@@ -12,8 +12,8 @@ contract SBTProxy is UpgradeableProxyOwnable {
   //Init ERC20
     ERC20MetadataStorage.Layout storage l = ERC20MetadataStorage.layout();
 
-    l.setName("StableBattle Token");
-    l.setSymbol("SBT");
+    l.setName("BEER");
+    l.setSymbol("BEER");
     l.setDecimals(0);
   //Set implementation
     _setImplementation(implementation);

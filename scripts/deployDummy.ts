@@ -18,13 +18,13 @@ export default async function deployDummy(SBDAddress : string) {
 
   
   fs.writeFileSync(
-    `./scripts/config/${hre.network.name}/dummmy-address.ts`,
+    `./scripts/config/${hre.network.name}/dummy-address.ts`,
     `export const dummy_address = "${dummy.address}"`,
     { flag: 'w' }
   );
 
   fs.writeFileSync(
-    `./scripts/config/${hre.network.name}/dummmy-address.txt`,
+    `./scripts/config/${hre.network.name}/dummy-address.txt`,
     `${dummy.address}`,
     { flag: 'w' }
   );

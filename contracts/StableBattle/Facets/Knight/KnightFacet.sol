@@ -16,6 +16,9 @@ contract KnightFacet is
 {
   function mintKnight(Pool p, Coin c)
     external
+    ifIsValidCoin(c)
+    ifIsVaildPool(p)
+    ifIsCompatible(p, c)
   {
     _mintKnight(p, c);
   }
@@ -23,6 +26,10 @@ contract KnightFacet is
   function burnKnight(uint256 knightId)
     external
   //ifOwnsItem(knightId)
+    ifIsKnight(knightId)
+    ifIsVaildPool(_knightPool(knightId))
+    ifIsValidCoin(_knightCoin(knightId))
+    ifIsCompatible(_knightPool(knightId), _knightCoin(knightId))
   {
     _burnKnight(knightId);
   }

@@ -20,12 +20,7 @@ abstract contract KnightInternal is
   MetaModifiers,
   ExternalCalls
 {
-  function _mintKnight(Pool p, Coin c)
-    internal
-    ifIsValidCoin(c)
-    ifIsVaildPool(p)
-    ifIsCompatible(p, c)
-  {
+  function _mintKnight(Pool p, Coin c) internal {
     if (c != Coin.TEST) {
       // Check if user gave its approval for enough COIN
       uint256 allowance = COIN(c).allowance(msg.sender, address(this));
@@ -54,13 +49,7 @@ abstract contract KnightInternal is
     emit KnightMinted(knightId, msg.sender, p, c);
   }
 
-  function _burnKnight(uint256 knightId)
-    internal
-    ifIsKnight(knightId)
-    ifIsVaildPool(_knightPool(knightId))
-    ifIsValidCoin(_knightCoin(knightId))
-    ifIsCompatible(_knightPool(knightId), _knightCoin(knightId))
-  {
+  function _burnKnight(uint256 knightId) internal {
     Pool p = _knightPool(knightId);
     Coin c = _knightCoin(knightId);
     //Leave or abandon clan

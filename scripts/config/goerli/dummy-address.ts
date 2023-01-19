@@ -1,1 +1,1 @@
-export const dummy_address = "0x2aa180BB38080BBA2bA34a39186e59D6d6E88386"
+export const dummy_address = "0x22242f56399DD3e6Bec44Ebb9CaFBc49a89766CE"

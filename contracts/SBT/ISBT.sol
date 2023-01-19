@@ -2,9 +2,13 @@
 pragma solidity ^0.8.0;
 
 import { ISolidStateERC20 } from "@solidstate/contracts/token/ERC20/ISolidStateERC20.sol";
-import { ISBTInternal } from "./ISBTInternal.sol";
 
-interface ISBT is ISolidStateERC20, ISBTInternal {
+interface ISBTEvents {
+  event Stake(address sender, uint clanId, uint256 amount);
+  event Withdraw(address sender, uint clanId, uint256 amount);
+}
+
+interface ISBT is ISolidStateERC20, ISBTEvents {
   function adminMint(address account, uint256 amount) external;
 
   function adminBurn(address account, uint256 amount) external;

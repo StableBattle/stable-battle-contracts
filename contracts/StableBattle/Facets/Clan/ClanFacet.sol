@@ -40,11 +40,11 @@ contract ClanFacet is
     ClanRole callerRole = _roleInClan(callerId);
     ClanRole knightRole = _roleInClan(knightId);
     if (newRole == ClanRole.OWNER && callerRole == ClanRole.OWNER) {
-      ClanStorage.state().roleInClan[callerId] = ClanRole.ADMIN;
-      ClanStorage.state().roleInClan[knightId] = ClanRole.OWNER;
+      _setClanRole(clanId, callerId, ClanRole.ADMIN);
+      _setClanRole(clanId, knightId, ClanRole.OWNER);
       ClanStorage.state().clan[clanId].leader = knightId;
     } else if (uint8(callerRole) > uint8(knightRole) && uint8(callerRole) > uint8(newRole)) {
-      ClanStorage.state().roleInClan[knightId] = newRole;
+      _setClanRole(clanId, knightId, newRole);
     } else {
       revert ClanFacet_CantAssignNewRoleToThisCharacter(clanId, knightId, newRole, callerId);
     }

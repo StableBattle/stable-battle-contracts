@@ -136,4 +136,11 @@ describe('ClanFacetTest', async function () {
     expect(await SB.Diamond.ClanFacet.getClanTotalMembers(clanId)).to.deep.equal(BigNumber.from(2));
     expect(await SB.Diamond.KnightFacet.getKnightClan(knight[2])).to.equal(0)
   })
+
+  it('Should assign user1 an admin role', async () => {
+    await SB.Diamond.ClanFacet.setClanRole(clanId, knight[1], 2, knight[0]);
+    
+    const knightRole = (await SB.Diamond.ClanFacet.getClanKnightInfo(knight[1]))[2];
+    expect(knightRole).to.equal(2);
+  })
 })
