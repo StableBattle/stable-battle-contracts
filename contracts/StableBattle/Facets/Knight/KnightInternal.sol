@@ -21,23 +21,20 @@ abstract contract KnightInternal is
   ExternalCalls
 {
   function _mintKnight(Pool p, Coin c) internal {
+    uint256 knightPrice = _knightPrice(c);
     if (c != Coin.TEST) {
       // Check if user gave its approval for enough COIN
       uint256 allowance = COIN(c).allowance(msg.sender, address(this));
-      uint256 knightPrice = _knightPrice(c);
       if (allowance < knightPrice) {
-        revert KnightFacet_InsufficientFunds({
-          avalible: allowance,
-          required: knightPrice
-        });
+        revert KnightFacet_InsufficientFunds(allowance, knightPrice);
       }
       // Transfer enough COIN from user to contract
-      COIN(c).transferFrom(msg.sender, address(this), _knightPrice(c));
+      COIN(c).transferFrom(msg.sender, address(this), knightPrice);
       // Approve COIN for Pool
-      COIN(c).approve(PoolAddress(p), _knightPrice(c));
+      COIN(c).approve(PoolAddress(p), knightPrice);
     }
     if (p == Pool.AAVE) {
-      AAVE().supply(address(COIN(c)), _knightPrice(c), address(this), 0);
+      AAVE().supply(address(COIN(c)), knightPrice, address(this), 0);
     }
     // Mint NFT for the user
     uint256 knightId = type(uint256).max - _knightsMintedTotal();

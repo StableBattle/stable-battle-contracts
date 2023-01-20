@@ -29,7 +29,7 @@ export default async function populateClans() {
   await assignClanRole(clanIds[1], knightIds[clans + 9], 1);
   await assignClanRole(clanIds[1], knightIds[clans + 10], 1);
   await assignClanRole(clanIds[1], knightIds[clans + 11], 1);
-  await bulkJoinClan(clanIds[2], knightIds.slice(clans + 15));
+  await bulkJoinClan(clanIds[2], knightIds.slice(clans + 15, clans+25));
   //2 Admins, 5 Mods
   await assignClanRole(clanIds[2], knightIds[clans + 15], 2);
   await assignClanRole(clanIds[2], knightIds[clans + 16], 2);
@@ -38,6 +38,15 @@ export default async function populateClans() {
   await assignClanRole(clanIds[2], knightIds[clans + 19], 1);
   await assignClanRole(clanIds[2], knightIds[clans + 20], 1);
   await assignClanRole(clanIds[2], knightIds[clans + 21], 1);
+
+  const SBD = await hre.ethers.getContractAt("StableBattleDummy", SBD_address);
+  await (await SBD.joinClan(knightIds[clans + 26], clanIds[2])).wait();
+  await (await SBD.withdrawJoinClan(knightIds[clans + 26], clanIds[2])).wait();
+  await (await SBD.leaveClan(knightIds[clans + 22], clanIds[2])).wait();
+  await (await SBD.joinClan(knightIds[clans + 26], clanIds[2])).wait();
+  await (await SBD.dismissJoinClan(knightIds[clans + 26], clanIds[2], knightIds[2])).wait();
+  const SBT = await hre.ethers.getContractAt("ISBT", SBT_address);
+  await (await SBT.withdraw(clanIds[2], 100)).wait();
 }
 
 async function mintAndApproveUSDT(amount: number) {
@@ -58,7 +67,7 @@ async function bulkMintKnights(n : number) : Promise<BigNumber[]> {
   const SBD = await hre.ethers.getContractAt("StableBattleDummy", SBD_address);
   let knightIds: BigNumber[] = [];
   for(let i = 0; i < n; i++) {
-    const mintTx = await SBD.mintKnight(2, 2);
+    const mintTx = await SBD.mintKnight(2, 2, {gasLimit: 1000000});
     await mintTx.wait();
     const eventsKnightMinted = await SBD.queryFilter(SBD.filters.KnightMinted());
     const knightId = eventsKnightMinted.filter(evt => evt.args.wallet == user).slice(-1)[0].args.knightId;
@@ -105,7 +114,7 @@ async function bulkJoinClan(clanId: BigNumber, knightIds: BigNumber[]) {
   const SBD = await hre.ethers.getContractAt("StableBattleDummy", SBD_address);
   const ownerId = (await SBD.getClanInfo(clanId))[0];
   for(let i = 0; i < knightIds.length; i++) {
-    const joinTx = await SBD.join(knightIds[i], clanId);
+    const joinTx = await SBD.joinClan(knightIds[i], clanId);
     await joinTx.wait();
     console.log(`Join request from ${knightIds[i]} into clan ${clanId} sent: ${joinTx.hash}`);
     const approveTx = await SBD.approveJoinClan(knightIds[i], clanId, ownerId);

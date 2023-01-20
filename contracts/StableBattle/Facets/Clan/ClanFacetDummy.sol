@@ -5,25 +5,27 @@ import { ClanRole } from "../../Meta/DataStructures.sol";
 import { IClan } from "./IClan.sol";
 
 contract ClanFacetDummy is IClan {
-  function createClan(uint256 knightId) external returns(uint) {}
+  function createClan(uint256 knightId) external returns(uint clanId) {}
 
   function setClanRole(uint256 clanId, uint256 knightId, ClanRole newRole, uint256 callerId) external {}
 
+// Clan stakes and leveling
   function onStake(address benefactor, uint256 clanId, uint256 amount) external {}
 
   function onWithdraw(address benefactor, uint256 clanId, uint256 amount) external {}
 
-  function join(uint256 knightId, uint256 clanId) external {}
+//Join, Leave and Invite Proposals
+  function joinClan(uint256 knightId, uint256 clanId) external {}
 
-  function withdrawJoin(uint256 knightId, uint256 clanId) external {}
-
-  function leave(uint256 knightId, uint256 clanId) external {}
-
-  function kick(uint256 knightId, uint256 clanId, uint256 callerId) external {}
+  function withdrawJoinClan(uint256 knightId, uint256 clanId) external {}
 
   function approveJoinClan(uint256 knightId, uint256 clanId, uint256 callerId) external {}
 
   function dismissJoinClan(uint256 knightId, uint256 clanId, uint256 callerId) external {}
+  
+  function kickFromClan(uint256 knightId, uint256 clanId, uint256 callerId) external {}
+
+  function leaveClan(uint256 knightId, uint256 clanId) external {}
 
 
   

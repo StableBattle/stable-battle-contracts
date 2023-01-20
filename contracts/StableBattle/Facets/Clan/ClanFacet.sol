@@ -64,7 +64,7 @@ contract ClanFacet is
 
 //Join, Leave and Invite Proposals
   //ONLY knight supposed call the join function
-  function join(uint256 knightId, uint256 clanId)
+  function joinClan(uint256 knightId, uint256 clanId)
     external
     ifIsKnight(knightId)
     ifOwnsItem(knightId)
@@ -74,7 +74,7 @@ contract ClanFacet is
     ifNoJoinProposalPending(knightId)
   { _join(knightId, clanId); }
 
-  function withdrawJoin(uint256 knightId, uint256 clanId)
+  function withdrawJoinClan(uint256 knightId, uint256 clanId)
     external
     ifIsKnight(knightId)
     ifOwnsItem(knightId)
@@ -87,7 +87,7 @@ contract ClanFacet is
     }
   }
 
-  function leave(uint256 knightId, uint256 clanId)
+  function leaveClan(uint256 knightId, uint256 clanId)
     external
     ifIsKnight(knightId)
     ifIsInClan(knightId, clanId)
@@ -97,7 +97,7 @@ contract ClanFacet is
     _kick(knightId, clanId);
   }
 
-  function kick(uint256 knightId, uint256 clanId, uint256 callerId)
+  function kickFromClan(uint256 knightId, uint256 clanId, uint256 callerId)
     external
     ifIsKnight(knightId)
     ifIsInClan(knightId, clanId)

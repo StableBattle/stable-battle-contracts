@@ -6,21 +6,18 @@ import { ClanRole } from "../../Meta/DataStructures.sol";
 interface IClanEvents {
   event ClanCreated(uint clanId, uint256 knightId);
   event ClanAbandoned(uint clanId, uint256 knightId);
-  event ClanLeaderChanged(uint clanId, uint256 knightId);
-  event NewClanRole(uint clanId, uint256 knightId, ClanRole newRole);
+  event ClanNewRole(uint clanId, uint256 knightId, ClanRole newRole);
 
-  event StakeAdded(address benefactor, uint clanId, uint amount);
-  event StakeWithdrawn(address benefactor, uint clanId, uint amount);
+  event ClanStakeAdded(address benefactor, uint clanId, uint amount);
+  event ClanStakeWithdrawn(address benefactor, uint clanId, uint amount);
   event ClanLeveledUp(uint clanId, uint newLevel);
   event ClanLeveledDown(uint clanId, uint newLevel);
 
-  event KnightAskedToJoin(uint clanId, uint256 knightId);
-  event KnightNoLongerWantsToJoin(uint clanId, uint256 knightId);
-  event KnightJoinedClan(uint clanId, uint256 knightId);
-  event KnightJoinDismissed(uint clanId, uint256 knightId);
-  event KnightAskedToLeave(uint clanId, uint256 knightId);
-  event KnightLeftClan(uint clanId, uint256 knightId);
-  event KnightInvitedToClan(uint clanId, uint256 knightId);
+  event ClanJoinProposalSent(uint clanId, uint256 knightId);
+  event ClanJoinProposalWithdrawn(uint clanId, uint256 knightId);
+  event ClanJoinProposalAccepted(uint clanId, uint256 knightId);
+  event ClanJoinProposalDismissed(uint clanId, uint256 knightId);
+  event ClanKnightKicked(uint clanId, uint256 knightId);
 }
 
 interface IClanErrors {
@@ -80,7 +77,15 @@ interface IClan is IClanGetters, IClanEvents, IClanErrors {
   function onWithdraw(address benefactor, uint256 clanId, uint256 amount) external;
 
 //Join, Leave and Invite Proposals
-  function join(uint256 knightId, uint256 clanId) external;
+  function joinClan(uint256 knightId, uint256 clanId) external;
 
-  function leave(uint256 knightId, uint256 clanId) external;
+  function withdrawJoinClan(uint256 knightId, uint256 clanId) external;
+
+  function approveJoinClan(uint256 knightId, uint256 clanId, uint256 callerId) external;
+
+  function dismissJoinClan(uint256 knightId, uint256 clanId, uint256 callerId) external;
+  
+  function kickFromClan(uint256 knightId, uint256 clanId, uint256 callerId) external;
+
+  function leaveClan(uint256 knightId, uint256 clanId) external;
 }

@@ -43,7 +43,7 @@ abstract contract ClanInternal is
     if (newClanRole == ClanRole.OWNER || newClanRole == ClanRole.ADMIN) {
       ClanStorage.state().clanKickCooldown[knightId] = 0;
     }
-    emit NewClanRole(clanId, knightId, newClanRole);
+    emit ClanNewRole(clanId, knightId, newClanRole);
   }
 
 // Clan stakes and leveling
@@ -52,7 +52,7 @@ abstract contract ClanInternal is
     ClanStorage.state().clan[clanId].stake += amount;
     _leveling(clanId);
 
-    emit StakeAdded(benefactor, clanId, amount);
+    emit ClanStakeAdded(benefactor, clanId, amount);
   }
 
   function _onWithdraw(address benefactor, uint256 clanId, uint256 amount) internal {
@@ -68,7 +68,7 @@ abstract contract ClanInternal is
     ClanStorage.state().clan[clanId].stake -= amount;
     _leveling(clanId);
 
-    emit StakeWithdrawn(benefactor, clanId, amount);
+    emit ClanStakeWithdrawn(benefactor, clanId, amount);
   }
 
   //Calculate clan level based on stake
@@ -83,40 +83,41 @@ abstract contract ClanInternal is
     }
     if (currentLevel < newLevel) {
       ClanStorage.state().clan[clanId].level = newLevel;
-      emit ClanLeveledUp (clanId, newLevel);
+      emit ClanLeveledUp(clanId, newLevel);
     } else if (currentLevel > newLevel) {
       ClanStorage.state().clan[clanId].level = newLevel;
-      emit ClanLeveledDown (clanId, newLevel);
+      emit ClanLeveledDown(clanId, newLevel);
     }
   }
 
 //Join, Leave and Invite Proposals
   function _join(uint256 knightId, uint256 clanId) internal {
     ClanStorage.state().joinProposal[knightId] = clanId;
-    emit KnightAskedToJoin(clanId, knightId);
+    emit ClanJoinProposalSent(clanId, knightId);
   }
 
   function _withdrawJoin(uint256 knightId, uint256 clanId) internal {
     ClanStorage.state().joinProposal[knightId] = 0;
-    emit KnightNoLongerWantsToJoin(clanId, knightId);
+    emit ClanJoinProposalWithdrawn(clanId, knightId);
   }
 
   function _kick(uint256 knightId, uint256 clanId) internal {
+    _setClanRole(clanId, knightId, ClanRole.NONE);
     ClanStorage.state().clan[clanId].totalMembers--;
     KnightStorage.state().knight[knightId].inClan = 0;
     ClanStorage.state().clanActivityCooldown[knightId] = block.timestamp + TWO_DAYS_IN_SECONDS;
-    emit KnightLeftClan(clanId, knightId);
+    emit ClanKnightKicked(clanId, knightId);
   }
 
   function _approveJoinClan(uint256 knightId, uint256 clanId) internal {
     ClanStorage.state().clan[clanId].totalMembers++;
     KnightStorage.state().knight[knightId].inClan = clanId;
     ClanStorage.state().joinProposal[knightId] = 0;
-    emit KnightJoinedClan(clanId, knightId);
+    emit ClanJoinProposalAccepted(clanId, knightId);
   }
 
   function _dismissJoinClan(uint256 knightId, uint256 clanId) internal {
     ClanStorage.state().joinProposal[knightId] = 0;
-    emit KnightJoinDismissed(clanId, knightId);
+    emit ClanJoinProposalDismissed(clanId, knightId);
   }
 }
