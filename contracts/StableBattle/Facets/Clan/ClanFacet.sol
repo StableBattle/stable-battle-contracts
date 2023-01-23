@@ -153,6 +153,7 @@ contract ClanFacet is
       revert ClanFacet_InsufficientRolePriveleges(callerId);
     }
     _approveJoinClan(knightId, clanId);
+    _setClanRole(clanId, knightId, ClanRole.PRIVATE);
     emit ClanJoinProposalAccepted(clanId, knightId, callerId);
   }
 
