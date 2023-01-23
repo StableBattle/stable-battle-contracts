@@ -120,6 +120,7 @@ abstract contract ClanInternal is
     KnightStorage.state().knight[knightId].inClan = clanId;
     ClanStorage.state().joinProposal[knightId] = 0;
     emit ClanKnightJoined(clanId, knightId);
+    _setClanRole(clanId, knightId, ClanRole.PRIVATE);
   }
 
   function _dismissJoinClan(uint256 knightId, uint256 clanId) internal {
