@@ -99,7 +99,7 @@ abstract contract ClanInternal is
 //Join, Leave and Invite Proposals
   function _join(uint256 knightId, uint256 clanId) internal {
     ClanStorage.state().joinProposal[knightId] = clanId;
-    emit ClanJoinProposalSent(clanId, knightId);
+    emit ClanKnightJoined(clanId, knightId);
   }
 
   function _withdrawJoin(uint256 knightId, uint256 clanId) internal {
@@ -112,14 +112,14 @@ abstract contract ClanInternal is
     ClanStorage.state().clan[clanId].totalMembers--;
     KnightStorage.state().knight[knightId].inClan = 0;
     ClanStorage.state().clanActivityCooldown[knightId] = block.timestamp + TWO_DAYS_IN_SECONDS;
-    emit ClanKnightKicked(clanId, knightId);
+    emit ClanKnightQuit(clanId, knightId);
   }
 
   function _approveJoinClan(uint256 knightId, uint256 clanId) internal {
     ClanStorage.state().clan[clanId].totalMembers++;
     KnightStorage.state().knight[knightId].inClan = clanId;
     ClanStorage.state().joinProposal[knightId] = 0;
-    emit ClanJoinProposalAccepted(clanId, knightId);
+    emit ClanKnightJoined(clanId, knightId);
   }
 
   function _dismissJoinClan(uint256 knightId, uint256 clanId) internal {

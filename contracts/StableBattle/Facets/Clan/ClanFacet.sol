@@ -108,6 +108,7 @@ contract ClanFacet is
     ifNotClanOwner(knightId)
   { 
     _kick(knightId, clanId);
+    emit ClanKnightLeft(clanId, knightId);
   }
 
   function kickFromClan(uint256 knightId, uint256 clanId, uint256 callerId)
@@ -135,6 +136,7 @@ contract ClanFacet is
     } else { 
       revert ClanFacet_CantKickThisMember(knightId, clanId, callerId); 
     }
+    emit ClanKnightKicked(clanId, knightId, callerId);
   }
 
   function approveJoinClan(uint256 knightId, uint256 clanId, uint256 callerId)
@@ -151,6 +153,7 @@ contract ClanFacet is
       revert ClanFacet_InsufficientRolePriveleges(callerId);
     }
     _approveJoinClan(knightId, clanId);
+    emit ClanJoinProposalAccepted(clanId, knightId, callerId);
   }
 
   function dismissJoinClan(uint256 knightId, uint256 clanId, uint256 callerId)

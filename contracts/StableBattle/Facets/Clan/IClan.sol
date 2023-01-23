@@ -16,9 +16,12 @@ interface IClanEvents {
 
   event ClanJoinProposalSent(uint clanId, uint256 knightId);
   event ClanJoinProposalWithdrawn(uint clanId, uint256 knightId);
-  event ClanJoinProposalAccepted(uint clanId, uint256 knightId);
+  event ClanJoinProposalAccepted(uint clanId, uint256 knightId, uint256 callerId);
   event ClanJoinProposalDismissed(uint clanId, uint256 knightId);
-  event ClanKnightKicked(uint clanId, uint256 knightId);
+  event ClanKnightKicked(uint clanId, uint256 knightId, uint256 callerId);
+  event ClanKnightLeft(uint clanId, uint256 knightId);
+  event ClanKnightQuit(uint clanId, uint256 knightId);
+  event ClanKnightJoined(uint clanId, uint256 knightId);
 }
 
 interface IClanErrors {
