@@ -81,7 +81,7 @@ async function createClans(n: number, knightIds: BigNumber[]) : Promise<BigNumbe
   const SBD = await hre.ethers.getContractAt("StableBattleDummy", SBD_address);
   let clanIds: BigNumber[] = [];
   for(let i = 0; i < n; i++) {
-    const createClanTx = await SBD.createClan(knightIds[i]);
+    const createClanTx = await SBD.createClan(knightIds[i], "💩💩💩");
     await createClanTx.wait(10);
     const eventsClanCreated = await SBD.queryFilter(SBD.filters.ClanCreated());
     const clanId = eventsClanCreated.filter(evt => evt.args.knightId.eq(knightIds[i]))[0].args.clanId;

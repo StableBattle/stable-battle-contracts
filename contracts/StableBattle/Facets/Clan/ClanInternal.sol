@@ -22,11 +22,12 @@ abstract contract ClanInternal is
   ItemsModifiers
 {
 //Creation, Abandonment and Leader Change
-  function _createClan(uint256 knightId) internal returns(uint clanId) {
+  function _createClan(uint256 knightId, string calldata clanName) internal returns(uint clanId) {
     ClanStorage.state().clansInTotal++;
     clanId = _clansInTotal();
     ClanStorage.state().clan[clanId] = Clan(knightId, 0, 0, 0);
     emit ClanCreated(clanId, knightId);
+    _setClanName(clanId, clanName);
     _approveJoinClan(knightId, clanId);
     _setClanRole(clanId, knightId, ClanRole.OWNER);
   }
@@ -44,6 +45,11 @@ abstract contract ClanInternal is
       ClanStorage.state().clanKickCooldown[knightId] = 0;
     }
     emit ClanNewRole(clanId, knightId, newClanRole);
+  }
+
+  function _setClanName(uint256 clanId, string calldata newClanName) internal {
+    ClanStorage.state().clanName[clanId] = newClanName;
+    emit ClanNewName(clanId, newClanName);
   }
 
 // Clan stakes and leveling

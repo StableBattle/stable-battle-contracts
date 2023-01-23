@@ -25,6 +25,10 @@ library ClanStorage {
     mapping(uint256 => ClanRole) roleInClan;
     //Knight => kick cooldown duration
     mapping(uint256 => uint) clanKickCooldown;
+    //Clan => name of said clan
+    mapping(uint256 => string) clanName;
+    //Clan name => taken or not
+    mapping(string => bool) clanNameTaken;
   }
 
   bytes32 internal constant STORAGE_SLOT = keccak256("Clan.storage");

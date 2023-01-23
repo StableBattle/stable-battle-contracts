@@ -40,7 +40,7 @@ describe('ClanFacetTest', async function () {
   })
 
   it('Should create a clan correctly', async () => {
-    await SB.Diamond.ClanFacet.createClan(knight[0])
+    await SB.Diamond.ClanFacet.createClan(knight[0], "💩💩💩");
     const eventsClanCreated = await SB.Diamond.ClanFacet.queryFilter(SB.Diamond.ClanFacet.filters.ClanCreated())
     const eventsKnightJoinedClan = await SB.Diamond.ClanFacet.queryFilter(SB.Diamond.ClanFacet.filters.ClanJoinProposalAccepted())
     clanId = eventsClanCreated[0].args.clanId

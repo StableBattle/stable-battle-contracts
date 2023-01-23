@@ -5,9 +5,11 @@ import { ClanRole } from "../../Meta/DataStructures.sol";
 import { IClan } from "./IClan.sol";
 
 contract ClanFacetDummy is IClan {
-  function createClan(uint256 knightId) external returns(uint clanId) {}
+  function createClan(uint256 knightId, string calldata clanName) external returns(uint clanId) {}
 
   function setClanRole(uint256 clanId, uint256 knightId, ClanRole newRole, uint256 callerId) external {}
+
+  function setClanName(uint256 clanId, string calldata newClanName) external {}
 
 // Clan stakes and leveling
   function onStake(address benefactor, uint256 clanId, uint256 amount) external {}
@@ -50,4 +52,6 @@ contract ClanFacetDummy is IClan {
   function getClanInfo(uint clanId) external view returns(uint256, uint256, uint256, uint256) {}
 
   function getClanKnightInfo(uint knightId) external view returns(uint256, uint256, ClanRole, uint256) {}
+
+  function getClanName(uint256 clanId) external view returns(string memory) {}
 }

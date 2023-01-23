@@ -22,14 +22,18 @@ contract ClanFacet is
 {
 
 //Creation, Abandonment and Role Change
-  function createClan(uint256 knightId)
+  function createClan(uint256 knightId, string calldata clanName)
     external
     ifOwnsItem(knightId)
     ifIsKnight(knightId)
     ifNotInClan(knightId)
     ifIsNotOnClanActivityCooldown(knightId)
-    returns(uint)
-  { return _createClan(knightId); }
+    ifNotClanNameTaken(clanName)
+    ifIsClanNameCorrectLength(clanName)
+    returns(uint256)
+  {
+    return _createClan(knightId, clanName);
+  }
 
   function setClanRole(uint256 clanId, uint256 knightId, ClanRole newRole, uint256 callerId)
     external
@@ -48,6 +52,15 @@ contract ClanFacet is
     } else {
       revert ClanFacet_CantAssignNewRoleToThisCharacter(clanId, knightId, newRole, callerId);
     }
+  }
+
+  function setClanName(uint256 clanId, string calldata newClanName)
+    external
+    ifOwnsItem(_clanLeader(clanId))
+    ifNotClanNameTaken(newClanName)
+    ifIsClanNameCorrectLength(newClanName)
+  {
+    _setClanName(clanId, newClanName);
   }
 
 // Clan stakes and leveling

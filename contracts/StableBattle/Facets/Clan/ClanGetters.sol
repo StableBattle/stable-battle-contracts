@@ -73,6 +73,14 @@ abstract contract ClanGetters {
   function _clanKickCooldown(uint256 knightId) internal view returns(uint) {
     return ClanStorage.state().clanKickCooldown[knightId];
   }
+
+  function _clanName(uint256 clanId) internal view returns(string memory) {
+    return ClanStorage.state().clanName[clanId];
+  }
+
+  function _clanNameTaken(string calldata clanName) internal view returns(bool) {
+    return ClanStorage.state().clanNameTaken[clanName];
+  }
 }
 
 abstract contract ClanGettersExternal is IClanGetters, ClanGetters {
@@ -128,5 +136,13 @@ abstract contract ClanGettersExternal is IClanGetters, ClanGetters {
       _roleInClan(knightId),
       _clanKickCooldown(knightId)
     );
+  }
+
+  function getClanName(uint256 clanId) external view returns(string memory) {
+    return _clanName(clanId);
+  }
+
+  function getClanNameTaken(string calldata clanName) external view returns(bool) {
+    return _clanNameTaken(clanName);
   }
 }

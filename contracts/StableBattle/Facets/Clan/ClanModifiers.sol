@@ -104,4 +104,19 @@ abstract contract ClanModifiers is IClanErrors, ClanGetters {
     }
     _;
   }
+
+  modifier ifNotClanNameTaken(string calldata clanName) {
+    if(_clanNameTaken(clanName)) {
+      revert ClanModifiers_ClanNameTaken(clanName);
+    }
+    _;
+  }
+
+  modifier ifIsClanNameCorrectLength(string calldata clanName) {
+    //This is NOT a correct way to calculate string length, should change it later
+    if(bytes(clanName).length < 1 || bytes(clanName).length > 30) {
+      revert ClanModifiers_ClanNameWrongLength(clanName);
+    }
+    _;
+  }
 }
