@@ -45,7 +45,7 @@ contract ClanFacet is
     if (newRole == ClanRole.OWNER && callerRole == ClanRole.OWNER) {
       _setClanRole(clanId, callerId, ClanRole.ADMIN);
       _setClanRole(clanId, knightId, ClanRole.OWNER);
-      ClanStorage.state().clan[clanId].leader = knightId;
+      ClanStorage.state().clanLeader[clanId] = knightId;
     } else if (uint8(callerRole) > uint8(knightRole) && uint8(callerRole) > uint8(newRole)) {
       _setClanRole(clanId, knightId, newRole);
     } else {

@@ -8,6 +8,7 @@ interface IClanEvents {
   event ClanAbandoned(uint clanId, uint256 knightId);
   event ClanNewRole(uint clanId, uint256 knightId, ClanRole newRole);
   event ClanNewName(uint256 clanId, string newClanName);
+  event ClanNewLevel(uint256 clanId, uint256 newLevel);
 
   event ClanStakeAdded(address benefactor, uint clanId, uint amount);
   event ClanStakeWithdrawn(address benefactor, uint clanId, uint amount);

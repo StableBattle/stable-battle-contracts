@@ -1,0 +1,40 @@
+{
+  "description": "A StableBattle Knight hosted via an https link", 
+  "external_url": "https://stablebattle.io/",
+  "image": "https://arweave.net/hCHNPFtpto3ak7VcoRoIvvwp1_ijm8iLbFevGX9rNPs",
+  "animation_url": "https://arweave.net/Zm3Fx6ji6su9GRNKbxt_DkkydgFZwoSMJDEtW_Trb2M",
+  "name": "Frog Head Without Helmet",
+  "attributes": [
+    {
+      "trait_type": "Level",
+      "value": 8,
+      "max_value": 10
+    },
+    {
+      "trait_type": "Health",
+      "value": 78,
+      "max_value": 100
+    },
+    {
+      "trait_type": "Clan",
+      "value": "Stable Knights"
+    },
+    {
+      "trait_type": "Pool",
+      "value": "AAVE"
+    },
+    {
+      "trait_type": "Coin",
+      "value": "USDT"
+    },
+    {
+      "trait_type": "Value",
+      "value": "$1000"
+    },
+    {
+      "display_type": "date", 
+      "trait_type": "knighthood", 
+      "value": 1659976579
+    }
+  ]
+}

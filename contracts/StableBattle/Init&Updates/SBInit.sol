@@ -11,6 +11,7 @@ import { TournamentStorage } from "../Facets/Tournament/TournamentStorage.sol";
 import { TreasuryStorage } from "../Facets/Treasury/TreasuryStorage.sol";
 import { GearStorage } from "../Facets/Gear/GearStorage.sol";
 import { AccessControlStorage } from "../Facets/AccessControl/AccessControlStorage.sol";
+import { ERC1155MetadataStorage } from "@solidstate/contracts/token/ERC1155/metadata/ERC1155MetadataStorage.sol";
 
 import { IERC1155 } from "@openzeppelin/contracts/interfaces/IERC1155.sol";
 import { IERC165 } from "@openzeppelin/contracts/interfaces/IERC165.sol";
@@ -82,7 +83,7 @@ contract SBInit {
     //TotemStorage.state().totemRangeRight = 2e12;
 
   //Items & ERC1155 Facet
-    //ERC1155MetadataStorage.layout()._uri = "ex_uri";
+    ERC1155MetadataStorage.layout().baseURI = "http://test1.stablebattle.io:5000/api/nft/";
 
   //Clan Facet
     ClanStorage.state().levelThresholds = [

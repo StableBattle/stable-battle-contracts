@@ -9,7 +9,7 @@ import { ClanGetters } from "../Clan/ClanGetters.sol";
 
 abstract contract ClanModifiers is IClanErrors, ClanGetters {
   function clanExists(uint256 clanId) internal view returns(bool) {
-    return ClanStorage.state().clan[clanId].leader != 0;
+    return ClanStorage.state().clanLeader[clanId] != 0;
   }
 
   modifier ifClanExists(uint256 clanId) {
@@ -20,7 +20,7 @@ abstract contract ClanModifiers is IClanErrors, ClanGetters {
   }
 
   function isClanLeader(uint256 knightId, uint256 clanId) internal view returns(bool) {
-    return ClanStorage.state().clan[clanId].leader == knightId;
+    return ClanStorage.state().clanLeader[clanId] == knightId;
   }
 
   modifier ifIsClanLeader(uint256 knightId, uint clanId) {
@@ -31,7 +31,7 @@ abstract contract ClanModifiers is IClanErrors, ClanGetters {
   }
 
   function isNotClanLeader(uint256 knightId, uint256 clanId) internal view returns(bool) {
-    return ClanStorage.state().clan[clanId].leader != knightId;
+    return ClanStorage.state().clanLeader[clanId] != knightId;
   }
 
   modifier ifIsNotClanLeader(uint256 knightId, uint clanId) {

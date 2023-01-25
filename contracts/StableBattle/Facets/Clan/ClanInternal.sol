@@ -25,9 +25,10 @@ abstract contract ClanInternal is
   function _createClan(uint256 knightId, string calldata clanName) internal returns(uint clanId) {
     ClanStorage.state().clansInTotal++;
     clanId = _clansInTotal();
-    ClanStorage.state().clan[clanId] = Clan(knightId, 0, 0, 0);
+    ClanStorage.state().clanLeader[clanId] = knightId;
     emit ClanCreated(clanId, knightId);
     _setClanName(clanId, clanName);
+    _setClanLevel(clanId, 1);
     _approveJoinClan(knightId, clanId);
     _setClanRole(clanId, knightId, ClanRole.OWNER);
   }
@@ -35,7 +36,7 @@ abstract contract ClanInternal is
   function _abandon(uint256 clanId) internal {
     uint256 leaderId = _clanLeader(clanId);
     KnightStorage.state().knight[leaderId].inClan = 0;
-    ClanStorage.state().clan[clanId].leader = 0;
+    ClanStorage.state().clanLeader[clanId] = 0;
     emit ClanAbandoned(clanId, leaderId);
   }
 
@@ -55,7 +56,7 @@ abstract contract ClanInternal is
 // Clan stakes and leveling
   function _onStake(address benefactor, uint256 clanId, uint256 amount) internal {
     ClanStorage.state().stake[benefactor][clanId] += amount;
-    ClanStorage.state().clan[clanId].stake += amount;
+    ClanStorage.state().clanStake[clanId] += amount;
     _leveling(clanId);
 
     emit ClanStakeAdded(benefactor, clanId, amount);
@@ -71,7 +72,7 @@ abstract contract ClanInternal is
     }
     
     ClanStorage.state().stake[benefactor][clanId] -= amount;
-    ClanStorage.state().clan[clanId].stake -= amount;
+    ClanStorage.state().clanStake[clanId] -= amount;
     _leveling(clanId);
 
     emit ClanStakeWithdrawn(benefactor, clanId, amount);
@@ -79,22 +80,22 @@ abstract contract ClanInternal is
 
   //Calculate clan level based on stake
   function _leveling(uint256 clanId) private {
-    uint currentLevel = _clanLevel(clanId);
+    uint256 currentLevel = _clanLevel(clanId);
     uint256 stake = _clanStake(clanId);
-    uint[] memory thresholds = ClanStorage.state().levelThresholds;
-    uint maxLevel = thresholds.length;
-    uint newLevel = 0;
-    while (stake > thresholds[newLevel] && newLevel < maxLevel) {
+    uint256[] memory thresholds = ClanStorage.state().levelThresholds;
+    uint256 maxLevel = thresholds.length;
+    uint256 newLevel = 1;
+    while (stake >= thresholds[newLevel] && newLevel < maxLevel) {
       newLevel++;
     }
-    newLevel--;
-    if (currentLevel < newLevel) {
-      ClanStorage.state().clan[clanId].level = newLevel;
-      emit ClanLeveledUp(clanId, newLevel);
-    } else if (currentLevel > newLevel) {
-      ClanStorage.state().clan[clanId].level = newLevel;
-      emit ClanLeveledDown(clanId, newLevel);
+    if (currentLevel != newLevel) {
+      _setClanLevel(clanId, newLevel);
     }
+  }
+
+  function _setClanLevel(uint256 clanId, uint256 newLevel) internal {
+    ClanStorage.state().clanLevel[clanId] = newLevel;
+    emit ClanNewLevel(clanId, newLevel);
   }
 
 //Join, Leave and Invite Proposals
@@ -110,14 +111,14 @@ abstract contract ClanInternal is
 
   function _kick(uint256 knightId, uint256 clanId) internal {
     _setClanRole(clanId, knightId, ClanRole.NONE);
-    ClanStorage.state().clan[clanId].totalMembers--;
+    ClanStorage.state().clanTotalMembers[clanId]--;
     KnightStorage.state().knight[knightId].inClan = 0;
     ClanStorage.state().clanActivityCooldown[knightId] = block.timestamp + TWO_DAYS_IN_SECONDS;
     emit ClanKnightQuit(clanId, knightId);
   }
 
   function _approveJoinClan(uint256 knightId, uint256 clanId) internal {
-    ClanStorage.state().clan[clanId].totalMembers++;
+    ClanStorage.state().clanTotalMembers[clanId]++;
     KnightStorage.state().knight[knightId].inClan = clanId;
     ClanStorage.state().joinProposal[knightId] = 0;
     emit ClanKnightJoined(clanId, knightId);

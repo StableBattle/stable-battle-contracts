@@ -25,13 +25,14 @@ export default async function initSBD() {
     'ClanFacet',
     'KnightFacet',
     'SBVHookFacet',
-    'TournamentFacet',
+  //'TournamentFacet',
     'TreasuryFacet',
     'GearFacet',
     'EtherscanFacet',
-    'DemoFightFacet',
+  //'DemoFightFacet',
     'AdminFacet',
-    'AccessControlFacet'
+    'AccessControlFacet',
+    'SiegeFacet'
   ]
   const cut = []
   const facetData : { address : string, name: string }[] = []

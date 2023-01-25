@@ -8,8 +8,15 @@ library ClanStorage {
   struct State {
     uint[] levelThresholds;
     uint[] maxMembers;
-    // clanId => Clan
-    mapping(uint256 => Clan) clan;
+    //clanId => clan leader id
+    mapping(uint256 => uint256) clanLeader;
+    //clanId => stake amount
+    mapping(uint256 => uint256) clanStake;
+    //clanId => amount of members in clanId
+    mapping(uint256 => uint256) clanTotalMembers;
+    //clanId => level of clanId
+    mapping(uint256 => uint256) clanLevel;
+
     // knightId => id of clan where join proposal is sent
     mapping (uint256 => uint256) joinProposal;
     // address => clanId => amount

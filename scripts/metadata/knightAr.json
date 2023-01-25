@@ -1,0 +1,40 @@
+{
+  "description": "A StableBattle Knight hosted via an arweave link", 
+  "external_url": "https://stablebattle.io/",
+  "image": "ar://yybcEATXWeX5AeU0KyuLn9ueklTOCqbvhPtebIQW77U",
+  "animation_url": "ar://tOWIdXSY-A_XlkGHUOa0PiEtnn2nlKlQnidB2E6Z0AA",
+  "name": "Viking",
+  "attributes": [
+    {
+      "trait_type": "Level",
+      "value": 8,
+      "max_value": 10
+    },
+    {
+      "trait_type": "Health",
+      "value": 78,
+      "max_value": 100
+    },
+    {
+      "trait_type": "Clan",
+      "value": "Stable Knights"
+    },
+    {
+      "trait_type": "Pool",
+      "value": "AAVE"
+    },
+    {
+      "trait_type": "Coin",
+      "value": "USDT"
+    },
+    {
+      "trait_type": "Value",
+      "value": "$1000"
+    },
+    {
+      "display_type": "date", 
+      "trait_type": "knighthood", 
+      "value": 1659976579
+    }
+  ]
+}

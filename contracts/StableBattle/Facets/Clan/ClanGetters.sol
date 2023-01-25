@@ -2,29 +2,33 @@
 
 pragma solidity ^0.8.0;
 
-import { Clan, ClanRole } from "../../Meta/DataStructures.sol";
+import { ClanRole } from "../../Meta/DataStructures.sol";
 import { ClanStorage } from "../Clan/ClanStorage.sol";
 import { IClanGetters } from "../Clan/IClan.sol";
 
 abstract contract ClanGetters {
-  function _clanInfo(uint clanId) internal view returns(Clan memory) {
-    return ClanStorage.state().clan[clanId];
+  function _clanInfo(uint clanId) internal view returns(uint256, uint256, uint256, uint256) {
+    return (
+      _clanLeader(clanId),
+      _clanStake(clanId),
+      _clanTotalMembers(clanId),
+      _clanLevel(clanId));
   }
 
   function _clanLeader(uint clanId) internal view returns(uint256) {
-    return ClanStorage.state().clan[clanId].leader;
+    return ClanStorage.state().clanLeader[clanId];
   }
 
   function _clanTotalMembers(uint clanId) internal view returns(uint) {
-    return ClanStorage.state().clan[clanId].totalMembers;
+    return ClanStorage.state().clanTotalMembers[clanId];
   }
   
   function _clanStake(uint clanId) internal view returns(uint256) {
-    return ClanStorage.state().clan[clanId].stake;
+    return ClanStorage.state().clanStake[clanId];
   }
 
   function _clanLevel(uint clanId) internal view returns(uint) {
-    return ClanStorage.state().clan[clanId].level;
+    return ClanStorage.state().clanLevel[clanId];
   }
 
   function _clanLevel2(uint256 clanId) internal view returns(uint) {
