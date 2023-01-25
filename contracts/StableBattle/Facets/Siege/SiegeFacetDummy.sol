@@ -11,5 +11,5 @@ contract SiegeFacetDummy is ISiege {
   function getSiegeWinnerInfo() external view returns(uint256, uint256, address) {}
 
   function setSiegeWinner(uint256 clanId) external {}
-  function claimSiegeReward(uint256 knightId, uint256 amount) external {}
+  function claimSiegeReward(address to, uint256 knightId, uint256 amount) external {}
 }

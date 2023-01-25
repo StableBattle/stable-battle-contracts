@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 interface ISiegeEvents {
-  event SiegeNewWinner(uint256 knightId, uint256 clanId, uint256 reward);
+  event SiegeNewWinner(uint256 clanId, uint256 knightId, address knightHolder, uint256 reward);
   event SiegeRewardClaimed(uint256 knightId, uint256 amount);
 }
 
@@ -21,5 +21,5 @@ interface ISiegeGetters {
 
 interface ISiege is ISiegeEvents, ISiegeErrors, ISiegeGetters {
   function setSiegeWinner(uint256 clanId) external;
-  function claimSiegeReward(uint256 knightId, uint256 amount) external;
+  function claimSiegeReward(address to, uint256 knightId, uint256 amount) external;
 }

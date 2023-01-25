@@ -5,6 +5,10 @@ library SiegeStorage {
   struct State {
     //Id of a last clan that won the siege
     uint256 siegeWinnerClan;
+    //Id of a last clan that won the siege
+    uint256 siegeWinnerKnight;
+    //Id of a last clan that won the siege
+    address siegeWinnerAddress;
     //Knight id => reward amount
     mapping(uint256 => uint256) reward;
   }

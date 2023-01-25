@@ -5,15 +5,15 @@ import { ExternalCalls } from "../../Meta/ExternalCalls.sol";
 import { Coin } from "../../Meta/DataStructures.sol";
 import { AccessControlModifiers } from "../AccessControl/AccessControlModifiers.sol";
 import { ItemsModifiers } from "../Items/ItemsModifiers.sol";
-import { ERC1155BaseInternal } from "@solidstate/contracts/token/ERC1155/base/ERC1155BaseInternal.sol";
 
 import { ISiege } from "../Siege/ISiege.sol";
 import { SiegeStorage } from "../Siege/SiegeStorage.sol";
 import { SiegeGettersExternal } from "../Siege/SiegeGetters.sol";
+import { SiegeInternal } from "../Siege/SiegeInternal.sol";
 
 contract SiegeFacet is 
   ISiege,
-  ERC1155BaseInternal,
+  SiegeInternal,
   SiegeGettersExternal,
   ExternalCalls,
   AccessControlModifiers,
@@ -21,21 +21,21 @@ contract SiegeFacet is
 {
   function setSiegeWinner(uint256 clanId) external ifCallerIsAdmin {
     uint256 reward = ACOIN(Coin.USDT).balanceOf(address(this));
-    uint256 knightId = _clanLeader(clanId);
+    uint256 knightId = _setSiegeWinnerKnight(clanId);
+    address knighHolder = _setSiegeWinnerAddress(knightId);
     SiegeStorage.state().siegeWinnerClan = clanId;
     SiegeStorage.state().reward[knightId] += reward;
-    emit SiegeNewWinner(knightId, clanId, reward);
+    emit SiegeNewWinner(clanId, knightId, knighHolder, reward);
   }
 
-  function claimSiegeReward(uint256 knightId, uint256 amount) external ifOwnsItem(knightId) {
+  function claimSiegeReward(address to, uint256 knightId, uint256 amount) external ifOwnsItem(knightId) {
     uint256 reward = _siegeReward(knightId);
-    address knightHolder = _accountsByToken(knightId)[0];
     if(reward == 0) { revert NoRewardToClaim(knightId); }
     if(amount > reward) {
       revert ClaimAmountExceedsReward(amount, reward, knightId);
     }
     SiegeStorage.state().reward[knightId] -= amount;
-    AAVE().withdraw(address(COIN(Coin.USDT)), reward, knightHolder);
+    AAVE().withdraw(address(COIN(Coin.USDT)), reward, to);
     emit SiegeRewardClaimed(knightId, amount);
   }
 }
