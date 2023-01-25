@@ -95,7 +95,7 @@ abstract contract ClanModifiers is IClanErrors, ClanGetters {
   }
 
   function isOnClanKickCooldown(uint knightId) internal view returns(bool) {
-    return _clanKickCooldown(knightId) < block.timestamp;
+    return _clanKickCooldown(knightId) > block.timestamp;
   }
 
   modifier ifNotOnClanKickCooldown(uint knightId) {

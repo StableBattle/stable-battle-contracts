@@ -30,9 +30,8 @@ contract ClanFacet is
     ifIsNotOnClanActivityCooldown(knightId)
     ifNotClanNameTaken(clanName)
     ifIsClanNameCorrectLength(clanName)
-    returns(uint256)
   {
-    return _createClan(knightId, clanName);
+    _createClan(knightId, clanName);
   }
 
   function setClanRole(uint256 clanId, uint256 knightId, ClanRole newRole, uint256 callerId)
@@ -117,16 +116,16 @@ contract ClanFacet is
     ifIsInClan(knightId, clanId)
     ifNotOnClanKickCooldown(callerId)
   {
-    ClanRole callerRole = _roleInClan(knightId);
+    ClanRole callerRole = _roleInClan(callerId);
     ClanRole knightRole = _roleInClan(knightId);
 
     if(
       //Owner can kick anyone besides himself
       callerRole == ClanRole.OWNER && knightRole != ClanRole.OWNER ||
       //Admin can kick anyone below himself
-      callerRole == ClanRole.ADMIN && (knightRole == ClanRole.MOD || knightRole == ClanRole.NONE) ||
+      callerRole == ClanRole.ADMIN && (knightRole == ClanRole.MOD || knightRole == ClanRole.PRIVATE) ||
       //Moderator can only kick ordinary members
-      callerRole == ClanRole.MOD && knightRole == ClanRole.NONE)
+      callerRole == ClanRole.MOD && knightRole == ClanRole.PRIVATE)
     {
       _kick(knightId, clanId);
       //Moderators go on one hour cooldown after kick

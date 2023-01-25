@@ -18,6 +18,8 @@ import { IERC173 } from "../Facets/Ownership/IERC173.sol";
 import { IDiamondCut } from "../Facets/DiamondCut/IDiamondCut.sol";
 import { IDiamondLoupe } from "../Facets/DiamondLoupe/IDiamondLoupe.sol";
 
+uint256 constant BEER_DECIMALS = 1e18;
+
 contract SBInit {
   struct Args {
     address AAVE_address;
@@ -83,8 +85,15 @@ contract SBInit {
     //ERC1155MetadataStorage.layout()._uri = "ex_uri";
 
   //Clan Facet
-    ClanStorage.state().levelThresholds = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900];
-    ClanStorage.state().maxMembers =      [5, 10,  15,  20,  25,  30,  35,  40,  45,  50];
+    ClanStorage.state().levelThresholds = [
+      0, 
+      40000  * BEER_DECIMALS,
+      110000 * BEER_DECIMALS,
+      230000 * BEER_DECIMALS,
+      430000 * BEER_DECIMALS,
+      760000 * BEER_DECIMALS
+    ];
+    ClanStorage.state().maxMembers = [10, 20, 22, 24, 26, 28, 30];
 
   //Treasury Facet
     TreasuryStorage.state().castleTax = 37;

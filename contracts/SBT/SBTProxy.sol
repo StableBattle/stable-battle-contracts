@@ -14,7 +14,7 @@ contract SBTProxy is UpgradeableProxyOwnable {
 
     l.setName("BEER");
     l.setSymbol("BEER");
-    l.setDecimals(0);
+    l.setDecimals(18);
   //Set implementation
     _setImplementation(implementation);
   //Set owner

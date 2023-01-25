@@ -75,7 +75,7 @@ interface IClanGetters {
 }
 
 interface IClan is IClanGetters, IClanEvents, IClanErrors {
-  function createClan(uint256 knightId, string calldata clanName) external returns(uint clanId);
+  function createClan(uint256 knightId, string calldata clanName) external;
 
   function setClanRole(uint256 clanId, uint256 knightId, ClanRole newRole, uint256 callerId) external;
 

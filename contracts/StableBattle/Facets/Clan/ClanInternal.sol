@@ -87,6 +87,7 @@ abstract contract ClanInternal is
     while (stake > thresholds[newLevel] && newLevel < maxLevel) {
       newLevel++;
     }
+    newLevel--;
     if (currentLevel < newLevel) {
       ClanStorage.state().clan[clanId].level = newLevel;
       emit ClanLeveledUp(clanId, newLevel);
@@ -99,7 +100,7 @@ abstract contract ClanInternal is
 //Join, Leave and Invite Proposals
   function _join(uint256 knightId, uint256 clanId) internal {
     ClanStorage.state().joinProposal[knightId] = clanId;
-    emit ClanKnightJoined(clanId, knightId);
+    emit ClanJoinProposalSent(clanId, knightId);
   }
 
   function _withdrawJoin(uint256 knightId, uint256 clanId) internal {
