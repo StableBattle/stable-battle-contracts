@@ -22,10 +22,10 @@ contract SiegeFacet is
   function setSiegeWinner(uint256 clanId) external ifCallerIsAdmin {
     uint256 reward = ACOIN(Coin.USDT).balanceOf(address(this));
     uint256 knightId = _setSiegeWinnerKnight(clanId);
-    address knighHolder = _setSiegeWinnerAddress(knightId);
+    address knightHolder = _setSiegeWinnerAddress(knightId);
     SiegeStorage.state().siegeWinnerClan = clanId;
     SiegeStorage.state().reward[knightId] += reward;
-    emit SiegeNewWinner(clanId, knightId, knighHolder, reward);
+    emit SiegeNewWinner(clanId, knightId, knightHolder, reward);
   }
 
   function claimSiegeReward(address to, uint256 knightId, uint256 amount) external ifOwnsItem(knightId) {
@@ -36,6 +36,6 @@ contract SiegeFacet is
     }
     SiegeStorage.state().reward[knightId] -= amount;
     AAVE().withdraw(address(COIN(Coin.USDT)), reward, to);
-    emit SiegeRewardClaimed(knightId, amount);
+    emit SiegeRewardClaimed(to, knightId, amount);
   }
 }

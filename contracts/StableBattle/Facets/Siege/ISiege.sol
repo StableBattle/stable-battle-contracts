@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 interface ISiegeEvents {
   event SiegeNewWinner(uint256 clanId, uint256 knightId, address knightHolder, uint256 reward);
-  event SiegeRewardClaimed(uint256 knightId, uint256 amount);
+  event SiegeRewardClaimed(address to, uint256 knightId, uint256 amount);
 }
 
 interface ISiegeErrors {
