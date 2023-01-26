@@ -18,7 +18,7 @@ const config: HardhatUserConfig = {
       */
       forking: {
         url: process.env.GOERLI_ALCHEMY_URL || "",
-        blockNumber: 7400000,
+        blockNumber: 8379289,
       },
     },
     mumbai: {

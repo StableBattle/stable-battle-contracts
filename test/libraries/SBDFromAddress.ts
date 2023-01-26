@@ -10,6 +10,7 @@ import {
   KnightFacet,
   OwnershipFacet,
   SBVHookFacet,
+  SiegeFacet,
   TournamentFacet,
   TreasuryFacet
 } from "../../typechain-types";
@@ -24,9 +25,10 @@ export interface SBDInterface {
   KnightFacet: KnightFacet;
   OwnershipFacet: OwnershipFacet;
   SBVHookFacet: SBVHookFacet;
-  TournamentFacet: TournamentFacet;
+//TournamentFacet: TournamentFacet;
   TreasuryFacet: TreasuryFacet;
-  DemoFightFacet: DemoFightFacet;
+//DemoFightFacet: DemoFightFacet;
+  SiegeFacet: SiegeFacet;
   Address: string
 }
 
@@ -40,10 +42,11 @@ export default async function SBDFromAddress(SBDAddress: string) : Promise<SBDIn
     ClanFacet: await hre.ethers.getContractAt('ClanFacet', SBDAddress),
     ItemsFacet: await hre.ethers.getContractAt('ItemsFacet', SBDAddress),
     KnightFacet: await hre.ethers.getContractAt('KnightFacet', SBDAddress),
-    TournamentFacet: await hre.ethers.getContractAt('TournamentFacet', SBDAddress),
+  //TournamentFacet: await hre.ethers.getContractAt('TournamentFacet', SBDAddress),
     TreasuryFacet: await hre.ethers.getContractAt('TreasuryFacet', SBDAddress),
     SBVHookFacet: await hre.ethers.getContractAt('SBVHookFacet', SBDAddress),
-    DemoFightFacet: await hre.ethers.getContractAt('DemoFightFacet', SBDAddress),
+  //DemoFightFacet: await hre.ethers.getContractAt('DemoFightFacet', SBDAddress),
+  SiegeFacet: await hre.ethers.getContractAt('SiegeFacet', SBDAddress),
     Address: SBDAddress
   }
 }

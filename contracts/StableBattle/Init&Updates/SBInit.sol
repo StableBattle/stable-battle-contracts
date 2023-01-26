@@ -21,7 +21,11 @@ import { IDiamondLoupe } from "../Facets/DiamondLoupe/IDiamondLoupe.sol";
 
 uint256 constant BEER_DECIMALS = 1e18;
 
-contract SBInit {
+interface ConfigEvents {
+  event ClanNewConfig(uint[] levelThresholds, uint[] maxMembersPerLevel);
+}
+
+contract SBInit is ConfigEvents {
   struct Args {
     address AAVE_address;
 
@@ -95,6 +99,7 @@ contract SBInit {
       760000 * BEER_DECIMALS
     ];
     ClanStorage.state().maxMembers = [10, 20, 22, 24, 26, 28, 30];
+    emit ClanNewConfig(ClanStorage.state().levelThresholds, ClanStorage.state().maxMembers);
 
   //Treasury Facet
     TreasuryStorage.state().castleTax = 37;

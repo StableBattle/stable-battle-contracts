@@ -15,6 +15,8 @@ import { EtherscanFacetDummy } from "../Etherscan/EtherscanFacetDummy.sol";
 import { DemoFightFacetDummy } from "../DemoFight/DemoFightFacetDummy.sol";
 import { AdminFacetDummy } from "../Admin/AdminFacetDummy.sol";
 import { AccessControlDummy } from "../AccessControl/AccessControlDummy.sol";
+import { SiegeFacetDummy } from "../Siege/SiegeFacetDummy.sol";
+import { ConfigEvents } from "../../Init&Updates/SBInit.sol";
 
 /*
   This is a dummy implementation of StableBattle contracts.
@@ -26,6 +28,7 @@ import { AccessControlDummy } from "../AccessControl/AccessControlDummy.sol";
 */
 
 contract StableBattleDummy is 
+  ConfigEvents,
   DiamondCutFacetDummy,
   DiamondLoupeFacetDummy,
   OwnershipFacetDummy,
@@ -33,13 +36,14 @@ contract StableBattleDummy is
   ClanFacetDummy,
   KnightFacetDummy,
   SBVHookFacetDummy,
-  TournamentFacetDummy,
+//TournamentFacetDummy,
   TreasuryFacetDummy,
   GearFacetDummy,
   EtherscanFacetDummy,
-  DemoFightFacetDummy,
+//DemoFightFacetDummy,
   AdminFacetDummy,
-  AccessControlDummy
+  AccessControlDummy,
+  SiegeFacetDummy
 {
   function supportsInterface(bytes4 interfaceId)
     external

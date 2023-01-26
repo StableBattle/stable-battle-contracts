@@ -46,7 +46,11 @@ abstract contract ClanGetters {
     return ClanStorage.state().stake[benefactor][clanId];
   }
 
-  function _clanLevelThreshold(uint level) internal view returns (uint) {
+  function _clanLevelThresholds() internal view returns (uint[] memory) {
+    return ClanStorage.state().levelThresholds;
+  }
+
+  function _clanLevelThreshold(uint256 level) internal view returns (uint) {
     return ClanStorage.state().levelThresholds[level];
   }
 
@@ -70,10 +74,6 @@ abstract contract ClanGetters {
     return ClanStorage.state().roleInClan[knightId];
   }
 
-  function _clanMaxMembers(uint256 clanId) internal view returns(uint) {
-    return ClanStorage.state().maxMembers[_clanLevel(clanId)];
-  }
-
   function _clanKickCooldown(uint256 knightId) internal view returns(uint) {
     return ClanStorage.state().clanKickCooldown[knightId];
   }
@@ -84,6 +84,14 @@ abstract contract ClanGetters {
 
   function _clanNameTaken(string calldata clanName) internal view returns(bool) {
     return ClanStorage.state().clanNameTaken[clanName];
+  }
+
+  function _clanMaxMembers() internal view returns(uint256[] memory) {
+    return ClanStorage.state().maxMembers;
+  }
+
+  function _clanMaxMembers(uint256 clanId) internal view returns(uint256) {
+    return ClanStorage.state().maxMembers[_clanLevel(clanId) - 1];
   }
 }
 
@@ -112,8 +120,12 @@ abstract contract ClanGettersExternal is IClanGetters, ClanGetters {
     return _stakeOf(benefactor, clanId);
   }
 
-  function getClanLevelThreshold(uint level) external view returns(uint) {
+  function getClanLevelThreshold(uint256 level) external view returns(uint) {
     return _clanLevelThreshold(level);
+  }
+
+  function getClanLevelThresholds() external view returns(uint[] memory) {
+    return _clanLevelThresholds();
   }
 
   function getClanMaxLevel() external view returns(uint) {
@@ -139,6 +151,14 @@ abstract contract ClanGettersExternal is IClanGetters, ClanGetters {
       _clanActivityCooldown(knightId),
       _roleInClan(knightId),
       _clanKickCooldown(knightId)
+    );
+  }
+
+  function getClanConfig() external view returns(uint256, uint256[] memory, uint256[] memory) {
+    return(
+      _clanMaxLevel(),
+      _clanLevelThresholds(),
+      _clanMaxMembers()
     );
   }
 
