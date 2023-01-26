@@ -1,13 +1,20 @@
 import { BigNumber } from "ethers";
 import hre, { ethers } from "hardhat";
 import { SBD as SBD_address, SBT as BEER_address } from "../config/goerli/main-contracts";
-import { USDT as UDST_address } from "../config/sb-init-addresses";
+import { AAVE as AAVE_address, USDT as UDST_address } from "../config/sb-init-addresses";
 
 //Mint 30 knights
 //Create 3 clans with levels of 0, 1, 3
 //Join knights in clans 5 in 0, 10 in 1, 15 in 3
 
 export default async function populateClans() {
+  const user = (await ethers.getSigners())[0].address;
+  const USDT = await hre.ethers.getContractAt("IERC20Mintable", UDST_address.goerli);
+  const USDT_decimals = await USDT.decimals();
+  const SBD = await hre.ethers.getContractAt("StableBattleDummy", SBD_address);
+  const BEER = await hre.ethers.getContractAt("ISBT", BEER_address);
+  const BEER_decimals = await BEER.decimals();
+
   const knights = 32;
   const clans = 3;
   await mintAndApproveUSDT(knights * 1000);
@@ -39,7 +46,6 @@ export default async function populateClans() {
   await assignClanRole(clanIds[2], knightIds[clans + 20], 2);
   await assignClanRole(clanIds[2], knightIds[clans + 21], 2);
 
-  const SBD = await hre.ethers.getContractAt("StableBattleDummy", SBD_address);
   let tx = await SBD.leaveClan(knightIds[clans + 22], clanIds[2]); await tx.wait();
   console.log(`Knight ${knightIds[clans + 22]} left clan ${clanIds[2]}`);
   tx = await SBD.kickFromClan(knightIds[clans + 23], clanIds[2], knightIds[2]); await tx.wait();
@@ -56,10 +62,13 @@ export default async function populateClans() {
   console.log(`Join request from ${knightIds[clans + 27]} into clan ${clanIds[2]} sent`);
   tx = await SBD.joinClan(knightIds[clans + 28], clanIds[2]); await tx.wait();
   console.log(`Join request from ${knightIds[clans + 28]} into clan ${clanIds[2]} sent`);
-  const BEER = await hre.ethers.getContractAt("ISBT", BEER_address);
-  const BEER_decimals = await BEER.decimals();
   tx = await BEER.withdraw(clanIds[2], (BigNumber.from(10).pow(BEER_decimals)).mul(100000)); await tx.wait();
   console.log(`Withdrawn ${100000} BEER tokens from ${clanIds[2]}`);
+  await bumpSBReward();
+  tx = await SBD.setSiegeWinner(clanIds[0]); await tx.wait();
+  console.log(`Made ${clanIds[0]} win the siege`);
+  tx = await SBD.claimSiegeReward(user, knightIds[0], (BigNumber.from(10).pow(USDT_decimals).mul(500))); await tx.wait();
+  console.log(`User ${clanIds[0]} took 500 USDT from his reward`);
 }
 
 async function mintAndApproveUSDT(amount: number) {
@@ -146,6 +155,23 @@ async function assignClanRole(clanId: BigNumber, knightId: BigNumber, newRole: n
   const setClanRoleTx = await SBD.setClanRole(clanId, knightId, newRole, ownerId);
   await setClanRoleTx.wait();
   console.log(`Assigned ${knightId} role ${newRole == 0 ? "NONE" : newRole == 1 ? "MOD" : newRole == 2 ? "ADMIN" : "OWNER"} in clan ${clanId}`);
+}
+
+async function bumpSBReward() {
+  const user = (await ethers.getSigners())[0].address;
+  const SBD = await hre.ethers.getContractAt("StableBattleDummy", SBD_address);
+  const AAVE = await ethers.getContractAt("IPool", AAVE_address.goerli);
+  const USDT = await hre.ethers.getContractAt("IERC20Mintable", UDST_address.goerli);
+  const amount = (BigNumber.from(10).pow(await USDT.decimals())).mul(1000);
+  const mintTx = await USDT.mint(user, amount);
+  await mintTx.wait();
+  console.log(`Minted ${amount} USDT to ${user}`);
+  const approveTx = await USDT.approve(AAVE_address.goerli, amount);
+  await approveTx.wait();
+  console.log(`Approved ${amount} USDT to ${AAVE_address.goerli}`);
+  const AAVEsupplyTx = await AAVE.supply(USDT.address, amount, SBD.address, 0);
+  await AAVEsupplyTx.wait();
+  console.log(`Added 1000 USDT to StableBattle yield`);
 }
 
 populateClans().catch((error) => {
