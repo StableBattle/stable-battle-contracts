@@ -10,6 +10,7 @@ import "../shared/interfaces/IERC1155MetadataURI.sol";
 import "../shared/utils/Address.sol";
 import "../shared/utils/Context.sol";
 import { ItemsStorage, ItemsGetters } from "../StableBattle/storage/ItemsStorage.sol";
+import "./UintUtils.sol";
 
 /**
  * @dev Implementation of the basic standard multi-token.
@@ -21,6 +22,7 @@ import { ItemsStorage, ItemsGetters } from "../StableBattle/storage/ItemsStorage
 contract ERC1155 is Context, IERC1155, IERC1155MetadataURI, ItemsGetters {
     using ItemsStorage for ItemsStorage.State;
     using Address for address;
+    using UintUtils for uint256;
 
     /**
      * @dev See {IERC1155MetadataURI-uri}.
@@ -32,8 +34,8 @@ contract ERC1155 is Context, IERC1155, IERC1155MetadataURI, ItemsGetters {
      * Clients calling this function must replace the `\{id\}` substring with the
      * actual token type ID.
      */
-    function uri(uint256) public view virtual override returns (string memory) {
-        return ItemsStorage.state()._uri;
+    function uri(uint256 tokenId) public view virtual override returns (string memory) {
+        return string(abi.encodePacked(ItemsStorage.state()._uri, tokenId.toString()));
     }
 
     /**
