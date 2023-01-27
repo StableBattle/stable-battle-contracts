@@ -7,6 +7,10 @@ import { ExternalCalls } from "../../Meta/ExternalCalls.sol";
 import { Coin } from "../../Meta/DataStructures.sol";
 
 abstract contract SiegeGetters {
+  function _siegeRewardTotal() internal view returns(uint256) {
+    return SiegeStorage.state().rewardTotal;
+  }
+
   function _siegeReward(uint256 knightId) internal view returns(uint256) {
     return SiegeStorage.state().reward[knightId];
   }

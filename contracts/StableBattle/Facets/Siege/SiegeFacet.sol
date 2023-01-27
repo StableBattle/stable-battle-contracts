@@ -22,13 +22,14 @@ contract SiegeFacet is
 {
   function setSiegeWinner(uint256 clanId) external ifCallerIsAdmin {
     uint256 knightStake = 
-      (_knightsMinted(Pool.AAVE, Coin.USDT) - _knightsBurned(Pool.AAVE, Coin.USDT)) 
-      * 1000
-      * (10 ** ACOIN(Coin.USDT).decimals());
+      (_knightsMinted(Pool.AAVE, Coin.USDT) - 
+      _knightsBurned(Pool.AAVE, Coin.USDT)) * 1000 * (10 ** ACOIN(Coin.USDT).decimals()) -
+      _siegeRewardTotal();
     uint256 reward = ACOIN(Coin.USDT).balanceOf(address(this)) - knightStake;
     uint256 knightId = _setSiegeWinnerKnight(clanId);
     SiegeStorage.state().siegeWinnerClan = clanId;
     SiegeStorage.state().reward[knightId] += reward;
+    SiegeStorage.state().rewardTotal += reward;
     emit SiegeNewWinner(clanId, knightId, reward);
   }
 
@@ -39,6 +40,7 @@ contract SiegeFacet is
       revert ClaimAmountExceedsReward(amount, reward, knightId);
     }
     SiegeStorage.state().reward[knightId] -= amount;
+    SiegeStorage.state().rewardTotal -= amount;
     AAVE().withdraw(address(COIN(Coin.USDT)), reward, to);
     emit SiegeRewardClaimed(to, knightId, amount);
   }
