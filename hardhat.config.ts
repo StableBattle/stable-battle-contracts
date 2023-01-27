@@ -8,6 +8,7 @@ import "dotenv/config";
 
 const config: HardhatUserConfig = {
   solidity: "0.8.10",
+//mocha: { timeout: 100000000 },
   networks: {
     hardhat: {
       /*

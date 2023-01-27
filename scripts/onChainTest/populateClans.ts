@@ -9,7 +9,7 @@ import { AAVE as AAVE_address, USDT as UDST_address } from "../config/sb-init-ad
 
 export default async function populateClans() {
   const user = (await ethers.getSigners())[0].address;
-  const USDT = await hre.ethers.getContractAt("IERC20Mintable", UDST_address.goerli);
+  const USDT = await hre.ethers.getContractAt("IERC20Mintable", UDST_address[hre.network.name]);
   const USDT_decimals = await USDT.decimals();
   const SBD = await hre.ethers.getContractAt("StableBattleDummy", SBD_address);
   const BEER = await hre.ethers.getContractAt("ISBT", BEER_address);
@@ -73,9 +73,9 @@ export default async function populateClans() {
 
 async function mintAndApproveUSDT(amount: number) {
   const user = (await ethers.getSigners())[0].address;
-  const USDT = await hre.ethers.getContractAt("IERC20Mintable", UDST_address.goerli);
+  const USDT = await hre.ethers.getContractAt("IERC20Mintable", UDST_address[hre.network.name]);
   const USDT_decimals = await USDT.decimals();
-  const realAmount = amount * (10 ** USDT_decimals);
+  const realAmount = (BigNumber.from(10).pow(USDT_decimals)).mul(amount);
   const mintTx = await USDT.mint(user, realAmount);
   await mintTx.wait();
   console.log(`Minted ${amount} USDT to ${user}`);
@@ -105,7 +105,7 @@ async function createClans(n: number, knightIds: BigNumber[]) : Promise<BigNumbe
   let clanName = "💩";
   for(let i = 0; i < n; i++) {
     const createClanTx = await SBD.createClan(knightIds[i], clanName);
-    await createClanTx.wait(10);
+    await createClanTx.wait();
     const eventsClanCreated = await SBD.queryFilter(SBD.filters.ClanCreated());
     const clanId = eventsClanCreated.filter(evt => evt.args.knightId.eq(knightIds[i]))[0].args.clanId;
     console.log(`Created clan ${clanId} with knight ${knightIds[i]}`);
@@ -154,21 +154,21 @@ async function assignClanRole(clanId: BigNumber, knightId: BigNumber, newRole: n
   const ownerId = (await SBD.getClanInfo(clanId))[0];
   const setClanRoleTx = await SBD.setClanRole(clanId, knightId, newRole, ownerId);
   await setClanRoleTx.wait();
-  console.log(`Assigned ${knightId} role ${newRole == 0 ? "NONE" : newRole == 1 ? "MOD" : newRole == 2 ? "ADMIN" : "OWNER"} in clan ${clanId}`);
+  console.log(`Assigned ${knightId} role ${newRole == 0 ? "NONE" : newRole == 1 ? "PRIVATE" : newRole == 2 ? "MOD" : newRole == 3 ? "ADMIN" : "OWNER"} in clan ${clanId}`);
 }
 
 async function bumpSBReward() {
   const user = (await ethers.getSigners())[0].address;
   const SBD = await hre.ethers.getContractAt("StableBattleDummy", SBD_address);
-  const AAVE = await ethers.getContractAt("IPool", AAVE_address.goerli);
-  const USDT = await hre.ethers.getContractAt("IERC20Mintable", UDST_address.goerli);
+  const AAVE = await ethers.getContractAt("IPool", AAVE_address[hre.network.name]);
+  const USDT = await hre.ethers.getContractAt("IERC20Mintable", UDST_address[hre.network.name]);
   const amount = (BigNumber.from(10).pow(await USDT.decimals())).mul(1000);
   const mintTx = await USDT.mint(user, amount);
   await mintTx.wait();
   console.log(`Minted ${amount} USDT to ${user}`);
-  const approveTx = await USDT.approve(AAVE_address.goerli, amount);
+  const approveTx = await USDT.approve(AAVE_address[hre.network.name], amount);
   await approveTx.wait();
-  console.log(`Approved ${amount} USDT to ${AAVE_address.goerli}`);
+  console.log(`Approved ${amount} USDT to ${AAVE_address[hre.network.name]}`);
   const AAVEsupplyTx = await AAVE.supply(USDT.address, amount, SBD.address, 0);
   await AAVEsupplyTx.wait();
   console.log(`Added 1000 USDT to StableBattle yield`);

@@ -6,6 +6,7 @@ import { Coin, Pool } from "../Meta/DataStructures.sol";
 
 import { IERC20 } from "@solidstate/contracts/token/ERC20/IERC20.sol";
 import { IPool } from "@aave/core-v3/contracts/interfaces/IPool.sol";
+import { AToken } from "@aave/core-v3/contracts/protocol/tokenization/AToken.sol";
 import { ISBT } from "../../SBT/ISBT.sol";
 import { ISBV } from "../../SBV/ISBV.sol";
 
@@ -28,8 +29,8 @@ abstract contract ExternalCalls {
     return IERC20(MetaStorage.state().coin[coin]);
   }
 
-  function ACOIN(Coin coin) internal view virtual returns(IERC20) {
-    return IERC20(MetaStorage.state().acoin[coin]);
+  function ACOIN(Coin coin) internal view virtual returns(AToken) {
+    return AToken(MetaStorage.state().acoin[coin]);
   }
 
   function PoolAddress(Pool pool) internal view virtual returns(address) {
