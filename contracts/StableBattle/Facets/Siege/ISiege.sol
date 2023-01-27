@@ -12,6 +12,7 @@ interface ISiegeErrors {
 }
 
 interface ISiegeGetters {
+  function getSiegeRewardTotal() external view returns(uint256);
   function getSiegeReward(uint256 knightId) external view returns(uint256);
   function getSiegeWinnerClanId() external view returns(uint256);
   function getSiegeWinnerKnightId() external view returns(uint256);

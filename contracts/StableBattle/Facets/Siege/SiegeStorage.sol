@@ -11,6 +11,8 @@ library SiegeStorage {
     address siegeWinnerAddress;
     //Knight id => reward amount
     mapping(uint256 => uint256) reward;
+    //Total anount of unclaimed rewards in a contract
+    uint256 rewardTotal;
   }
 
   bytes32 internal constant STORAGE_SLOT = keccak256("Siege.storage");

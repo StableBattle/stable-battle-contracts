@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import { ISiege } from "../Siege/ISiege.sol";
 
 contract SiegeFacetDummy is ISiege {
+  function getSiegeRewardTotal() external view returns(uint256) {}
   function getSiegeReward(uint256 knightId) external view returns(uint256) {}
   function getSiegeWinnerClanId() external view returns(uint256) {}
   function getSiegeWinnerKnightId() external view returns(uint256) {}
