@@ -23,4 +23,24 @@ library SiegeStorage {
       l.slot := slot
     }
   }
+
+  function _siegeRewardTotal() internal view returns(uint256) {
+    return state().rewardTotal;
+  }
+
+  function _siegeReward(uint256 knightId) internal view returns(uint256) {
+    return state().reward[knightId];
+  }
+
+  function _siegeWinnerClan() internal view returns(uint256) {
+    return state().siegeWinnerClan;
+  }
+
+  function _siegeWinnerKnight() internal view returns(uint256) {
+    return state().siegeWinnerKnight;
+  }
+
+  function _siegeWinnerAddress() internal view returns(address) {
+    return state().siegeWinnerAddress;
+  }
 }

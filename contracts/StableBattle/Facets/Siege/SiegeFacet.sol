@@ -21,11 +21,7 @@ contract SiegeFacet is
   KnightGetters
 {
   function setSiegeWinner(uint256 clanId) external ifCallerIsAdmin {
-    uint256 knightStake = 
-      (_knightsMinted(Pool.AAVE, Coin.USDT) - 
-      _knightsBurned(Pool.AAVE, Coin.USDT)) * 1000 * (10 ** ACOIN(Coin.USDT).decimals()) -
-      _siegeRewardTotal();
-    uint256 reward = ACOIN(Coin.USDT).balanceOf(address(this)) - knightStake;
+    uint256 reward = _siegeYield();
     uint256 knightId = _setSiegeWinnerKnight(clanId);
     SiegeStorage.state().siegeWinnerClan = clanId;
     SiegeStorage.state().reward[knightId] += reward;

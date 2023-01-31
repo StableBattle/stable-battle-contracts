@@ -2,33 +2,41 @@
 pragma solidity ^0.8.0;
 
 import { SiegeStorage } from "../Siege/SiegeStorage.sol";
+import { KnightStorage } from "../Knight/KnightStorage.sol";
 import { ISiegeGetters } from "../Siege/ISiege.sol";
 import { ExternalCalls } from "../../Meta/ExternalCalls.sol";
-import { Coin } from "../../Meta/DataStructures.sol";
+import { Pool, Coin } from "../../Meta/DataStructures.sol";
 
-abstract contract SiegeGetters {
+abstract contract SiegeGetters is ExternalCalls {
   function _siegeRewardTotal() internal view returns(uint256) {
-    return SiegeStorage.state().rewardTotal;
+    return SiegeStorage._siegeRewardTotal();
   }
 
   function _siegeReward(uint256 knightId) internal view returns(uint256) {
-    return SiegeStorage.state().reward[knightId];
+    return SiegeStorage._siegeReward(knightId);
   }
 
   function _siegeWinnerClan() internal view returns(uint256) {
-    return SiegeStorage.state().siegeWinnerClan;
+    return SiegeStorage.siegeWinnerClan();
   }
 
   function _siegeWinnerKnight() internal view returns(uint256) {
-    return SiegeStorage.state().siegeWinnerKnight;
+    return SiegeStorage.siegeWinnerKnight();
   }
 
   function _siegeWinnerAddress() internal view returns(address) {
-    return SiegeStorage.state().siegeWinnerAddress;
+    return SiegeStorage.siegeWinnerAddress();
   }
-}
 
-abstract contract SiegeGettersExternal is ISiegeGetters, SiegeGetters, ExternalCalls {
+  function _siegeYield() internal view returns(uint256) {
+    return ACOIN(Coin.USDT).balanceOf(address(this)) -
+      (KnightStorage.state().knightsMinted[Pool.AAVE][Coin.USDT] - 
+      KnightStorage.state().knightsBurned[Pool.AAVE][Coin.USDT]) * 1000 * (10 ** ACOIN(Coin.USDT).decimals()) -
+      _siegeRewardTotal();
+  }
+} 
+
+abstract contract SiegeGettersExternal is ISiegeGetters, SiegeGetters {
   function getSiegeRewardTotal() external view returns(uint256) {
     return _siegeRewardTotal();
   }
@@ -50,6 +58,10 @@ abstract contract SiegeGettersExternal is ISiegeGetters, SiegeGetters, ExternalC
   }
 
   function getSiegeYield() external view returns(uint256) {
+    return _siegeYield();
+  }
+
+  function getYieldTotal() external view returns(uint256) {
     return ACOIN(Coin.USDT).balanceOf(address(this));
   }
 }
