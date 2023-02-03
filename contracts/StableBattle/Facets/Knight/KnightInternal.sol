@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.10;
 
-import { Coin, Pool, Knight } from "../../Meta/DataStructures.sol";
+import { Coin, Pool, Knight, ClanRole } from "../../Meta/DataStructures.sol";
 
 import { IKnightEvents, IKnightErrors } from "../Knight/IKnight.sol";
 import { KnightStorage } from "../Knight/KnightStorage.sol";
@@ -46,7 +46,7 @@ abstract contract KnightInternal is
     emit KnightMinted(knightId, msg.sender, p, c);
   }
 
-  function _burnKnight(uint256 knightId) internal {
+  function _burnKnight(uint256 knightId, uint256 heirId) internal {
     Pool p = _knightPool(knightId);
     Coin c = _knightCoin(knightId);
     //Leave or abandon clan
@@ -54,7 +54,18 @@ abstract contract KnightInternal is
     uint256 leaderId = _clanLeader(clanId);
     if (clanId != 0 && leaderId != 0) {
       if (knightId == leaderId) {
-        revert KnightFacet_AbandonLeaderRoleBeforeBurning(knightId, clanId);
+        if(heirId != 0) {
+          if(!isKnight(heirId)) {
+            revert KnightFacet_HeirIsNotKnight(heirId);
+          }
+          if(_knightClan(heirId) != clanId) {
+            revert KnightFacet_HeirIsNotInTheSameClan(clanId, heirId);
+          }
+          _setClanRole(clanId, knightId, ClanRole.ADMIN);
+          _setClanRole(clanId, heirId, ClanRole.OWNER);
+        } else {
+          _abandonClan(clanId, knightId);
+        }
       } else {
         _kick(knightId, clanId);
       }

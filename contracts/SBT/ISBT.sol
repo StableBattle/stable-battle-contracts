@@ -6,6 +6,7 @@ import { ISolidStateERC20 } from "@solidstate/contracts/token/ERC20/ISolidStateE
 interface ISBTEvents {
   event Stake(address sender, uint clanId, uint256 amount);
   event Withdraw(address sender, uint clanId, uint256 amount);
+  event WithdrawRequest(address sender, uint clanId, uint256 amount);
 }
 
 interface ISBT is ISolidStateERC20, ISBTEvents {
@@ -18,4 +19,6 @@ interface ISBT is ISolidStateERC20, ISBTEvents {
   function stake(uint clanId, uint256 amount) external;
 
   function withdraw(uint clanId, uint256 amount) external;
+
+  function withdrawRequest(uint clanId, uint256 amount) external;
 }

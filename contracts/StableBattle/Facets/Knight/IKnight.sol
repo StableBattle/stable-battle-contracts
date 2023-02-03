@@ -11,6 +11,9 @@ interface IKnightEvents {
 interface IKnightErrors {
   error KnightFacet_InsufficientFunds(uint256 avalible, uint256 required);
   error KnightFacet_AbandonLeaderRoleBeforeBurning(uint256 knightId, uint256 clanId);
+  error KnightFacet_CantAppointYourselfAsHeir(uint256 knightId);
+  error KnightFacet_HeirIsNotKnight(uint256 heirId);
+  error KnightFacet_HeirIsNotInTheSameClan(uint256 clanId, uint256 heirId);
 
   error KnightModifiers_WrongKnightId(uint256 wrongId);
   error KnightModifiers_KnightNotInAnyClan(uint256 knightId);
@@ -63,5 +66,5 @@ interface IKnightGetters {
 interface IKnight is IKnightEvents, IKnightErrors, IKnightGetters {
   function mintKnight(Pool p, Coin c) external;
 
-  function burnKnight (uint256 knightId) external;
+  function burnKnight (uint256 knightId, uint256 heirId) external;
 }

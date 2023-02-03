@@ -10,8 +10,9 @@ interface IClanEvents {
   event ClanNewName(uint256 clanId, string newClanName);
   event ClanNewLevel(uint256 clanId, uint256 newLevel);
 
-  event ClanStakeAdded(address benefactor, uint clanId, uint amount);
-  event ClanStakeWithdrawn(address benefactor, uint clanId, uint amount);
+  event ClanStakeAdded(address user, uint clanId, uint amount, uint256 clanStakeTotal, uint256 walletStakeTotal);
+  event ClanStakeWithdrawRequest(address user, uint256 clanId, uint256 amount, uint256 cooldownEnd);
+  event ClanStakeWithdrawn(address user, uint clanId, uint amount, uint256 clanStakeTotal, uint256 walletStakeTotal);
   event ClanLeveledUp(uint clanId, uint newLevel);
   event ClanLeveledDown(uint clanId, uint newLevel);
 
@@ -38,6 +39,9 @@ interface IClanErrors {
   error ClanModifiers_ClanOwnersCantCallThis(uint256 knightId);
   error ClanModifiers_ClanNameTaken(string clanName);
   error ClanModifiers_ClanNameWrongLength(string clanName);
+  error ClanModifiers_UserOnWithdrawalCooldown(address user);
+  error ClanModifiers_WithdrawalAmountAboveStake(address user, uint256 clanId, uint256 withdrawalAmount);
+  error ClanModifiers_NotClanOwner(uint256 knightId);
 
   error ClanFacet_InsufficientStake(uint256 stakeAvalible, uint256 withdrawAmount);
   error ClanFacet_CantJoinAlreadyInClan(uint256 knightId, uint256 clanId);
@@ -60,7 +64,7 @@ interface IClanGetters {
 
   function getClanLevel(uint clanId) external view returns(uint);
 
-  function getStakeOf(address benefactor, uint clanId) external view returns(uint256);
+  function getStakeOf(address user, uint clanId) external view returns(uint256);
 
   function getClanLevelThreshold(uint level) external view returns(uint);
 
@@ -70,7 +74,7 @@ interface IClanGetters {
 
   function getClanInfo(uint clanId) external view returns(uint256, uint256, uint256, uint256);
 
-  function getClanConfig() external view returns(uint256, uint256[] memory, uint256[] memory);
+  function getClanConfig() external view returns(uint256[] memory, uint256[] memory);
 
   function getClanKnightInfo(uint knightId) external view returns(uint256, uint256, ClanRole, uint256);
   
@@ -80,14 +84,18 @@ interface IClanGetters {
 interface IClan is IClanGetters, IClanEvents, IClanErrors {
   function createClan(uint256 knightId, string calldata clanName) external;
 
+  function abandonClan(uint256 clanId, uint256 ownerId) external;
+
   function setClanRole(uint256 clanId, uint256 knightId, ClanRole newRole, uint256 callerId) external;
 
   function setClanName(uint256 clanId, string calldata newClanName) external;
 
 // Clan stakes and leveling
-  function onStake(address benefactor, uint256 clanId, uint256 amount) external;
+  function onStake(address user, uint256 clanId, uint256 amount) external;
 
-  function onWithdraw(address benefactor, uint256 clanId, uint256 amount) external;
+  function onWithdraw(address user, uint256 clanId, uint256 amount) external;
+
+  function onWithdrawRequest(address user, uint256 clanId, uint256 amount) external;
 
 //Join, Leave and Invite Proposals
   function joinClan(uint256 knightId, uint256 clanId) external;

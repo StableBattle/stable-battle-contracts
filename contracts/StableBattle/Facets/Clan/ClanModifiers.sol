@@ -75,6 +75,13 @@ abstract contract ClanModifiers is IClanErrors, ClanGetters {
     _;
   }
 
+  modifier ifIsClanOwner(uint knightId) {
+    if (!isClanOwner(knightId)) {
+      revert ClanModifiers_NotClanOwner(knightId);
+    }
+    _;
+  }
+
   function isClanAdmin(uint256 knightId) internal view returns(bool) {
     return _roleInClan(knightId) == ClanRole.ADMIN;
   }
@@ -116,6 +123,39 @@ abstract contract ClanModifiers is IClanErrors, ClanGetters {
     //This is NOT a correct way to calculate string length, should change it later
     if(bytes(clanName).length < 1 || bytes(clanName).length > 30) {
       revert ClanModifiers_ClanNameWrongLength(clanName);
+    }
+    _;
+  }
+
+  function isOnWithdrawalCooldown(address user) internal view returns(bool) {
+    return _withdrawalCooldown(user) > block.timestamp;
+  }
+
+  modifier ifNotOnWithdrawalCooldown(address user) {
+    if(isOnWithdrawalCooldown(user)) {
+      revert ClanModifiers_UserOnWithdrawalCooldown(user);
+    }
+    _;
+  }
+
+  function isBelowAllowedWithdrawal(address user, uint256 amount) internal view returns(bool) {
+    return _allowedWithdrawal(user) >= amount;
+  }
+
+  modifier ifIsBelowAllowedWithdrawal(address user, uint256 amount) {
+    if(!isBelowAllowedWithdrawal(user, amount)) {
+      revert ClanModifiers_UserOnWithdrawalCooldown(user);
+    }
+    _;
+  }
+
+  function isBelowStake(address user, uint256 clanId, uint256 amount) internal view returns(bool) {
+    return _stakeOf(user, clanId) >= amount;
+  }
+
+  modifier ifIsBelowStake(address user, uint256 clanId, uint256 amount) {
+    if(!isBelowStake(user, clanId, amount)) {
+      revert ClanModifiers_WithdrawalAmountAboveStake(user, clanId, amount);
     }
     _;
   }

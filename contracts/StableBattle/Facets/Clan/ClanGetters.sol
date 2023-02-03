@@ -35,8 +35,8 @@ abstract contract ClanGetters {
     uint256 stake = _clanStake(clanId);
     uint[] memory thresholds = ClanStorage.state().levelThresholds;
     uint maxLevel = thresholds.length;
-    uint newLevel = 0;
-    while(stake > thresholds[newLevel] && newLevel < maxLevel) {
+    uint newLevel = 1;
+    while(stake >= thresholds[newLevel] && newLevel < maxLevel) {
       newLevel++;
     }
     return newLevel;
@@ -92,6 +92,14 @@ abstract contract ClanGetters {
 
   function _clanMaxMembers(uint256 clanId) internal view returns(uint256) {
     return ClanStorage.state().maxMembers[_clanLevel(clanId) - 1];
+  }
+
+  function _withdrawalCooldown(address user) internal view returns(uint256) {
+    return ClanStorage.state().withdrawalCooldown[user];
+  }
+
+  function _allowedWithdrawal(address user) internal view returns(uint256) {
+    return ClanStorage.state().allowedWithdrawal[user];
   }
 }
 
@@ -154,9 +162,8 @@ abstract contract ClanGettersExternal is IClanGetters, ClanGetters {
     );
   }
 
-  function getClanConfig() external view returns(uint256, uint256[] memory, uint256[] memory) {
+  function getClanConfig() external view returns(uint256[] memory, uint256[] memory) {
     return(
-      _clanMaxLevel(),
       _clanLevelThresholds(),
       _clanMaxMembers()
     );

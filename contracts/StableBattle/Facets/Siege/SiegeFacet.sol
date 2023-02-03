@@ -20,24 +20,31 @@ contract SiegeFacet is
   ItemsModifiers,
   KnightGetters
 {
-  function setSiegeWinner(uint256 clanId) external ifCallerIsAdmin {
+  function setSiegeWinner(uint256 clanId, uint256 knightId, address user) external ifCallerIsAdmin {
     uint256 reward = _siegeYield();
-    uint256 knightId = _setSiegeWinnerKnight(clanId);
+    if(_knightClan(knightId) != clanId) {
+      revert();
+    }
+    if(_balanceOf(user, knightId) < 1) {
+      revert();
+    }
     SiegeStorage.state().siegeWinnerClan = clanId;
-    SiegeStorage.state().reward[knightId] += reward;
+    SiegeStorage.state().siegeWinnerKnight = knightId;
+    SiegeStorage.state().siegeWinnerAddress = user;
+    SiegeStorage.state().reward[user] += reward;
     SiegeStorage.state().rewardTotal += reward;
-    emit SiegeNewWinner(clanId, knightId, reward);
+    emit SiegeNewWinner(clanId, knightId, user, reward);
   }
 
-  function claimSiegeReward(address to, uint256 knightId, uint256 amount) external ifOwnsItem(knightId) {
-    uint256 reward = _siegeReward(knightId);
-    if(reward == 0) { revert NoRewardToClaim(knightId); }
+  function claimSiegeReward(address user, uint256 amount) external {
+    uint256 reward = _siegeReward(user);
+    if(reward == 0) { revert NoRewardToClaim(user); }
     if(amount > reward) {
-      revert ClaimAmountExceedsReward(amount, reward, knightId);
+      revert ClaimAmountExceedsReward(amount, reward, user);
     }
-    SiegeStorage.state().reward[knightId] -= amount;
+    SiegeStorage.state().reward[user] -= amount;
     SiegeStorage.state().rewardTotal -= amount;
-    AAVE().withdraw(address(COIN(Coin.USDT)), reward, to);
-    emit SiegeRewardClaimed(to, knightId, amount);
+    AAVE().withdraw(address(COIN(Coin.USDT)), amount, user);
+    emit SiegeRewardClaimed(user, amount);
   }
 }

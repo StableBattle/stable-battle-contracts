@@ -8,22 +8,23 @@ library ClanStorage {
   struct State {
     uint[] levelThresholds;
     uint[] maxMembers;
-    //clanId => clan leader id
-    mapping(uint256 => uint256) clanLeader;
-    //clanId => stake amount
-    mapping(uint256 => uint256) clanStake;
-    //clanId => amount of members in clanId
-    mapping(uint256 => uint256) clanTotalMembers;
-    //clanId => level of clanId
-    mapping(uint256 => uint256) clanLevel;
-
-    // knightId => id of clan where join proposal is sent
-    mapping (uint256 => uint256) joinProposal;
-    // address => clanId => amount
-    mapping (address => mapping (uint => uint256)) stake;
-    
     uint256 clansInTotal;
+
+    //Clan => clan leader id
+    mapping(uint256 => uint256) clanLeader;
+    //Clan => stake amount
+    mapping(uint256 => uint256) clanStake;
+    //Clan => amount of members in clanId
+    mapping(uint256 => uint256) clanTotalMembers;
+    //Clan => level of clanId
+    mapping(uint256 => uint256) clanLevel;
+    //Clan => name of said clan
+    mapping(uint256 => string) clanName;
+    //Clan name => taken or not
+    mapping(string => bool) clanNameTaken;
     
+    //Knight => id of clan where join proposal is sent
+    mapping (uint256 => uint256) joinProposal;
     //Knight => end of cooldown
     mapping(uint256 => uint256) clanActivityCooldown;
     //Knight => clan join proposal sent
@@ -32,10 +33,13 @@ library ClanStorage {
     mapping(uint256 => ClanRole) roleInClan;
     //Knight => kick cooldown duration
     mapping(uint256 => uint) clanKickCooldown;
-    //Clan => name of said clan
-    mapping(uint256 => string) clanName;
-    //Clan name => taken or not
-    mapping(string => bool) clanNameTaken;
+
+    //address => clanId => amount
+    mapping (address => mapping (uint => uint256)) stake;
+    //address => withdrawal cooldown
+    mapping (address => uint256) withdrawalCooldown;
+    //address => allowed withdrawal
+    mapping (address => uint256) allowedWithdrawal;
   }
 
   bytes32 internal constant STORAGE_SLOT = keccak256("Clan.storage");

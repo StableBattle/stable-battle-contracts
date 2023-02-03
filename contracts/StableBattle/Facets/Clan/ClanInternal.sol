@@ -33,8 +33,7 @@ abstract contract ClanInternal is
     _setClanRole(clanId, knightId, ClanRole.OWNER);
   }
 
-  function _abandon(uint256 clanId) internal {
-    uint256 leaderId = _clanLeader(clanId);
+  function _abandonClan(uint256 clanId, uint256 leaderId) internal {
     KnightStorage.state().knight[leaderId].inClan = 0;
     ClanStorage.state().clanLeader[clanId] = 0;
     emit ClanAbandoned(clanId, leaderId);
@@ -45,6 +44,9 @@ abstract contract ClanInternal is
     if (newClanRole == ClanRole.OWNER || newClanRole == ClanRole.ADMIN) {
       ClanStorage.state().clanKickCooldown[knightId] = 0;
     }
+    if (newClanRole == ClanRole.OWNER) {
+      ClanStorage.state().clanLeader[clanId] = knightId;
+    }
     emit ClanNewRole(clanId, knightId, newClanRole);
   }
 
@@ -54,28 +56,24 @@ abstract contract ClanInternal is
   }
 
 // Clan stakes and leveling
-  function _onStake(address benefactor, uint256 clanId, uint256 amount) internal {
-    ClanStorage.state().stake[benefactor][clanId] += amount;
+  function _onStake(address user, uint256 clanId, uint256 amount) internal {
+    ClanStorage.state().stake[user][clanId] += amount;
     ClanStorage.state().clanStake[clanId] += amount;
     _leveling(clanId);
 
-    emit ClanStakeAdded(benefactor, clanId, amount);
+    emit ClanStakeAdded(user, clanId, amount, _clanStake(clanId), _stakeOf(user, clanId));
   }
 
-  function _onWithdraw(address benefactor, uint256 clanId, uint256 amount) internal {
-    uint256 stake = _stakeOf(benefactor, clanId);
-    if (stake < amount) {
-      revert ClanFacet_InsufficientStake({
-        stakeAvalible: stake,
-        withdrawAmount: amount
-      });
-    }
-    
-    ClanStorage.state().stake[benefactor][clanId] -= amount;
+  function _onWithdraw(address user, uint256 clanId, uint256 amount) internal {
+    ClanStorage.state().allowedWithdrawal[user] -= amount;
+    ClanStorage.state().stake[user][clanId] -= amount;
     ClanStorage.state().clanStake[clanId] -= amount;
+    if(_clanLevel2(clanId) < _clanLevel(clanId)) {
+
+    }
     _leveling(clanId);
 
-    emit ClanStakeWithdrawn(benefactor, clanId, amount);
+    emit ClanStakeWithdrawn(user, clanId, amount, _clanStake(clanId), _stakeOf(user, clanId));
   }
 
   //Calculate clan level based on stake
@@ -113,7 +111,9 @@ abstract contract ClanInternal is
     _setClanRole(clanId, knightId, ClanRole.NONE);
     ClanStorage.state().clanTotalMembers[clanId]--;
     KnightStorage.state().knight[knightId].inClan = 0;
-    ClanStorage.state().clanActivityCooldown[knightId] = block.timestamp + TWO_DAYS_IN_SECONDS;
+    if(_clanLeader(clanId) != 0) {
+      ClanStorage.state().clanActivityCooldown[knightId] = block.timestamp + TWO_DAYS_IN_SECONDS;
+    }
     emit ClanKnightQuit(clanId, knightId);
   }
 

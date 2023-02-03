@@ -10,7 +10,7 @@ library SiegeStorage {
     //Id of a last clan that won the siege
     address siegeWinnerAddress;
     //Knight id => reward amount
-    mapping(uint256 => uint256) reward;
+    mapping(address => uint256) reward;
     //Total anount of unclaimed rewards in a contract
     uint256 rewardTotal;
   }
@@ -28,8 +28,8 @@ library SiegeStorage {
     return state().rewardTotal;
   }
 
-  function _siegeReward(uint256 knightId) internal view returns(uint256) {
-    return state().reward[knightId];
+  function _siegeReward(address user) internal view returns(uint256) {
+    return state().reward[user];
   }
 
   function _siegeWinnerClan() internal view returns(uint256) {

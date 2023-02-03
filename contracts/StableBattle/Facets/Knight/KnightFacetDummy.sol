@@ -9,7 +9,7 @@ contract KnightFacetDummy is IKnight {
 //Knight Facet
   function mintKnight(Pool p, Coin c) external {}
 
-  function burnKnight (uint256 knightId) external {}
+  function burnKnight (uint256 knightId, uint256 heirId) external {}
 
 //Knight Getters
   function getKnightInfo(uint256 knightId) external view returns(Knight memory) {}

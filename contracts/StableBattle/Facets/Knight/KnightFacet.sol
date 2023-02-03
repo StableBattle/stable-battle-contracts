@@ -23,14 +23,15 @@ contract KnightFacet is
     _mintKnight(p, c);
   }
 
-  function burnKnight(uint256 knightId)
+  function burnKnight(uint256 knightId, uint256 heirId)
     external
-  //ifOwnsItem(knightId)
+    ifOwnsItem(knightId)
     ifIsKnight(knightId)
     ifIsVaildPool(_knightPool(knightId))
     ifIsValidCoin(_knightCoin(knightId))
     ifIsCompatible(_knightPool(knightId), _knightCoin(knightId))
   {
-    _burnKnight(knightId);
+    if(knightId == heirId) { revert KnightFacet_CantAppointYourselfAsHeir(knightId); }
+    _burnKnight(knightId, heirId);
   }
 }

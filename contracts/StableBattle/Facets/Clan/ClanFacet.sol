@@ -34,6 +34,14 @@ contract ClanFacet is
     _createClan(knightId, clanName);
   }
 
+  function abandonClan(uint256 clanId, uint256 ownerId)
+    external
+    ifOwnsItem(ownerId)
+    ifIsClanLeader(ownerId, clanId)
+  {
+    _abandonClan(clanId, ownerId);
+  }
+
   function setClanRole(uint256 clanId, uint256 knightId, ClanRole newRole, uint256 callerId)
     external
     ifOwnsItem(_clanLeader(clanId))
@@ -45,7 +53,6 @@ contract ClanFacet is
     if (newRole == ClanRole.OWNER && callerRole == ClanRole.OWNER) {
       _setClanRole(clanId, callerId, ClanRole.ADMIN);
       _setClanRole(clanId, knightId, ClanRole.OWNER);
-      ClanStorage.state().clanLeader[clanId] = knightId;
     } else if (uint8(callerRole) > uint8(knightRole) && uint8(callerRole) > uint8(newRole)) {
       _setClanRole(clanId, knightId, newRole);
     } else {
@@ -63,16 +70,30 @@ contract ClanFacet is
   }
 
 // Clan stakes and leveling
-  function onStake(address benefactor, uint256 clanId, uint256 amount)
+  function onStake(address user, uint256 clanId, uint256 amount)
     external
   //onlySBT
     ifClanExists(clanId)
-  { _onStake(benefactor, clanId, amount); }
+  { _onStake(user, clanId, amount); }
 
-  function onWithdraw(address benefactor, uint256 clanId, uint256 amount)
+  function onWithdraw(address user, uint256 clanId, uint256 amount)
     external
   //onlySBT
-  { _onWithdraw(benefactor, clanId, amount); }
+  //ifNotOnWithdrawalCooldown(user)
+    ifIsBelowAllowedWithdrawal(user, amount)
+  { _onWithdraw(user, clanId, amount); }
+
+  uint256 constant TWO_WEEKS_IN_SECONDS = 60 * 60 * 24 * 14;
+
+  function onWithdrawRequest(address user, uint256 clanId, uint256 amount) 
+    external
+    //onlySBT
+    ifIsBelowStake(user, clanId, amount)
+  {
+    ClanStorage.state().allowedWithdrawal[user] = amount;
+    ClanStorage.state().withdrawalCooldown[user] = block.timestamp + TWO_WEEKS_IN_SECONDS;
+    emit ClanStakeWithdrawRequest(user, clanId, amount, block.timestamp + TWO_WEEKS_IN_SECONDS);
+  }
 
 //Join, Leave and Invite Proposals
   //ONLY knight supposed call the join function

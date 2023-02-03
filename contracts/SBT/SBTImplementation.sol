@@ -44,10 +44,13 @@ contract SBTImplementation is
   }
 
   function withdraw(uint clanId, uint256 amount) external {
-    require(Clan().getStakeOf(msg.sender, clanId) >= amount,
-      "SBT: withdrawal amount exceeds stake");
-    _transfer(address(Clan()), msg.sender, amount);
     Clan().onWithdraw(msg.sender, clanId, amount);
+    _transfer(address(Clan()), msg.sender, amount);
     emit Withdraw(msg.sender, clanId, amount);
+  }
+
+  function withdrawRequest(uint clanId, uint256 amount) external {
+    Clan().onWithdrawRequest(msg.sender, clanId, amount);
+    emit WithdrawRequest(msg.sender, clanId, amount);
   }
 }

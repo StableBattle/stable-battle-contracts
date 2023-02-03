@@ -7,6 +7,8 @@ import { IClan } from "./IClan.sol";
 contract ClanFacetDummy is IClan {
   function createClan(uint256 knightId, string calldata clanName) external {}
 
+  function abandonClan(uint256 clanId, uint256 ownerId) external {}
+
   function setClanRole(uint256 clanId, uint256 knightId, ClanRole newRole, uint256 callerId) external {}
 
   function setClanName(uint256 clanId, string calldata newClanName) external {}
@@ -15,6 +17,8 @@ contract ClanFacetDummy is IClan {
   function onStake(address benefactor, uint256 clanId, uint256 amount) external {}
 
   function onWithdraw(address benefactor, uint256 clanId, uint256 amount) external {}
+
+  function onWithdrawRequest(address benefactor, uint256 clanId, uint256 amount) external {}
 
 //Join, Leave and Invite Proposals
   function joinClan(uint256 knightId, uint256 clanId) external {}
@@ -51,7 +55,7 @@ contract ClanFacetDummy is IClan {
 
   function getClanInfo(uint clanId) external view returns(uint256, uint256, uint256, uint256) {}
 
-  function getClanConfig() external view returns(uint256, uint256[] memory, uint256[] memory) {}
+  function getClanConfig() external view returns(uint256[] memory, uint256[] memory) {}
 
   function getClanKnightInfo(uint knightId) external view returns(uint256, uint256, ClanRole, uint256) {}
 

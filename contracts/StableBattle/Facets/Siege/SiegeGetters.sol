@@ -12,27 +12,30 @@ abstract contract SiegeGetters is ExternalCalls {
     return SiegeStorage._siegeRewardTotal();
   }
 
-  function _siegeReward(uint256 knightId) internal view returns(uint256) {
-    return SiegeStorage._siegeReward(knightId);
+  function _siegeReward(address user) internal view returns(uint256) {
+    return SiegeStorage._siegeReward(user);
   }
 
   function _siegeWinnerClan() internal view returns(uint256) {
-    return SiegeStorage.siegeWinnerClan();
+    return SiegeStorage._siegeWinnerClan();
   }
 
   function _siegeWinnerKnight() internal view returns(uint256) {
-    return SiegeStorage.siegeWinnerKnight();
+    return SiegeStorage._siegeWinnerKnight();
   }
 
   function _siegeWinnerAddress() internal view returns(address) {
-    return SiegeStorage.siegeWinnerAddress();
+    return SiegeStorage._siegeWinnerAddress();
   }
 
   function _siegeYield() internal view returns(uint256) {
-    return ACOIN(Coin.USDT).balanceOf(address(this)) -
-      (KnightStorage.state().knightsMinted[Pool.AAVE][Coin.USDT] - 
-      KnightStorage.state().knightsBurned[Pool.AAVE][Coin.USDT]) * 1000 * (10 ** ACOIN(Coin.USDT).decimals()) -
-      _siegeRewardTotal();
+    uint256 stakeTotal = ACOIN(Coin.USDT).balanceOf(address(this));
+    uint256 knightStake = 
+      (
+        KnightStorage.state().knightsMinted[Pool.AAVE][Coin.USDT] - 
+        KnightStorage.state().knightsBurned[Pool.AAVE][Coin.USDT]
+      ) * 1e9;
+    return stakeTotal - knightStake - _siegeRewardTotal();
   }
 } 
 
@@ -41,8 +44,8 @@ abstract contract SiegeGettersExternal is ISiegeGetters, SiegeGetters {
     return _siegeRewardTotal();
   }
 
-  function getSiegeReward(uint256 knightId) external view returns(uint256) {
-    return _siegeReward(knightId);
+  function getSiegeReward(address user) external view returns(uint256) {
+    return _siegeReward(user);
   }
 
   function getSiegeWinnerClanId() external view returns(uint256) {
