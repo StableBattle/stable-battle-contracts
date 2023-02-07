@@ -7,14 +7,14 @@ import { Coin, Pool } from "../Meta/DataStructures.sol";
 import { IERC20 } from "@solidstate/contracts/token/ERC20/IERC20.sol";
 import { IPool } from "@aave/core-v3/contracts/interfaces/IPool.sol";
 import { AToken } from "@aave/core-v3/contracts/protocol/tokenization/AToken.sol";
-import { ISBT } from "../../SBT/ISBT.sol";
+import { IBEER } from "../../BEER/IBEER.sol";
 import { ISBV } from "../../SBV/ISBV.sol";
 
 import { MetaStorage } from "./MetaStorage.sol";
 
 abstract contract ExternalCalls {
-  function SBT() internal view virtual returns(ISBT) {
-    return ISBT(MetaStorage.state().SBT);
+  function BEER() internal view virtual returns(IBEER) {
+    return IBEER(MetaStorage.state().BEER);
   }
 
   function SBV() internal view virtual returns(ISBV) {

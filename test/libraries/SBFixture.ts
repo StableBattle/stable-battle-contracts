@@ -1,6 +1,6 @@
 import hre from "hardhat";
 import SBDFromAddress, { SBDInterface } from "./SBDFromAddress";
-import { ISBT, ISBV } from "../../typechain-types";
+import { IBEER, ISBV } from "../../typechain-types";
 import { BigNumber } from "ethers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import deploy from "../../scripts/deploy";
@@ -19,7 +19,7 @@ export const knightPrice = {
 
 export interface SBFixtureInterface {
   Diamond : SBDInterface,
-  SBT : ISBT,
+  BEER : IBEER,
   SBV : ISBV,
   knightPrice : knightPriceInterface,
   users : SignerWithAddress[],
@@ -30,10 +30,10 @@ export interface SBFixtureInterface {
 export default async function SBFixture() : Promise<SBFixtureInterface> {
   const users = await hre.ethers.getSigners();
   const owner = users[0];
-  const [SBDAddress, SBTAddress, SBVAddress, predeployBlock] = await deploy();
+  const [SBDAddress, BEERAddress, SBVAddress, predeployBlock] = await deploy();
   return {
     Diamond : await SBDFromAddress(SBDAddress),
-    SBT : await hre.ethers.getContractAt("ISBT", SBTAddress),
+    BEER : await hre.ethers.getContractAt("IBEER", BEERAddress),
     SBV : await hre.ethers.getContractAt("ISBV", SBVAddress),
     knightPrice : knightPrice,
     users : users,

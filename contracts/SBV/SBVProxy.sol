@@ -22,4 +22,6 @@ contract SBVProxy is UpgradeableProxyOwnable {
   //Set StableBattle address
     SBVStorage.state().SBD = diamond;
   }
+
+  receive() external payable {}
 }

@@ -1,6 +1,6 @@
 import { BigNumber } from "ethers";
 import hre, { ethers } from "hardhat";
-import { SBD as SBD_address, SBT as BEER_address } from "../config/goerli/main-contracts";
+import { SBD as SBD_address, BEER as BEER_address } from "../config/goerli/main-contracts";
 import { AAVE as AAVE_address, USDT as UDST_address } from "../config/sb-init-addresses";
 
 //Mint 30 knights
@@ -12,7 +12,7 @@ export default async function populateClans() {
   const USDT = await hre.ethers.getContractAt("IERC20Mintable", UDST_address[hre.network.name]);
   const USDT_decimals = await USDT.decimals();
   const SBD = await hre.ethers.getContractAt("StableBattleDummy", SBD_address);
-  const BEER = await hre.ethers.getContractAt("ISBT", BEER_address);
+  const BEER = await hre.ethers.getContractAt("IBEER", BEER_address);
   const BEER_decimals = await BEER.decimals();
 
   const knights = 32;
@@ -127,7 +127,7 @@ async function createClans(n: number, knightIds: BigNumber[]) : Promise<BigNumbe
 async function stakeInClan(n: number, clanId : BigNumber) {
   const SBD = await hre.ethers.getContractAt("StableBattleDummy", SBD_address);
   const user = (await ethers.getSigners())[0].address;
-  const BEER = await hre.ethers.getContractAt("ISBT", BEER_address);
+  const BEER = await hre.ethers.getContractAt("IBEER", BEER_address);
   const BEER_decimals = await BEER.decimals();
   const realStake = (BigNumber.from(10).pow(BEER_decimals)).mul(n);
 

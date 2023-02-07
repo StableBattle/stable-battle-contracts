@@ -7,7 +7,7 @@ import { Coin, Pool } from "../Meta/DataStructures.sol";
 library MetaStorage {
   struct State {
     // StableBattle EIP20 Token address
-    address SBT;
+    address BEER;
     // StableBattle EIP721 Village address
     address SBV;
 

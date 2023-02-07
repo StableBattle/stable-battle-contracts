@@ -7,7 +7,6 @@ import { Coin, Pool, Role } from "../Meta/DataStructures.sol";
 import { ClanStorage } from "../Facets/Clan/ClanStorage.sol";
 import { KnightStorage } from "../Facets/Knight/KnightStorage.sol";
 import { MetaStorage } from "../Meta/MetaStorage.sol";
-import { TournamentStorage } from "../Facets/Tournament/TournamentStorage.sol";
 import { TreasuryStorage } from "../Facets/Treasury/TreasuryStorage.sol";
 import { GearStorage } from "../Facets/Gear/GearStorage.sol";
 import { AccessControlStorage } from "../Facets/AccessControl/AccessControlStorage.sol";
@@ -19,11 +18,9 @@ import { IERC173 } from "../Facets/Ownership/IERC173.sol";
 import { IDiamondCut } from "../Facets/DiamondCut/IDiamondCut.sol";
 import { IDiamondLoupe } from "../Facets/DiamondLoupe/IDiamondLoupe.sol";
 
-uint256 constant BEER_DECIMALS = 1e18;
+import { ConfigEvents } from "./ConfigEvents.sol";
 
-interface ConfigEvents {
-  event ClanNewConfig(uint[] levelThresholds, uint[] maxMembersPerLevel);
-}
+uint256 constant BEER_DECIMALS = 1e18;
 
 contract SBInit is ConfigEvents {
   struct Args {
@@ -37,7 +34,7 @@ contract SBInit is ConfigEvents {
     address AAVE_USDC_address;
     address AAVE_EURS_address;
 
-    address SBT_address;
+    address BEER_address;
     address SBV_address;
   }
 
@@ -52,7 +49,7 @@ contract SBInit is ConfigEvents {
 
   // Assign Meta Storage
     // Token & Villages
-      MetaStorage.state().SBT = _args.SBT_address;
+      MetaStorage.state().BEER = _args.BEER_address;
       MetaStorage.state().SBV = _args.SBV_address;
     //AAVE
     MetaStorage.state().pool[Pool.AAVE] = _args.AAVE_address;

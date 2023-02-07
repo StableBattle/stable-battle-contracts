@@ -6,7 +6,7 @@ import { TreasuryStorage } from "../Treasury/TreasuryStorage.sol";
 import { TreasuryGetters } from "../Treasury/TreasuryGetters.sol";
 import { KnightGetters } from "../Knight/KnightGetters.sol";
 import { ClanGetters } from "../Clan/ClanGetters.sol";
-import { TournamentGetters } from "../Tournament/TournamentGetters.sol";
+import { SiegeGetters } from "../Siege/SiegeGetters.sol";
 import { ExternalCalls } from "../../Meta/ExternalCalls.sol";
 
 contract TreasuryInternal is
@@ -14,9 +14,9 @@ contract TreasuryInternal is
   ITreasuryErrors,
   TreasuryGetters,
   ClanGetters,
-  TournamentGetters,
   KnightGetters,
-  ExternalCalls
+  ExternalCalls,
+  SiegeGetters
 {
   function _claimRewards() internal {
     uint256 villageAmount = _villageAmount();
@@ -32,11 +32,11 @@ contract TreasuryInternal is
       rewards[v] = reward * (100 - _castleTax());
     }
     //Assign reward to castle holder clan leader
-    owners[villageAmount] = _castleHolderAddress();
+    owners[villageAmount] = _siegeWinnerAddress();
     rewards[villageAmount] = reward * _castleTax();
     //Mint reward tokens
     TreasuryStorage.state().lastBlock = block.number;
-    SBT().treasuryMint(owners, rewards);
+    BEER().treasuryMint(owners, rewards);
   }
 
   function _setTax(uint8 tax) internal {
@@ -45,9 +45,5 @@ contract TreasuryInternal is
     }
     TreasuryStorage.state().castleTax = tax;
     emit NewTaxSet(tax);
-  }
-
-  function _castleHolderAddress() internal view returns(address) {
-    return _knightOwner(_clanLeader(_castleHolderClan()));
   }
 }

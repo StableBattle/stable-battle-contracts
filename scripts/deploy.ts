@@ -42,13 +42,13 @@ export default async function deploy():
   console.log('StableBattle Diamond deployed:', SBD.address);
 
   // deploy StableBattleToken
-  const SBTProxy = await hre.ethers.getContractFactory('SBTProxy');
-  const SBTImplementation = await hre.ethers.getContractFactory('SBTImplementation');
-  const implementationSBT = await SBTImplementation.deploy();
-  await implementationSBT.deployed();
-  const SBT = await SBTProxy.deploy(implementationSBT.address, contractOwner.address, SBD.address);
-  await SBT.deployed();
-  console.log('StableBattle Token deployed:', SBT.address);
+  const BEERProxy = await hre.ethers.getContractFactory('BEERProxy');
+  const BEERImplementation = await hre.ethers.getContractFactory('BEERImplementation');
+  const implementationBEER = await BEERImplementation.deploy();
+  await implementationBEER.deployed();
+  const BEER = await BEERProxy.deploy(implementationBEER.address, contractOwner.address, SBD.address);
+  await BEER.deployed();
+  console.log('StableBattle Token deployed:', BEER.address);
 
   // deploy StableBattleVillages
   const SBVProxy = await hre.ethers.getContractFactory('SBVProxy');
@@ -63,7 +63,7 @@ export default async function deploy():
   fs.writeFileSync(
     `./scripts/config/${hre.network.name}/main-contracts.ts`,
     `export const SBD = "${SBD.address}"
-export const SBT = "${SBT.address}"
+export const BEER = "${BEER.address}"
 export const SBV = "${SBV.address}"`,
     { flag: 'w' }
   );
@@ -71,7 +71,7 @@ export const SBV = "${SBV.address}"`,
   fs.writeFileSync(
     `./scripts/config/${hre.network.name}/main-contracts.txt`,
     `${SBD.address}
-${SBT.address}
+${BEER.address}
 ${SBV.address}`,
     { flag: 'w' }
   );
@@ -84,5 +84,5 @@ ${SBV.address}`,
 
   console.log('StableBattle deployed!');
 
-  return [SBD.address, SBT.address, SBV.address, predeployBlock.number];
+  return [SBD.address, BEER.address, SBV.address, predeployBlock.number];
 }

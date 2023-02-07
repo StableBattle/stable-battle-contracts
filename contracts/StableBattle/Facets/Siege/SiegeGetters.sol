@@ -56,6 +56,10 @@ abstract contract SiegeGettersExternal is ISiegeGetters, SiegeGetters {
     return _siegeWinnerKnight();
   }
 
+  function getSiegeWinnerAddress() external view returns(address) {
+    return _siegeWinnerAddress();
+  }
+
   function getSiegeWinnerInfo() external view returns(uint256, uint256) {
     return (_siegeWinnerClan(), _siegeWinnerKnight());
   }

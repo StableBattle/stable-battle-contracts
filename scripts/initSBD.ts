@@ -5,7 +5,7 @@ import * as conf from "./config/sb-init-addresses";
 import { DiamondSelectors, FacetCutAction } from "./libraries/diamond";
 
 export default async function initSBD() {
-  const { SBD, SBT, SBV } = require("./config/"+hre.network.name+"/main-contracts.ts");
+  const { SBD, BEER, SBV } = require("./config/"+hre.network.name+"/main-contracts.ts");
 
   // deploy SBInit
   // SBInit provides a function that is called when the diamond is upgraded to initialize state variables
@@ -24,13 +24,13 @@ export default async function initSBD() {
     'ItemsFacet',
     'ClanFacet',
     'KnightFacet',
-    'SBVHookFacet',
+  //'SBVHookFacet',
   //'TournamentFacet',
-    'TreasuryFacet',
-    'GearFacet',
+  //'TreasuryFacet',
+  //'GearFacet',
     'EtherscanFacet',
   //'DemoFightFacet',
-    'AdminFacet',
+    'DebugFacet',
     'AccessControlFacet',
     'SiegeFacet'
   ]
@@ -97,7 +97,7 @@ export default async function initSBD() {
     AAVE_USDC_address: conf.AUSDC[hre.network.name],
     AAVE_EURS_address: conf.AEURS[hre.network.name],
 
-    SBT_address: SBT,
+    BEER_address: BEER,
     SBV_address: SBV
   }
   // call to init function

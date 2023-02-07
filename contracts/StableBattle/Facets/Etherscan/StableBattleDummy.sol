@@ -8,15 +8,16 @@ import { ItemsFacetDummy } from "../Items/ItemsFacetDummy.sol";
 import { ClanFacetDummy } from "../Clan/ClanFacetDummy.sol";
 import { KnightFacetDummy } from "../Knight/KnightFacetDummy.sol";
 import { SBVHookFacetDummy } from "../SBVHook/SBVHookFacetDummy.sol";
-import { TournamentFacetDummy } from "../Tournament/TournamentFacetDummy.sol";
 import { TreasuryFacetDummy } from "../Treasury/TreasuryFacetDummy.sol";
 import { GearFacetDummy } from "../Gear/GearFacetDummy.sol";
 import { EtherscanFacetDummy } from "../Etherscan/EtherscanFacetDummy.sol";
-import { DemoFightFacetDummy } from "../DemoFight/DemoFightFacetDummy.sol";
-import { AdminFacetDummy } from "../Admin/AdminFacetDummy.sol";
+import { DebugFacetDummy } from "../Debug/DebugFacetDummy.sol";
 import { AccessControlDummy } from "../AccessControl/AccessControlDummy.sol";
 import { SiegeFacetDummy } from "../Siege/SiegeFacetDummy.sol";
 import { ConfigEvents } from "../../Init&Updates/SBInit.sol";
+
+import { IStableBattle } from "../../Meta/IStableBattle.sol";
+import { IERC165 } from "@solidstate/contracts/introspection/ERC165.sol";
 
 /*
   This is a dummy implementation of StableBattle contracts.
@@ -27,28 +28,26 @@ import { ConfigEvents } from "../../Init&Updates/SBInit.sol";
   or look into scripts/config/(network) in the github repo
 */
 
-contract StableBattleDummy is 
-  ConfigEvents,
+contract StableBattleDummy is
+  IStableBattle,
   DiamondCutFacetDummy,
   DiamondLoupeFacetDummy,
   OwnershipFacetDummy,
   ItemsFacetDummy,
   ClanFacetDummy,
   KnightFacetDummy,
-  SBVHookFacetDummy,
-//TournamentFacetDummy,
-  TreasuryFacetDummy,
-  GearFacetDummy,
+//SBVHookFacetDummy,
+//TreasuryFacetDummy,
+//GearFacetDummy,
   EtherscanFacetDummy,
-//DemoFightFacetDummy,
-  AdminFacetDummy,
+  DebugFacetDummy,
   AccessControlDummy,
   SiegeFacetDummy
 {
   function supportsInterface(bytes4 interfaceId)
     external
     view
-    override(DiamondLoupeFacetDummy, ItemsFacetDummy)
+    override(DiamondLoupeFacetDummy, ItemsFacetDummy, IERC165)
     returns (bool)
   {}
 }

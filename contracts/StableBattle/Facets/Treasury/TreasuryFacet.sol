@@ -17,7 +17,7 @@ contract TreasuryFacet is
     _claimRewards();
   }
 
-  function setTax(uint8 tax) external ifIsFromAddress(_castleHolderAddress()) {
+  function setTax(uint8 tax) external ifIsFromAddress(_siegeWinnerAddress()) {
     _setTax(tax);
   }
 }

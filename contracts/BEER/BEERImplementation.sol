@@ -2,14 +2,14 @@
 pragma solidity ^0.8.0;
 
 import { SolidStateERC20 } from "@solidstate/contracts/token/ERC20/SolidStateERC20.sol";
-import { ISBT } from "./ISBT.sol";
-import { SBTGetters } from "./SBTGetters.sol";
+import { IBEER } from "./IBEER.sol";
+import { BEERGetters } from "./BEERGetters.sol";
 import { OwnableInternal } from "@solidstate/contracts/access/ownable/OwnableInternal.sol";
 
-contract SBTImplementation is 
-  ISBT, 
-  SolidStateERC20, 
-  SBTGetters,
+contract BEERImplementation is 
+  IBEER,
+  SolidStateERC20,
+  BEERGetters,
   OwnableInternal
 {
   function adminMint(address account, uint256 amount)
@@ -31,7 +31,7 @@ contract SBTImplementation is
   //onlySBD
   {
     require(accounts.length == amounts.length,
-      "SBT: arrays are of different sizes");
+      "BEER: arrays are of different sizes");
     for(uint i; i < accounts.length; i++) {
       _mint (accounts[i], amounts[i]);
     }

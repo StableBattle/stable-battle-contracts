@@ -8,6 +8,7 @@ contract SiegeFacetDummy is ISiege {
   function getSiegeReward(address user) external view returns(uint256) {}
   function getSiegeWinnerClanId() external view returns(uint256) {}
   function getSiegeWinnerKnightId() external view returns(uint256) {}
+  function getSiegeWinnerAddress() external view returns(address) {}
   function getSiegeWinnerInfo() external view returns(uint256, uint256) {}
   function getSiegeYield() external view returns(uint256) {}
   function getYieldTotal() external view returns(uint256) {}

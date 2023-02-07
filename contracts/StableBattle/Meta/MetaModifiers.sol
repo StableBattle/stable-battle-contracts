@@ -58,15 +58,15 @@ abstract contract MetaModifiers {
     _;
   }
 
-  error CallerNotSBT();
+  error CallerNotBEER();
 
-  function isSBT() internal view virtual returns(bool) {
-    return MetaStorage.state().SBT == msg.sender;
+  function isBEER() internal view virtual returns(bool) {
+    return MetaStorage.state().BEER == msg.sender;
   }
 
-  modifier ifIsSBT {
-    if (!isSBT()) {
-      revert CallerNotSBT();
+  modifier ifIsBEER {
+    if (!isBEER()) {
+      revert CallerNotBEER();
     }
     _;
   }

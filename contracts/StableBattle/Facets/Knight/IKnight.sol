@@ -4,8 +4,8 @@ pragma solidity ^0.8.0;
 import { Coin, Pool, Knight } from "../../Meta/DataStructures.sol";
 
 interface IKnightEvents {
-  event KnightMinted (uint knightId, address wallet, Pool c, Coin p);
-  event KnightBurned (uint knightId, address wallet, Pool c, Coin p);
+  event KnightMinted (uint knightId, address wallet, Pool p, Coin c);
+  event KnightBurned (uint knightId, address wallet, Pool p, Coin c);
 }
 
 interface IKnightErrors {

@@ -80,7 +80,7 @@ describe('KnightFacetTest', async function () {
           let [knightId, knightOwner, knightPool, KnightCoin] = eventsKnightMinted[eventCount].args
           
           let balance_before = await Coin[coinName].balanceOf(SB.owner.address)
-          await SB.Diamond.KnightFacet.burnKnight(knightId)
+          await SB.Diamond.KnightFacet.burnKnight(knightId, 0)
           let balance_after = await Coin[coinName].balanceOf(SB.owner.address)
           expect(balance_after.sub(balance_before)).to.equal(await SB.Diamond.KnightFacet.getKnightPrice(coinNumber))
           let eventsKnightBurned = await SB.Diamond.KnightFacet.queryFilter(SB.Diamond.KnightFacet.filters.KnightBurned())

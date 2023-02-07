@@ -5,7 +5,13 @@ import { StorageSlot } from "@openzeppelin/contracts/utils/StorageSlot.sol";
 import { Address } from "@openzeppelin/contracts/utils/Address.sol";
 import { LibDiamond } from "../../Diamond/LibDiamond.sol";
 
-contract EtherscanFacet {
+interface IEtherscan {
+  function setDummyImplementation(address newImplementation) external;
+  function getDummyImplementation() external view returns (address);
+  event DummyUpgraded(address newImplementation);
+}
+
+contract EtherscanFacet is IEtherscan {
 
   bytes32 internal constant _IMPLEMENTATION_SLOT = 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc;
 
@@ -23,6 +29,4 @@ contract EtherscanFacet {
     LibDiamond.enforceIsContractOwner();
     _;
   }
-
-  event DummyUpgraded(address newImplementation);
 }
