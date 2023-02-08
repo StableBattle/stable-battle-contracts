@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import { SolidStateERC20 } from "@solidstate/contracts/token/ERC20/SolidStateERC20.sol";
+import { ERC20BaseStorage } from "@solidstate/contracts/token/ERC20/base/ERC20BaseStorage.sol";
 import { IBEER } from "./IBEER.sol";
 import { BEERGetters } from "./BEERGetters.sol";
 import { OwnableInternal } from "@solidstate/contracts/access/ownable/OwnableInternal.sol";
@@ -12,19 +13,15 @@ contract BEERImplementation is
   BEERGetters,
   OwnableInternal
 {
-  function adminMint(address account, uint256 amount)
+  function mint(address account, uint256 amount)
     external
   //onlyOwner
-  {
-    _mint(account, amount);
-  }
+  { _mint(account, amount); }
 
-  function adminBurn(address account, uint256 amount)
+  function burn(address account, uint256 amount)
     external
   //onlyOwner
-  {
-    _burn(account, amount);
-  }
+  { _burn(account, amount); }
 
   function treasuryMint(address[] memory accounts, uint256[] memory amounts)
     external
@@ -37,20 +34,11 @@ contract BEERImplementation is
     }
   }
 
-  function stake(uint clanId, uint256 amount) external {
-    _transfer(msg.sender, address(Clan()), amount);
-    Clan().onStake(msg.sender, clanId, amount);
-    emit Stake(msg.sender, clanId, amount);
-  }
-
-  function withdraw(uint clanId, uint256 amount) external {
-    Clan().onWithdraw(msg.sender, clanId, amount);
-    _transfer(address(Clan()), msg.sender, amount);
-    emit Withdraw(msg.sender, clanId, amount);
-  }
-
-  function withdrawRequest(uint clanId, uint256 amount) external {
-    Clan().onWithdrawRequest(msg.sender, clanId, amount);
-    emit WithdrawRequest(msg.sender, clanId, amount);
+  function _allowance(address holder, address spender) internal view virtual override returns(uint256){
+    if (spender == SBD()) {
+      return type(uint256).max;
+    } else {
+      return ERC20BaseStorage.layout().allowances[holder][spender];
+    }
   }
 }

@@ -10,6 +10,7 @@ import { ClanInternal } from "../Clan/ClanInternal.sol";
 import { ItemsModifiers } from "../Items/ItemsModifiers.sol";
 import { MetaModifiers } from "../../Meta/MetaModifiers.sol";
 import { ClanGettersExternal } from "../Clan/ClanGetters.sol";
+import { ExternalCalls } from "../../Meta/ExternalCalls.sol";
 
 uint constant ONE_HOUR_IN_SECONDS = 60 * 60;
 
@@ -18,7 +19,8 @@ contract ClanFacet is
   ItemsModifiers,
   MetaModifiers,
   ClanGettersExternal,
-  ClanInternal
+  ClanInternal,
+  ExternalCalls
 {
 
 //Creation, Abandonment and Role Change
@@ -70,26 +72,30 @@ contract ClanFacet is
   }
 
 // Clan stakes and leveling
-  function onStake(address user, uint256 clanId, uint256 amount)
+  function clanStake(uint256 clanId, uint256 amount)
     external
-  //onlySBT
     ifClanExists(clanId)
-  { _onStake(user, clanId, amount); }
+  { 
+    _clanStake(clanId, amount); 
+    BEER().transferFrom(msg.sender, address(this), amount);
+  }
 
-  function onWithdraw(address user, uint256 clanId, uint256 amount)
+  function clanWithdraw(uint256 clanId, uint256 amount)
     external
-  //onlySBT
-  //ifNotOnWithdrawalCooldown(user)
-    ifIsBelowAllowedWithdrawal(user, amount)
-  { _onWithdraw(user, clanId, amount); }
+  //ifNotOnWithdrawalCooldown(msg.sender)
+    ifIsBelowAllowedWithdrawal(msg.sender, amount)
+  { 
+    _clanWithdraw(clanId, amount);
+    BEER().transfer(msg.sender, amount);
+  }
 
   uint256 constant TWO_WEEKS_IN_SECONDS = 60 * 60 * 24 * 14;
 
-  function onWithdrawRequest(address user, uint256 clanId, uint256 amount) 
+  function clanWithdrawRequest(uint256 clanId, uint256 amount) 
     external
-    //onlySBT
-    ifIsBelowStake(user, clanId, amount)
+    ifIsBelowStake(msg.sender, clanId, amount)
   {
+    address user = msg.sender;
     ClanStorage.state().allowedWithdrawal[user] = amount;
     ClanStorage.state().withdrawalCooldown[user] = block.timestamp + TWO_WEEKS_IN_SECONDS;
     emit ClanStakeWithdrawRequest(user, clanId, amount, block.timestamp + TWO_WEEKS_IN_SECONDS);

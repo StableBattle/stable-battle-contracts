@@ -62,10 +62,10 @@ export default async function populateClans() {
   console.log(`Join request from ${knightIds[clans + 27]} into clan ${clanIds[2]} sent`);
   tx = await SBD.joinClan(knightIds[clans + 28], clanIds[2]); await tx.wait();
   console.log(`Join request from ${knightIds[clans + 28]} into clan ${clanIds[2]} sent`);
-  tx = await BEER.withdrawRequest(clanIds[2], (BigNumber.from(10).pow(BEER_decimals)).mul(100000)); await tx.wait();
+  tx = await SBD.clanWithdrawRequest(clanIds[2], (BigNumber.from(10).pow(BEER_decimals)).mul(100000)); await tx.wait();
   console.log(`Requested to withdraw ${100000} BEER tokens from ${clanIds[2]}`);
 //if(hre.network.name == "hardhat") { await hre.network.provider.send("hardhat_mine", ["0x3e8", "0x3c"]); }
-  tx = await BEER.withdraw(clanIds[2], (BigNumber.from(10).pow(BEER_decimals)).mul(100000)); await tx.wait();
+  tx = await SBD.clanWithdraw(clanIds[2], (BigNumber.from(10).pow(BEER_decimals)).mul(100000)); await tx.wait();
   console.log(`Withdrawn ${100000} BEER tokens from ${clanIds[2]}`);
   await bumpSBReward();
   const siegeReward = await SBD.getSiegeYield();
@@ -131,10 +131,10 @@ async function stakeInClan(n: number, clanId : BigNumber) {
   const BEER_decimals = await BEER.decimals();
   const realStake = (BigNumber.from(10).pow(BEER_decimals)).mul(n);
 
-  const mintTx = await BEER.adminMint(user, realStake);
+  const mintTx = await BEER.mint(user, realStake);
   await mintTx.wait();
   console.log(`Minted ${n} BEER tokens to ${user}`);
-  const stakeTx = await BEER.stake(clanId, realStake);
+  const stakeTx = await SBD.clanStake(clanId, realStake);
   await stakeTx.wait();
   console.log(`Staked ${n} BEER tokens into ${clanId}`);
   const newClanLevel = (await SBD.getClanInfo(clanId))[3];

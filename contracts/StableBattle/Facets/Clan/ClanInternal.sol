@@ -56,7 +56,8 @@ abstract contract ClanInternal is
   }
 
 // Clan stakes and leveling
-  function _onStake(address user, uint256 clanId, uint256 amount) internal {
+  function _clanStake(uint256 clanId, uint256 amount) internal {
+    address user = msg.sender;
     ClanStorage.state().stake[user][clanId] += amount;
     ClanStorage.state().clanStake[clanId] += amount;
     _leveling(clanId);
@@ -64,13 +65,11 @@ abstract contract ClanInternal is
     emit ClanStakeAdded(user, clanId, amount, _clanStake(clanId), _stakeOf(user, clanId));
   }
 
-  function _onWithdraw(address user, uint256 clanId, uint256 amount) internal {
+  function _clanWithdraw(uint256 clanId, uint256 amount) internal {
+    address user = msg.sender;
     ClanStorage.state().allowedWithdrawal[user] -= amount;
     ClanStorage.state().stake[user][clanId] -= amount;
     ClanStorage.state().clanStake[clanId] -= amount;
-    if(_clanLevel2(clanId) < _clanLevel(clanId)) {
-
-    }
     _leveling(clanId);
 
     emit ClanStakeWithdrawn(user, clanId, amount, _clanStake(clanId), _stakeOf(user, clanId));

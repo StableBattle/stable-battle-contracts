@@ -20,7 +20,7 @@ import { IDiamondLoupe } from "../Facets/DiamondLoupe/IDiamondLoupe.sol";
 
 import { ConfigEvents } from "./ConfigEvents.sol";
 
-uint256 constant BEER_DECIMALS = 1e18;
+uint256 constant BEER_DECIMALS = 1e6;
 
 contract SBInit is ConfigEvents {
   struct Args {

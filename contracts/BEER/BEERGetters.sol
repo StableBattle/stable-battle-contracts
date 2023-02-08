@@ -8,4 +8,8 @@ abstract contract BEERGetters {
   function Clan() internal view returns(IClan) {
     return IClan(BEERStorage.state().SBD);
   }
+
+  function SBD() internal view returns(address) {
+    return BEERStorage.state().SBD;
+  }
 }

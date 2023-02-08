@@ -91,11 +91,11 @@ interface IClan is IClanGetters, IClanEvents, IClanErrors {
   function setClanName(uint256 clanId, string calldata newClanName) external;
 
 // Clan stakes and leveling
-  function onStake(address user, uint256 clanId, uint256 amount) external;
+  function clanStake(uint256 clanId, uint256 amount) external;
 
-  function onWithdraw(address user, uint256 clanId, uint256 amount) external;
+  function clanWithdraw(uint256 clanId, uint256 amount) external;
 
-  function onWithdrawRequest(address user, uint256 clanId, uint256 amount) external;
+  function clanWithdrawRequest(uint256 clanId, uint256 amount) external;
 
 //Join, Leave and Invite Proposals
   function joinClan(uint256 knightId, uint256 clanId) external;
