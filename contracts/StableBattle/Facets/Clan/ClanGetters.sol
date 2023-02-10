@@ -5,8 +5,10 @@ pragma solidity ^0.8.0;
 import { ClanRole } from "../../Meta/DataStructures.sol";
 import { ClanStorage } from "../Clan/ClanStorage.sol";
 import { IClanGetters } from "../Clan/IClan.sol";
+import { EnumerableMap } from "@openzeppelin/contracts/utils/structs/EnumerableMap.sol";
 
 abstract contract ClanGetters {
+  using EnumerableMap for EnumerableMap.AddressToUintMap;
   function _clanInfo(uint clanId) internal view returns(uint256, uint256, uint256, uint256) {
     return (
       _clanLeader(clanId),
@@ -24,14 +26,19 @@ abstract contract ClanGetters {
   }
   
   function _clanStake(uint clanId) internal view returns(uint256) {
-    return ClanStorage.state().clanStake[clanId];
+    uint256 stake =  ClanStorage.state().clanStake[clanId];
+    uint256 withdrawed = 0;
+    uint256 numOfPendingWithdrawals = ClanStorage.state().pendingWithdrawal[clanId].length();
+    for(uint256 i; i < numOfPendingWithdrawals; ++i) {
+      (address user, uint256 pendingWithdraw) = ClanStorage.state().pendingWithdrawal[clanId].at(i);
+      if(_withdrawalCooldown(clanId, user) <= block.timestamp) {
+        withdrawed += pendingWithdraw;
+      }
+    }
+    return stake - withdrawed;
   }
 
-  function _clanLevel(uint clanId) internal view returns(uint) {
-    return ClanStorage.state().clanLevel[clanId];
-  }
-
-  function _clanLevel2(uint256 clanId) internal view returns(uint) {
+  function _clanLevel(uint256 clanId) internal view returns(uint) {
     uint256 stake = _clanStake(clanId);
     uint[] memory thresholds = ClanStorage.state().levelThresholds;
     uint maxLevel = thresholds.length;
@@ -40,10 +47,6 @@ abstract contract ClanGetters {
       newLevel++;
     }
     return newLevel;
-  }
-
-  function _stakeOf(address benefactor, uint clanId) internal view returns(uint256) {
-    return ClanStorage.state().stake[benefactor][clanId];
   }
 
   function _clanLevelThresholds() internal view returns (uint[] memory) {
@@ -94,12 +97,17 @@ abstract contract ClanGetters {
     return ClanStorage.state().maxMembers[_clanLevel(clanId) - 1];
   }
 
-  function _withdrawalCooldown(address user) internal view returns(uint256) {
-    return ClanStorage.state().withdrawalCooldown[user];
+  function _stakeOf(uint clanId, address user) internal view returns(uint256) {
+    return ClanStorage.state().stake[user][clanId];
   }
 
-  function _allowedWithdrawal(address user) internal view returns(uint256) {
-    return ClanStorage.state().allowedWithdrawal[user];
+  function _pendingWithdrawal(uint256 clanId, address user) internal view returns(uint256) {
+    (bool exists, uint256 amount) = ClanStorage.state().pendingWithdrawal[clanId].tryGet(user);
+    return exists ? amount : 0;
+  }
+
+  function _withdrawalCooldown(uint256 clanId, address user) internal view returns(uint256) {
+    return ClanStorage.state().withdrawalCooldown[clanId][user];
   }
 }
 
@@ -124,8 +132,8 @@ abstract contract ClanGettersExternal is IClanGetters, ClanGetters {
     return _clanLevel(clanId);
   }
 
-  function getStakeOf(address benefactor, uint clanId) external view returns(uint256) {
-    return _stakeOf(benefactor, clanId);
+  function getStakeOf(uint clanId, address user) external view returns(uint256) {
+    return _stakeOf(clanId, user);
   }
 
   function getClanLevelThreshold(uint256 level) external view returns(uint) {
@@ -175,5 +183,9 @@ abstract contract ClanGettersExternal is IClanGetters, ClanGetters {
 
   function getClanNameTaken(string calldata clanName) external view returns(bool) {
     return _clanNameTaken(clanName);
+  }
+
+  function getClanUserInfo(uint256 clanId, address user) external view returns(uint256, uint256, uint256) {
+    return (_stakeOf(clanId, user), _pendingWithdrawal(clanId, user), _withdrawalCooldown(clanId, user));
   }
 }

@@ -22,7 +22,6 @@ contract ClanFacet is
   ClanInternal,
   ExternalCalls
 {
-
 //Creation, Abandonment and Role Change
   function createClan(uint256 knightId, string calldata clanName)
     external
@@ -80,25 +79,20 @@ contract ClanFacet is
     BEER().transferFrom(msg.sender, address(this), amount);
   }
 
+  function clanWithdrawRequest(uint256 clanId, uint256 amount) 
+    external
+    ifIsBelowStake(clanId, msg.sender, amount)
+  {
+    _clanWithdrawRequest(clanId, amount);
+  }
+
   function clanWithdraw(uint256 clanId, uint256 amount)
     external
   //ifNotOnWithdrawalCooldown(msg.sender)
-    ifIsBelowAllowedWithdrawal(msg.sender, amount)
+    ifIsBelowPendingWithdrawal(clanId, msg.sender, amount)
   { 
     _clanWithdraw(clanId, amount);
     BEER().transfer(msg.sender, amount);
-  }
-
-  uint256 constant TWO_WEEKS_IN_SECONDS = 60 * 60 * 24 * 14;
-
-  function clanWithdrawRequest(uint256 clanId, uint256 amount) 
-    external
-    ifIsBelowStake(msg.sender, clanId, amount)
-  {
-    address user = msg.sender;
-    ClanStorage.state().allowedWithdrawal[user] = amount;
-    ClanStorage.state().withdrawalCooldown[user] = block.timestamp + TWO_WEEKS_IN_SECONDS;
-    emit ClanStakeWithdrawRequest(user, clanId, amount, block.timestamp + TWO_WEEKS_IN_SECONDS);
   }
 
 //Join, Leave and Invite Proposals

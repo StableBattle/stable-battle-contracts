@@ -40,8 +40,9 @@ interface IClanErrors {
   error ClanModifiers_ClanNameTaken(string clanName);
   error ClanModifiers_ClanNameWrongLength(string clanName);
   error ClanModifiers_UserOnWithdrawalCooldown(address user);
-  error ClanModifiers_WithdrawalAmountAboveStake(address user, uint256 clanId, uint256 withdrawalAmount);
+  error ClanModifiers_WithdrawalAmountAboveStake(uint256 clanId, address user, uint256 withdrawalAmount);
   error ClanModifiers_NotClanOwner(uint256 knightId);
+  error ClanModifiers_WithdrawalAbovePending(address user);
 
   error ClanFacet_InsufficientStake(uint256 stakeAvalible, uint256 withdrawAmount);
   error ClanFacet_CantJoinAlreadyInClan(uint256 knightId, uint256 clanId);
@@ -64,7 +65,7 @@ interface IClanGetters {
 
   function getClanLevel(uint clanId) external view returns(uint);
 
-  function getStakeOf(address user, uint clanId) external view returns(uint256);
+  function getStakeOf(uint clanId, address user) external view returns(uint256);
 
   function getClanLevelThreshold(uint level) external view returns(uint);
 
@@ -79,6 +80,8 @@ interface IClanGetters {
   function getClanKnightInfo(uint knightId) external view returns(uint256, uint256, ClanRole, uint256);
   
   function getClanName(uint256 clanId) external view returns(string memory);
+
+  function getClanUserInfo(uint256 clanId, address user) external view returns(uint256, uint256, uint256);
 }
 
 interface IClan is IClanGetters, IClanEvents, IClanErrors {

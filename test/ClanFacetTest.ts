@@ -36,7 +36,7 @@ describe('ClanFacetTest', async function () {
     for (let i = 0; i < mints; i++) {
       knight[i] = eventsKnightMinted[i].args.knightId;
     }
-    await SB.SBT.adminMint(SB.owner.address, (BigNumber.from(10).pow(await SB.SBT.decimals())).mul(1e6));
+    await SB.BEER.mint(SB.owner.address, (BigNumber.from(10).pow(await SB.BEER.decimals())).mul(1e6));
   })
 
   it('Should create a clan correctly', async () => {
@@ -51,11 +51,10 @@ describe('ClanFacetTest', async function () {
     const clanStake = await SB.Diamond.ClanFacet.getClanStake(clanId)
     const clanLevel = await SB.Diamond.ClanFacet.getClanLevel(clanId)
 
-    expect(knight[0]).to.equal(knight[0])
     expect(clanLeader).to.equal(knight[0])
     expect(clanTotalMembers).to.equal(1)
     expect(clanStake).to.equal(0)
-    expect(clanLevel).to.equal(0)
+    expect(clanLevel).to.equal(1)
 
     expect(await SB.Diamond.KnightFacet.getKnightClan(knight[0])).to.equal(clanId)
     expect(eventsKnightJoinedClan.length).to.equal(1);
@@ -66,44 +65,37 @@ describe('ClanFacetTest', async function () {
   })
 
   it('Should stake & level up a clan correctly', async () => {
-    const amount = (BigNumber.from(10).pow(await SB.SBT.decimals())).mul(150000)
-    await SB.SBT.stake(clanId, amount)
-    const eventsStake = await SB.SBT.queryFilter(SB.SBT.filters.Stake())
-    expect(eventsStake[0].args.sender).to.equal(SB.owner.address)
-    expect(eventsStake[0].args.clanId).to.equal(clanId)
-    expect(eventsStake[0].args.amount).to.equal(amount)
+    const amount = (BigNumber.from(10).pow(await SB.BEER.decimals())).mul(150000);
+    await SB.Diamond.ClanFacet.clanStake(clanId, amount);
 
-    const eventsStakeAdded = await SB.Diamond.ClanFacet.queryFilter(SB.Diamond.ClanFacet.filters.ClanStakeAdded())
-    expect(eventsStakeAdded[0].args.benefactor).to.equal(SB.owner.address)
-    expect(eventsStakeAdded[0].args.clanId).to.equal(clanId)
-    expect(eventsStakeAdded[0].args.amount).to.equal(amount)
+    const eventsStakeAdded = await SB.Diamond.ClanFacet.queryFilter(SB.Diamond.ClanFacet.filters.ClanStakeAdded());
+    expect(eventsStakeAdded[0].args.user).to.equal(SB.owner.address);
+    expect(eventsStakeAdded[0].args.clanId).to.equal(clanId);
+    expect(eventsStakeAdded[0].args.amount).to.equal(amount);
 
-    const eventsClanLeveledUp = await SB.Diamond.ClanFacet.queryFilter(SB.Diamond.ClanFacet.filters.ClanLeveledUp())
-    expect(eventsClanLeveledUp[0].args.clanId).to.equal(clanId)
-    expect(eventsClanLeveledUp[0].args.newLevel).to.equal(2)
+    const eventsClanNewLevel = await SB.Diamond.ClanFacet.queryFilter(SB.Diamond.ClanFacet.filters.ClanNewLevel());
+    expect(eventsClanNewLevel[0].args.clanId).to.equal(clanId);
+    expect(eventsClanNewLevel[0].args.newLevel).to.equal(1);
 
-    expect(await SB.Diamond.ClanFacet.getStakeOf(SB.owner.address, clanId)).to.equal(amount)
-    expect(await SB.Diamond.ClanFacet.getClanLevel(clanId)).to.equal(2)
+    expect(await SB.Diamond.ClanFacet.getStakeOf(SB.owner.address, clanId)).to.equal(amount);
+    expect(await SB.Diamond.ClanFacet.getClanLevel(clanId)).to.equal(3);
   })
 
   it('Should withdraw & level down a clan correctly', async () => {
-    const amount = (BigNumber.from(10).pow(await SB.SBT.decimals())).mul(50000)
-    await SB.SBT.withdraw(clanId, amount)
-    const eventsWithdraw = await SB.SBT.queryFilter(SB.SBT.filters.Withdraw());
-    expect(eventsWithdraw[0].args.sender).to.equal(SB.owner.address)
-    expect(eventsWithdraw[0].args.clanId).to.equal(clanId)
-    expect(eventsWithdraw[0].args.amount).to.equal(amount)
+    const amount = (BigNumber.from(10).pow(await SB.BEER.decimals())).mul(50000);
+    await SB.Diamond.ClanFacet.clanWithdrawRequest(clanId, amount);
+    await SB.Diamond.ClanFacet.clanWithdraw(clanId, amount);
 
     const eventsStakeWithdrawn = await SB.Diamond.ClanFacet.queryFilter(SB.Diamond.ClanFacet.filters.ClanStakeWithdrawn())
-    expect(eventsStakeWithdrawn[0].args.benefactor).to.equal(SB.owner.address)
+    expect(eventsStakeWithdrawn[0].args.user).to.equal(SB.owner.address)
     expect(eventsStakeWithdrawn[0].args.clanId).to.equal(clanId)
     expect(eventsStakeWithdrawn[0].args.amount).to.equal(amount)
 
-    const eventsClanLeveledDown = await SB.Diamond.ClanFacet.queryFilter(SB.Diamond.ClanFacet.filters.ClanLeveledDown())
-    expect(eventsClanLeveledDown[0].args.clanId).to.equal(clanId)
-    expect(eventsClanLeveledDown[0].args.newLevel).to.equal(1)
+    const eventsClanNewLevel = await SB.Diamond.ClanFacet.queryFilter(SB.Diamond.ClanFacet.filters.ClanNewLevel())
+    expect(eventsClanNewLevel[0].args.clanId).to.equal(clanId);
+    expect(eventsClanNewLevel[0].args.newLevel).to.equal(2);
 
-    expect(await SB.Diamond.ClanFacet.getStakeOf(SB.owner.address, clanId)).to.equal((BigNumber.from(10).pow(await SB.SBT.decimals())).mul(100000))
+    expect(await SB.Diamond.ClanFacet.getStakeOf(SB.owner.address, clanId)).to.equal((BigNumber.from(10).pow(await SB.BEER.decimals())).mul(100000))
     expect(await SB.Diamond.ClanFacet.getClanLevel(clanId)).to.equal(1)
   })
 

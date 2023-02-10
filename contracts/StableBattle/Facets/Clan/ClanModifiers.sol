@@ -127,35 +127,35 @@ abstract contract ClanModifiers is IClanErrors, ClanGetters {
     _;
   }
 
-  function isOnWithdrawalCooldown(address user) internal view returns(bool) {
-    return _withdrawalCooldown(user) > block.timestamp;
+  function isOnWithdrawalCooldown(uint256 clanId, address user) internal view returns(bool) {
+    return _withdrawalCooldown(clanId, user) > block.timestamp;
   }
 
-  modifier ifNotOnWithdrawalCooldown(address user) {
-    if(isOnWithdrawalCooldown(user)) {
+  modifier ifNotOnWithdrawalCooldown(uint256 clanId, address user) {
+    if(isOnWithdrawalCooldown(clanId, user)) {
       revert ClanModifiers_UserOnWithdrawalCooldown(user);
     }
     _;
   }
 
-  function isBelowAllowedWithdrawal(address user, uint256 amount) internal view returns(bool) {
-    return _allowedWithdrawal(user) >= amount;
+  function isBelowPendingWithdrawal(uint256 clanId, address user, uint256 amount) internal view returns(bool) {
+    return _pendingWithdrawal(clanId, user) >= amount;
   }
 
-  modifier ifIsBelowAllowedWithdrawal(address user, uint256 amount) {
-    if(!isBelowAllowedWithdrawal(user, amount)) {
-      revert ClanModifiers_UserOnWithdrawalCooldown(user);
+  modifier ifIsBelowPendingWithdrawal(uint256 clanId, address user, uint256 amount) {
+    if(!isBelowPendingWithdrawal(clanId, user, amount)) {
+      revert ClanModifiers_WithdrawalAbovePending(user);
     }
     _;
   }
 
-  function isBelowStake(address user, uint256 clanId, uint256 amount) internal view returns(bool) {
-    return _stakeOf(user, clanId) >= amount;
+  function isBelowStake(uint256 clanId, address user, uint256 amount) internal view returns(bool) {
+    return _stakeOf(clanId, user) >= amount;
   }
 
-  modifier ifIsBelowStake(address user, uint256 clanId, uint256 amount) {
-    if(!isBelowStake(user, clanId, amount)) {
-      revert ClanModifiers_WithdrawalAmountAboveStake(user, clanId, amount);
+  modifier ifIsBelowStake(uint256 clanId, address user, uint256 amount) {
+    if(!isBelowStake(clanId, user, amount)) {
+      revert ClanModifiers_WithdrawalAmountAboveStake(clanId, user, amount);
     }
     _;
   }

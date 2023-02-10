@@ -10,8 +10,10 @@ import { KnightModifiers } from "../Knight/KnightModifiers.sol";
 import { ClanGetters } from "../Clan/ClanGetters.sol";
 import { ClanModifiers } from "../Clan/ClanModifiers.sol";
 import { ItemsModifiers } from "../Items/ItemsModifiers.sol";
+import { EnumerableMap } from "@openzeppelin/contracts/utils/structs/EnumerableMap.sol";
 
 uint constant TWO_DAYS_IN_SECONDS = 2 * 24 * 60 * 60;
+uint256 constant TWO_WEEKS_IN_SECONDS = 60 * 60 * 24 * 14;
 
 abstract contract ClanInternal is 
   IClanEvents,
@@ -21,6 +23,7 @@ abstract contract ClanInternal is
   KnightModifiers,
   ItemsModifiers
 {
+  using EnumerableMap for EnumerableMap.AddressToUintMap;
 //Creation, Abandonment and Leader Change
   function _createClan(uint256 knightId, string calldata clanName) internal returns(uint clanId) {
     ClanStorage.state().clansInTotal++;
@@ -60,34 +63,49 @@ abstract contract ClanInternal is
     address user = msg.sender;
     ClanStorage.state().stake[user][clanId] += amount;
     ClanStorage.state().clanStake[clanId] += amount;
-    _leveling(clanId);
 
-    emit ClanStakeAdded(user, clanId, amount, _clanStake(clanId), _stakeOf(user, clanId));
+    uint256 newUserStake = 
+      _withdrawalCooldown(clanId, user) <= block.timestamp ?
+        _stakeOf(clanId, user) - _pendingWithdrawal(clanId, user) :
+        _stakeOf(clanId, user);
+    emit ClanStakeAdded(
+      user,
+      clanId,
+      amount,
+      _clanStake(clanId),
+      newUserStake
+    );
+  }
+
+  function _clanWithdrawRequest(uint256 clanId, uint256 amount) internal {
+    address user = msg.sender;
+    ClanStorage.state().pendingWithdrawal[clanId].set(user, amount);
+    ClanStorage.state().withdrawalCooldown[clanId][user] = block.timestamp + TWO_WEEKS_IN_SECONDS;
+    emit ClanStakeWithdrawRequest(user, clanId, amount, block.timestamp + TWO_WEEKS_IN_SECONDS);
   }
 
   function _clanWithdraw(uint256 clanId, uint256 amount) internal {
     address user = msg.sender;
-    ClanStorage.state().allowedWithdrawal[user] -= amount;
+    uint256 userWithdrawAllowance = _pendingWithdrawal(clanId, user);
+    if (userWithdrawAllowance == amount) {
+      ClanStorage.state().pendingWithdrawal[clanId].remove(user);
+    } else {
+      ClanStorage.state().pendingWithdrawal[clanId].set(user, userWithdrawAllowance - amount);
+    }
     ClanStorage.state().stake[user][clanId] -= amount;
     ClanStorage.state().clanStake[clanId] -= amount;
-    _leveling(clanId);
 
-    emit ClanStakeWithdrawn(user, clanId, amount, _clanStake(clanId), _stakeOf(user, clanId));
-  }
-
-  //Calculate clan level based on stake
-  function _leveling(uint256 clanId) private {
-    uint256 currentLevel = _clanLevel(clanId);
-    uint256 stake = _clanStake(clanId);
-    uint256[] memory thresholds = ClanStorage.state().levelThresholds;
-    uint256 maxLevel = thresholds.length;
-    uint256 newLevel = 1;
-    while (stake >= thresholds[newLevel] && newLevel < maxLevel) {
-      newLevel++;
-    }
-    if (currentLevel != newLevel) {
-      _setClanLevel(clanId, newLevel);
-    }
+    uint256 newUserStake = 
+      _withdrawalCooldown(clanId, user) <= block.timestamp ?
+        _stakeOf(clanId, user) - _pendingWithdrawal(clanId, user) :
+        _stakeOf(clanId, user);
+    emit ClanStakeWithdrawn(
+      user,
+      clanId,
+      amount,
+      _clanStake(clanId),
+      newUserStake
+    );
   }
 
   function _setClanLevel(uint256 clanId, uint256 newLevel) internal {

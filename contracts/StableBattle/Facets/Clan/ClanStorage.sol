@@ -3,6 +3,7 @@
 pragma solidity ^0.8.0;
 
 import { Clan, ClanRole } from "../../Meta/DataStructures.sol";
+import { EnumerableMap } from "@openzeppelin/contracts/utils/structs/EnumerableMap.sol";
 
 library ClanStorage {
   struct State {
@@ -36,10 +37,10 @@ library ClanStorage {
 
     //address => clanId => amount
     mapping (address => mapping (uint => uint256)) stake;
-    //address => withdrawal cooldown
-    mapping (address => uint256) withdrawalCooldown;
-    //address => allowed withdrawal
-    mapping (address => uint256) allowedWithdrawal;
+    //clanId => address => withdrawal cooldown
+    mapping (uint256 => mapping (address => uint256)) withdrawalCooldown;
+    //clanId => user => withdrawal
+    mapping (uint256 => EnumerableMap.AddressToUintMap) pendingWithdrawal;
   }
 
   bytes32 internal constant STORAGE_SLOT = keccak256("Clan.storage");
