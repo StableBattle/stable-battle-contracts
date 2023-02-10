@@ -3,7 +3,7 @@ import { ethers } from "hardhat";
 import { SBD as SBD_address } from "../config/goerli/main-contracts";
 
 export default async function refreshOpenSea() {
-  const SBD = await ethers.getContractAt("StableBattleDummy", SBD_address);
+  const SBD = await ethers.getContractAt("StableBattleDummy", "0xC0662fAee7C84A03B1e58d60256cafeeb08Ab85d");
   const eventsTransferSingle = await SBD.queryFilter(SBD.filters.TransferSingle());
   const eventsTransferBatch = await SBD.queryFilter(SBD.filters.TransferBatch());
   //All single transfer ids

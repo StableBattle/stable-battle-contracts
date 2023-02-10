@@ -12,9 +12,6 @@ import { ClanModifiers } from "../Clan/ClanModifiers.sol";
 import { ItemsModifiers } from "../Items/ItemsModifiers.sol";
 import { EnumerableMap } from "@openzeppelin/contracts/utils/structs/EnumerableMap.sol";
 
-uint constant TWO_DAYS_IN_SECONDS = 2 * 24 * 60 * 60;
-uint256 constant TWO_WEEKS_IN_SECONDS = 60 * 60 * 24 * 14;
-
 abstract contract ClanInternal is 
   IClanEvents,
   IClanErrors,
@@ -80,8 +77,8 @@ abstract contract ClanInternal is
   function _clanWithdrawRequest(uint256 clanId, uint256 amount) internal {
     address user = msg.sender;
     ClanStorage.state().pendingWithdrawal[clanId].set(user, amount);
-    ClanStorage.state().withdrawalCooldown[clanId][user] = block.timestamp + TWO_WEEKS_IN_SECONDS;
-    emit ClanStakeWithdrawRequest(user, clanId, amount, block.timestamp + TWO_WEEKS_IN_SECONDS);
+    ClanStorage.state().withdrawalCooldown[clanId][user] = block.timestamp + _withdrawalCooldownConst();
+    emit ClanStakeWithdrawRequest(user, clanId, amount, block.timestamp + _withdrawalCooldownConst());
   }
 
   function _clanWithdraw(uint256 clanId, uint256 amount) internal {
@@ -129,7 +126,7 @@ abstract contract ClanInternal is
     ClanStorage.state().clanTotalMembers[clanId]--;
     KnightStorage.state().knight[knightId].inClan = 0;
     if(_clanLeader(clanId) != 0) {
-      ClanStorage.state().clanActivityCooldown[knightId] = block.timestamp + TWO_DAYS_IN_SECONDS;
+      ClanStorage.state().clanActivityCooldown[knightId] = block.timestamp + _clanActivityCooldownConst();
     }
     emit ClanKnightQuit(clanId, knightId);
   }

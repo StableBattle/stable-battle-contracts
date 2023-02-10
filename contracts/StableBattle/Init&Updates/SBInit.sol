@@ -21,6 +21,9 @@ import { IDiamondLoupe } from "../Facets/DiamondLoupe/IDiamondLoupe.sol";
 import { ConfigEvents } from "./ConfigEvents.sol";
 
 uint256 constant BEER_DECIMALS = 1e6;
+uint constant ONE_HOUR_IN_SECONDS = 60 * 60;
+uint constant TWO_DAYS_IN_SECONDS = 2 * 24 * 60 * 60;
+uint constant TWO_WEEKS_IN_SECONDS = 60 * 60 * 24 * 14;
 
 contract SBInit is ConfigEvents {
   struct Args {
@@ -96,7 +99,17 @@ contract SBInit is ConfigEvents {
       760000 * BEER_DECIMALS
     ];
     ClanStorage.state().maxMembers = [10, 20, 22, 24, 26, 28, 30];
-    emit ClanNewConfig(ClanStorage.state().levelThresholds, ClanStorage.state().maxMembers);
+    ClanStorage.state().clanActivityCooldownConst = TWO_DAYS_IN_SECONDS;
+    ClanStorage.state().clanKickCoolDownConst = ONE_HOUR_IN_SECONDS;
+    ClanStorage.state().withdrawalCooldownConst = TWO_WEEKS_IN_SECONDS;
+
+    emit ClanNewConfig(
+      ClanStorage.state().levelThresholds,
+      ClanStorage.state().maxMembers,
+      ClanStorage.state().clanActivityCooldownConst,
+      ClanStorage.state().clanKickCoolDownConst,
+      ClanStorage.state().withdrawalCooldownConst
+    );
 
   //Treasury Facet
     TreasuryStorage.state().castleTax = 37;

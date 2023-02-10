@@ -144,7 +144,7 @@ abstract contract ClanModifiers is IClanErrors, ClanGetters {
 
   modifier ifIsBelowPendingWithdrawal(uint256 clanId, address user, uint256 amount) {
     if(!isBelowPendingWithdrawal(clanId, user, amount)) {
-      revert ClanModifiers_WithdrawalAbovePending(user);
+      revert ClanModifiers_WithdrawalAbovePending(clanId, user, amount);
     }
     _;
   }

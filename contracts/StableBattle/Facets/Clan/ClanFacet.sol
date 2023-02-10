@@ -11,8 +11,7 @@ import { ItemsModifiers } from "../Items/ItemsModifiers.sol";
 import { MetaModifiers } from "../../Meta/MetaModifiers.sol";
 import { ClanGettersExternal } from "../Clan/ClanGetters.sol";
 import { ExternalCalls } from "../../Meta/ExternalCalls.sol";
-
-uint constant ONE_HOUR_IN_SECONDS = 60 * 60;
+import { EnumerableMap } from "@openzeppelin/contracts/utils/structs/EnumerableMap.sol";
 
 contract ClanFacet is
   IClan,
@@ -22,6 +21,7 @@ contract ClanFacet is
   ClanInternal,
   ExternalCalls
 {
+  using EnumerableMap for EnumerableMap.AddressToUintMap;
 //Creation, Abandonment and Role Change
   function createClan(uint256 knightId, string calldata clanName)
     external
@@ -81,6 +81,7 @@ contract ClanFacet is
 
   function clanWithdrawRequest(uint256 clanId, uint256 amount) 
     external
+    ifClanExists(clanId)
     ifIsBelowStake(clanId, msg.sender, amount)
   {
     _clanWithdrawRequest(clanId, amount);
@@ -89,10 +90,21 @@ contract ClanFacet is
   function clanWithdraw(uint256 clanId, uint256 amount)
     external
   //ifNotOnWithdrawalCooldown(msg.sender)
-    ifIsBelowPendingWithdrawal(clanId, msg.sender, amount)
-  { 
+  {
+    address user = msg.sender;
+    if(clanExists(clanId)) {
+      if(!isBelowPendingWithdrawal(clanId, user, amount)) {
+        revert ClanModifiers_WithdrawalAbovePending(clanId, user, amount);
+      }
+    } else {
+      if(!isBelowStake(clanId, user, amount)) {
+        revert ClanModifiers_WithdrawalAmountAboveStake(clanId, user, amount);
+      } else {
+        ClanStorage.state().pendingWithdrawal[clanId].set(user, _stakeOf(clanId, user));
+      }
+    }
     _clanWithdraw(clanId, amount);
-    BEER().transfer(msg.sender, amount);
+    BEER().transfer(user, amount);
   }
 
 //Join, Leave and Invite Proposals
@@ -151,7 +163,7 @@ contract ClanFacet is
       _kick(knightId, clanId);
       //Moderators go on one hour cooldown after kick
       if (callerRole == ClanRole.MOD) {
-        ClanStorage.state().clanKickCooldown[callerId] = ONE_HOUR_IN_SECONDS;
+        ClanStorage.state().clanKickCooldown[callerId] = _clanKickCoolDownConst();
       }
     } else { 
       revert ClanFacet_CantKickThisMember(knightId, clanId, callerId); 

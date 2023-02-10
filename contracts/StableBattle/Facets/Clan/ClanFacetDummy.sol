@@ -55,7 +55,16 @@ contract ClanFacetDummy is IClan {
 
   function getClanInfo(uint clanId) external view returns(uint256, uint256, uint256, uint256) {}
 
-  function getClanConfig() external view returns(uint256[] memory, uint256[] memory) {}
+  function getClanConfig() 
+    external
+    view
+    returns(
+      uint256[] memory,
+      uint256[] memory,
+      uint,
+      uint,
+      uint
+    ) {}
 
   function getClanKnightInfo(uint knightId) external view returns(uint256, uint256, ClanRole, uint256) {}
 

@@ -41,6 +41,11 @@ library ClanStorage {
     mapping (uint256 => mapping (address => uint256)) withdrawalCooldown;
     //clanId => user => withdrawal
     mapping (uint256 => EnumerableMap.AddressToUintMap) pendingWithdrawal;
+
+    //Cooldowns
+    uint256 clanActivityCooldownConst;
+    uint256 clanKickCoolDownConst;
+    uint256 withdrawalCooldownConst;
   }
 
   bytes32 internal constant STORAGE_SLOT = keccak256("Clan.storage");

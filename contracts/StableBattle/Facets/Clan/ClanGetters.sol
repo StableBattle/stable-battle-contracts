@@ -7,7 +7,21 @@ import { ClanStorage } from "../Clan/ClanStorage.sol";
 import { IClanGetters } from "../Clan/IClan.sol";
 import { EnumerableMap } from "@openzeppelin/contracts/utils/structs/EnumerableMap.sol";
 
-abstract contract ClanGetters {
+abstract contract ClanConfigGetters {
+  function _clanActivityCooldownConst() internal view returns(uint) {
+    return ClanStorage.state().clanActivityCooldownConst;
+  }
+
+  function _clanKickCoolDownConst() internal view returns(uint) {
+    return ClanStorage.state().clanKickCoolDownConst;
+  }
+
+  function _withdrawalCooldownConst() internal view returns(uint) {
+    return ClanStorage.state().withdrawalCooldownConst;
+  }
+}
+
+abstract contract ClanGetters is ClanConfigGetters {
   using EnumerableMap for EnumerableMap.AddressToUintMap;
   function _clanInfo(uint clanId) internal view returns(uint256, uint256, uint256, uint256) {
     return (
@@ -170,10 +184,23 @@ abstract contract ClanGettersExternal is IClanGetters, ClanGetters {
     );
   }
 
-  function getClanConfig() external view returns(uint256[] memory, uint256[] memory) {
+  function getClanConfig() 
+    external
+    view
+    returns(
+      uint256[] memory,
+      uint256[] memory,
+      uint,
+      uint,
+      uint
+    )
+  {
     return(
       _clanLevelThresholds(),
-      _clanMaxMembers()
+      _clanMaxMembers(),
+      _clanActivityCooldownConst(),
+      _clanKickCoolDownConst(),
+      _withdrawalCooldownConst()
     );
   }
 

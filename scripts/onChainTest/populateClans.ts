@@ -70,6 +70,9 @@ export default async function populateClans() {
   await bumpSBReward();
   const siegeReward = await SBD.getSiegeYield();
   console.log(`Siege reward is ${siegeReward} USDT`);
+  tx = await SBD.setClanName(clanIds[1], "🍆"); await tx.wait(5);
+  const newName = await SBD.getClanName(clanIds[1]);
+  console.log(`New clan name of clan ${clanIds[1]} is ${newName}`);
   tx = await SBD.setSiegeWinner(clanIds[0], knightIds[0], user); await tx.wait();
   console.log(`Made ${clanIds[0]} win the siege`);
   tx = await SBD.claimSiegeReward(user, siegeReward.div(2)); await tx.wait();
