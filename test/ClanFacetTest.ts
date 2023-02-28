@@ -7,6 +7,9 @@ import SBFixture, { SBFixtureInterface } from "./libraries/SBFixture";
 import CoinSetup from "./libraries/CoinSetup";
 import { BigNumber } from "ethers";
 import coinsFixture from "./libraries/coinsFixture";
+import { ethers } from "hardhat";
+import populateClans from "../scripts/onChainTest/populateClans";
+import { clan } from "../typechain-types/contracts/StableBattle/Facets";
 
 describe('ClanFacetTest', async function () {
   let SB : SBFixtureInterface;
@@ -14,11 +17,19 @@ describe('ClanFacetTest', async function () {
 
   let knight : BigNumber[] = [];
   let clanId : BigNumber;
+  const accounts = await ethers.getSigners();
+
+  let knightSetup : BigNumber[] = [];
+  let clanSetup : BigNumber[]= [];
 
   before(async function () {
     SB = await loadFixture(SBFixture);
     Coin = await loadFixture(CoinSetup);
     await loadFixture(coinsFixture);
+    const CF_setup = await populateClans();
+    knightSetup = CF_setup.knightIds;
+    clanSetup = CF_setup.clanIds;
+
     for (const user of SB.users) {
       for (const [coinName, coinNumber] of Object.entries(COIN)) {
         if (coinName == "USDT") {
@@ -39,8 +50,27 @@ describe('ClanFacetTest', async function () {
     await SB.BEER.mint(SB.owner.address, (BigNumber.from(10).pow(await SB.BEER.decimals())).mul(1e6));
   })
 
+  it('Should revert on createClan with ownership error', async () => {
+    await expect(SB.Diamond.ClanFacet.connect(accounts[1]).createClan(knight[0], "q")).to.be.reverted;
+  })
+
+  it('Should revert on createClan with alreadyinclan error', async () => {
+    await expect(SB.Diamond.ClanFacet.createClan(knightSetup[8], "qq")).to.be.reverted;
+  })
+
+  it('Should revert on createClan with clanNameTaken error', async () => {
+    await expect(SB.Diamond.ClanFacet.createClan(knight[0], "qqq")).to.be.reverted;
+  })
+
+  it('Should revert on createClan with nameIncorrect length error', async () => {
+    await expect(SB.Diamond.ClanFacet.createClan(
+      knight[0],
+      "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest"))
+    .to.be.reverted;
+  })
+
   it('Should create a clan correctly', async () => {
-    await SB.Diamond.ClanFacet.createClan(knight[0], "💩💩💩");
+    await SB.Diamond.ClanFacet.createClan(knight[0], "qqq");
     const eventsClanCreated = await SB.Diamond.ClanFacet.queryFilter(SB.Diamond.ClanFacet.filters.ClanCreated())
     const eventsKnightJoinedClan = await SB.Diamond.ClanFacet.queryFilter(SB.Diamond.ClanFacet.filters.ClanKnightJoined())
     clanId = eventsClanCreated[0].args.clanId
@@ -64,6 +94,19 @@ describe('ClanFacetTest', async function () {
     expect(await SB.Diamond.ClanFacet.getClanRole(knight[0])).to.equal(4);
   })
 
+  it('Should revert on abandonClan with ownership error', async () => {
+    await expect(SB.Diamond.ClanFacet.connect(accounts[1]).abandonClan(1, knight[0])).to.be.reverted
+  })
+
+  it('Should revert on abandonClan with clanLeader error', async () => {
+    await SB.Diamond.ItemsFacet.safeTransferFrom(accounts[0].address, accounts[3].address, knightSetup[8], 1, "");
+    await expect(SB.Diamond.ClanFacet.connect(accounts[3]).abandonClan(clanSetup[1], knightSetup[8])).to.be.reverted
+  })
+
+  it('Should revert on setClanName with clanNameTaken error', async () => {
+    await expect(SB.Diamond.ClanFacet.setClanName(clanId, "💩💩💩")).to.be.reverted;
+  })
+  
   it('Should stake & level up a clan correctly', async () => {
     const amount = (BigNumber.from(10).pow(await SB.BEER.decimals())).mul(150000);
     await SB.Diamond.ClanFacet.clanStake(clanId, amount);
@@ -77,7 +120,7 @@ describe('ClanFacetTest', async function () {
     expect(eventsClanNewLevel[0].args.clanId).to.equal(clanId);
     expect(eventsClanNewLevel[0].args.newLevel).to.equal(1);
 
-    expect(await SB.Diamond.ClanFacet.getStakeOf(SB.owner.address, clanId)).to.equal(amount);
+    expect(await SB.Diamond.ClanFacet.getStakeOf(clanId, SB.owner.address)).to.equal(amount);
     expect(await SB.Diamond.ClanFacet.getClanLevel(clanId)).to.equal(3);
   })
 
@@ -95,8 +138,24 @@ describe('ClanFacetTest', async function () {
     expect(eventsClanNewLevel[0].args.clanId).to.equal(clanId);
     expect(eventsClanNewLevel[0].args.newLevel).to.equal(2);
 
-    expect(await SB.Diamond.ClanFacet.getStakeOf(SB.owner.address, clanId)).to.equal((BigNumber.from(10).pow(await SB.BEER.decimals())).mul(100000))
+    expect(await SB.Diamond.ClanFacet.getStakeOf(clanId, SB.owner.address)).to.equal((BigNumber.from(10).pow(await SB.BEER.decimals())).mul(100000))
     expect(await SB.Diamond.ClanFacet.getClanLevel(clanId)).to.equal(1)
+  })
+
+  it('Should revert on joinClan with wrongKnightId error', async () => {
+    await expect(SB.Diamond.ClanFacet.joinClan(1, clanId)).to.be.reverted;
+  })
+
+  it('Should revert on joinClan with ownership error', async () => {
+    await expect(SB.Diamond.ClanFacet.joinClan(knight[1], clanId)).to.be.reverted;
+  })
+
+  it('Should revert on joinClan with alreadyinclan error', async () => {
+    await expect(SB.Diamond.ClanFacet.joinClan(knightSetup[8], clanId)).to.be.reverted;
+  })
+
+  it('Should revert on joinClan with clannotexist error', async () => {
+    await expect(SB.Diamond.ClanFacet.joinClan(knightSetup[8], 100)).to.be.reverted;
   })
 
   it('Should allow user1 & user2 to create a join proposals', async () => {
@@ -140,5 +199,13 @@ describe('ClanFacetTest', async function () {
 
   it('Should kick user1', async () => {
     await SB.Diamond.ClanFacet.kickFromClan(knight[1], clanId, knight[0]);
+    const eventsClanNewName = await SB.Diamond.ClanFacet.queryFilter(SB.Diamond.ClanFacet.filters.ClanKnightKicked());
+    expect(eventsClanNewName[0].args.callerId).to.equal(knight[0]);
+  })
+
+  it('Should rename clan', async () => {
+    await SB.Diamond.ClanFacet.setClanName(1, "pook");
+    const eventsClanNewName = await SB.Diamond.ClanFacet.queryFilter(SB.Diamond.ClanFacet.filters.ClanNewName());
+    eventsClanNewName[0].args
   })
 })

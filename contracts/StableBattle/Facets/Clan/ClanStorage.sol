@@ -45,7 +45,7 @@ library ClanStorage {
     //Cooldowns
     uint256 clanActivityCooldownConst;
     uint256 clanKickCoolDownConst;
-    uint256 withdrawalCooldownConst;
+    uint256 clanStakeWithdrawCooldownConst;
   }
 
   bytes32 internal constant STORAGE_SLOT = keccak256("Clan.storage");

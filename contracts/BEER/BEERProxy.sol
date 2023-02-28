@@ -14,7 +14,7 @@ contract BEERProxy is UpgradeableProxyOwnable {
 
     l.setName("BEER");
     l.setSymbol("BEER");
-    l.setDecimals(6);
+    l.setDecimals(18);
   //Set implementation
     _setImplementation(implementation);
   //Set owner

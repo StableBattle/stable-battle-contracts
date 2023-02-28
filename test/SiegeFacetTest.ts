@@ -37,7 +37,7 @@ describe('SiegeFacetTest', async function () {
       knight[i] = eventsKnightMinted[i].args.knightId;
       console.log(`Minted ${knight[i]} from ${eventsKnightMinted[i].args.wallet}`);
     }
-    await SB.SBT.adminMint(SB.owner.address, (BigNumber.from(10).pow(await SB.SBT.decimals())).mul(1e6));
+    await SB.BEER.mint(SB.owner.address, (BigNumber.from(10).pow(await SB.BEER.decimals())).mul(1e6));
     await SB.Diamond.ClanFacet.createClan(knight[0], "💩💩💩");
     clanId = (await SB.Diamond.ClanFacet.queryFilter(SB.Diamond.ClanFacet.filters.ClanCreated()))[0].args.clanId;
   })
@@ -46,7 +46,7 @@ describe('SiegeFacetTest', async function () {
     const reward = 
       (await Coin.AUSDT.balanceOf(SB.Diamond.Address))
       .sub(BigNumber.from(10).pow(await Coin.USDT.decimals()).mul(1000 * knight.length));
-    await SB.Diamond.SiegeFacet.setSiegeWinner(1);
+    await SB.Diamond.SiegeFacet.setSiegeWinner(1, knight[0], SB.users[0].address);
     expect(await SB.Diamond.SiegeFacet.getSiegeWinnerClanId()).to.equal(1);
     expect(await SB.Diamond.SiegeFacet.getSiegeWinnerKnightId()).to.equal(knight[0]);
   //expect(await SB.Diamond.SiegeFacet.getSiegeReward(knight[0])).to.equal(reward);

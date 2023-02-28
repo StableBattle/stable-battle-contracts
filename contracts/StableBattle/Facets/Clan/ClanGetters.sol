@@ -16,8 +16,8 @@ abstract contract ClanConfigGetters {
     return ClanStorage.state().clanKickCoolDownConst;
   }
 
-  function _withdrawalCooldownConst() internal view returns(uint) {
-    return ClanStorage.state().withdrawalCooldownConst;
+  function _clanStakeWithdrawCooldownConst() internal view returns(uint) {
+    return ClanStorage.state().clanStakeWithdrawCooldownConst;
   }
 }
 
@@ -200,7 +200,7 @@ abstract contract ClanGettersExternal is IClanGetters, ClanGetters {
       _clanMaxMembers(),
       _clanActivityCooldownConst(),
       _clanKickCoolDownConst(),
-      _withdrawalCooldownConst()
+      _clanStakeWithdrawCooldownConst()
     );
   }
 

@@ -77,8 +77,8 @@ abstract contract ClanInternal is
   function _clanWithdrawRequest(uint256 clanId, uint256 amount) internal {
     address user = msg.sender;
     ClanStorage.state().pendingWithdrawal[clanId].set(user, amount);
-    ClanStorage.state().withdrawalCooldown[clanId][user] = block.timestamp + _withdrawalCooldownConst();
-    emit ClanStakeWithdrawRequest(user, clanId, amount, block.timestamp + _withdrawalCooldownConst());
+    ClanStorage.state().withdrawalCooldown[clanId][user] = block.timestamp + _clanStakeWithdrawCooldownConst();
+    emit ClanStakeWithdrawRequest(user, clanId, amount, block.timestamp + _clanStakeWithdrawCooldownConst());
   }
 
   function _clanWithdraw(uint256 clanId, uint256 amount) internal {

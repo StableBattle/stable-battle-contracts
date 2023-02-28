@@ -17,10 +17,10 @@ import { IERC165 } from "@openzeppelin/contracts/interfaces/IERC165.sol";
 import { IERC173 } from "../Facets/Ownership/IERC173.sol";
 import { IDiamondCut } from "../Facets/DiamondCut/IDiamondCut.sol";
 import { IDiamondLoupe } from "../Facets/DiamondLoupe/IDiamondLoupe.sol";
+import { IBEER } from "../../BEER/IBEER.sol";
 
 import { ConfigEvents } from "./ConfigEvents.sol";
 
-uint256 constant BEER_DECIMALS = 1e6;
 uint constant ONE_HOUR_IN_SECONDS = 60 * 60;
 uint constant TWO_DAYS_IN_SECONDS = 2 * 24 * 60 * 60;
 uint constant TWO_WEEKS_IN_SECONDS = 60 * 60 * 24 * 14;
@@ -42,6 +42,7 @@ contract SBInit is ConfigEvents {
   }
 
   function SB_init(Args memory _args) external {
+    uint256 BEER_DECIMALS = IBEER(_args.BEER_address).decimals();
   // Assign supported interfaces
     LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
     ds.supportedInterfaces[type(IERC165).interfaceId] = true;
@@ -101,14 +102,14 @@ contract SBInit is ConfigEvents {
     ClanStorage.state().maxMembers = [10, 20, 22, 24, 26, 28, 30];
     ClanStorage.state().clanActivityCooldownConst = TWO_DAYS_IN_SECONDS;
     ClanStorage.state().clanKickCoolDownConst = ONE_HOUR_IN_SECONDS;
-    ClanStorage.state().withdrawalCooldownConst = TWO_WEEKS_IN_SECONDS;
+    ClanStorage.state().clanStakeWithdrawCooldownConst = TWO_WEEKS_IN_SECONDS;
 
     emit ClanNewConfig(
       ClanStorage.state().levelThresholds,
       ClanStorage.state().maxMembers,
       ClanStorage.state().clanActivityCooldownConst,
       ClanStorage.state().clanKickCoolDownConst,
-      ClanStorage.state().withdrawalCooldownConst
+      ClanStorage.state().clanStakeWithdrawCooldownConst
     );
 
   //Treasury Facet

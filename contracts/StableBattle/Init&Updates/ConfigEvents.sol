@@ -7,5 +7,5 @@ interface ConfigEvents {
     uint[] maxMembersPerLevel,
     uint clanActivityCooldownConst,
     uint clanKickCoolDownConst,
-    uint withdrawalCooldownConst);
+    uint clanStakeWithdrawCooldownConst);
 }

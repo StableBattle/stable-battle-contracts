@@ -1,6 +1,6 @@
 import { BigNumber } from "ethers";
 import hre, { ethers } from "hardhat";
-import { SBD as SBD_address, BEER as BEER_address } from "../config/goerli/main-contracts";
+import { SBD as SBD_address, BEER as BEER_address } from "../config/mumbai/main-contracts";
 import { AAVE as AAVE_address, USDT as UDST_address } from "../config/sb-init-addresses";
 
 //Mint 30 knights
@@ -70,10 +70,14 @@ export default async function populateClans() {
   await bumpSBReward();
   const siegeReward = await SBD.getSiegeYield();
   console.log(`Siege reward is ${siegeReward} USDT`);
-  tx = await SBD.setClanName(clanIds[1], "🍆"); await tx.wait(5);
+  tx = await SBD.setClanName(clanIds[1], "🍆"); await tx.wait(10);
   const newName = await SBD.getClanName(clanIds[1]);
   console.log(`New clan name of clan ${clanIds[1]} is ${newName}`);
-  tx = await SBD.setSiegeWinner(clanIds[0], knightIds[0], user); await tx.wait();
+  try {
+    tx = await SBD.setSiegeWinner(clanIds[0], knightIds[0], user); await tx.wait(10);
+  } catch (error) {
+    tx = await SBD.setSiegeWinner(clanIds[0], knightIds[0], user); await tx.wait();
+  }
   console.log(`Made ${clanIds[0]} win the siege`);
   tx = await SBD.claimSiegeReward(user, siegeReward.div(2)); await tx.wait();
   console.log(`User ${clanIds[0]} took ${siegeReward.div(2)} USDT from his reward`);
@@ -81,6 +85,7 @@ export default async function populateClans() {
   console.log(`Burned ${knightIds[0]} and transfered his clan ${clanIds[0]} to ${knightIds[3]}`);
   tx = await SBD.abandonClan(clanIds[0], knightIds[3]); await tx.wait();
   console.log(`${knightIds[3]} abandoned his clan ${clanIds[0]}`);
+  return {clanIds, knightIds};
 }
 
 async function mintAndApproveUSDT(amount: number) {
@@ -88,7 +93,7 @@ async function mintAndApproveUSDT(amount: number) {
   const USDT = await hre.ethers.getContractAt("IERC20Mintable", UDST_address[hre.network.name]);
   const USDT_decimals = await USDT.decimals();
   const realAmount = (BigNumber.from(10).pow(USDT_decimals)).mul(amount);
-  const mintTx = await USDT.mint(user, realAmount);
+  const mintTx = await USDT.mint(user, realAmount, {gasLimit: 300000});
   await mintTx.wait();
   console.log(`Minted ${amount} USDT to ${user}`);
   const approveTx = await USDT.approve(SBD_address, realAmount);
