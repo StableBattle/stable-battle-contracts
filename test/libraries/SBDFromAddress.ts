@@ -46,7 +46,7 @@ export default async function SBDFromAddress(SBDAddress: string) : Promise<SBDIn
     TreasuryFacet: await hre.ethers.getContractAt('TreasuryFacet', SBDAddress),
     SBVHookFacet: await hre.ethers.getContractAt('SBVHookFacet', SBDAddress),
   //DemoFightFacet: await hre.ethers.getContractAt('DemoFightFacet', SBDAddress),
-  SiegeFacet: await hre.ethers.getContractAt('SiegeFacet', SBDAddress),
+    SiegeFacet: await hre.ethers.getContractAt('SiegeFacet', SBDAddress),
     Address: SBDAddress
   }
 }

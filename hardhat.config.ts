@@ -16,11 +16,15 @@ const config: HardhatUserConfig = {
         url: process.env.MUMBAI_ALCHEMY_URL || "",
         blockNumber: 26681409,
       },
-      */
       forking: {
         url: process.env.GOERLI_ALCHEMY_URL || "",
         blockNumber: 8455800,
       },
+      */
+     forking: {
+        url: process.env.MAINNET_INFURA_URL || "",
+        blockNumber: 16731600,
+      }
     },
     mumbai: {
       url: process.env.MUMBAI_ALCHEMY_URL || "",
@@ -31,7 +35,7 @@ const config: HardhatUserConfig = {
       url: process.env.GOERLI_INFURA_URL || "",
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
-    },
+    }
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,

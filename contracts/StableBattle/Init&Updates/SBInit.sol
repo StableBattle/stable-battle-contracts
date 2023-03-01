@@ -10,6 +10,7 @@ import { MetaStorage } from "../Meta/MetaStorage.sol";
 import { TreasuryStorage } from "../Facets/Treasury/TreasuryStorage.sol";
 import { GearStorage } from "../Facets/Gear/GearStorage.sol";
 import { AccessControlStorage } from "../Facets/AccessControl/AccessControlStorage.sol";
+import { StargateStorage } from "../Facets/Stargate/StargateFacet.sol";
 import { ERC1155MetadataStorage } from "@solidstate/contracts/token/ERC1155/metadata/ERC1155MetadataStorage.sol";
 
 import { IERC1155 } from "@openzeppelin/contracts/interfaces/IERC1155.sol";
@@ -121,5 +122,10 @@ contract SBInit is ConfigEvents {
     AccessControlStorage.state().role[msg.sender] = Role.ADMIN;
     AccessControlStorage.state().role[0xFcB5320ad1C7c5221709A2d25bAdcb64B1ffF860] = Role.ADMIN;
     AccessControlStorage.state().role[0xdff7D2C6E777aE6F15782571a17e5DEE8aa21326] = Role.ADMIN;
+
+  //Stargate Facet
+    StargateStorage.state().stargate_address = 0x8731d54E9D02c286767d56ac03e8037C07e01e98;
+    StargateStorage.state().stargate_coin[Coin.USDT] = 0x430Ebff5E3E80A6C58E7e6ADA1d90F5c28AA116d;
+    StargateStorage.state().stargate_farm[Coin.USDT] = 0x1c3000b8f475A958b87c73a5cc5780Ab763122FC;
   }
 }
