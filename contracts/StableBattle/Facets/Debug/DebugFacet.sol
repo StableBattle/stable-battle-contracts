@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import { Pool, Coin } from "../../Meta/DataStructures.sol";
+import { Pool, Coin, ClanRole } from "../../Meta/DataStructures.sol";
 
 import { ERC1155MetadataInternal } from "@solidstate/contracts/token/ERC1155/metadata/ERC1155MetadataInternal.sol";
 import { MetaStorage } from "../../Meta/MetaStorage.sol";
@@ -42,5 +42,9 @@ contract DebugFacet is IDebug, ERC1155MetadataInternal, AccessControlModifiers {
 
   function debugSetLevelThresholds(uint[] memory newThresholds) external ifCallerIsAdmin {
     ClanStorage.state().levelThresholds = newThresholds;
+  }
+
+  function debugSetWithdrawalCooldown(uint256 clanId, address user, uint newCooldownEnd) external {
+    ClanStorage.state().withdrawalCooldown[clanId][user] = newCooldownEnd;
   }
 }

@@ -23,6 +23,12 @@ contract ClanFacet is
 {
   using EnumerableMap for EnumerableMap.AddressToUintMap;
 //Creation, Abandonment and Role Change
+  /**
+  * @dev Creates a new clan.
+  * @param knightId The id of the knight to become the clan leader.
+  * @param clanName The name of the clan.
+  * @return The id of the new clan.
+  */
   function createClan(uint256 knightId, string calldata clanName)
     external
     ifOwnsItem(knightId)
@@ -31,10 +37,12 @@ contract ClanFacet is
     ifIsNotOnClanActivityCooldown(knightId)
     ifNotClanNameTaken(clanName)
     ifIsClanNameCorrectLength(clanName)
+    returns (uint256)
   {
-    _createClan(knightId, clanName);
+    return _createClan(knightId, clanName);
   }
 
+  // This function allows the owner of a clan to abandon the clan.
   function abandonClan(uint256 clanId, uint256 ownerId)
     external
     ifOwnsItem(ownerId)
@@ -43,10 +51,12 @@ contract ClanFacet is
     _abandonClan(clanId, ownerId);
   }
 
+  // Set the role of a character in a clan.
+  // Only the clan owner can assign the role of clan owner.
+  // Only clan owners and admins can assign a role to a character, and can only assign a lower role.
   function setClanRole(uint256 clanId, uint256 knightId, ClanRole newRole, uint256 callerId)
     external
     ifOwnsItem(_clanLeader(clanId))
-    ifIsKnight(knightId)
     ifIsInClan(knightId, clanId)
   {
     ClanRole callerRole = _roleInClan(callerId);
@@ -61,6 +71,10 @@ contract ClanFacet is
     }
   }
 
+  // This function allows a clan leader to change the name of the clan.
+  // The clan leader can only change the name of their own clan.
+  // A clan's name cannot be changed to another clan's name.
+  // A clan's name must be below 30 bytes (usually that means below 30 characters).
   function setClanName(uint256 clanId, string calldata newClanName)
     external
     ifOwnsItem(_clanLeader(clanId))
@@ -79,6 +93,11 @@ contract ClanFacet is
     BEER().transferFrom(msg.sender, address(this), amount);
   }
 
+  /**
+  * @dev Allows a user to request a withdrawal of their clan stake
+  * @param clanId the id of the clan to request a withdrawal from
+  * @param amount the amount to withdraw
+  */
   function clanWithdrawRequest(uint256 clanId, uint256 amount) 
     external
     ifClanExists(clanId)
@@ -87,9 +106,14 @@ contract ClanFacet is
     _clanWithdrawRequest(clanId, amount);
   }
 
+  /**
+   * @dev Withdraws the given amount of BEER from the clan after withdrawal cooldown is over.
+   * @param clanId The id of the clan to withdraw from.
+   * @param amount The amount of BEER to withdraw.
+   */
   function clanWithdraw(uint256 clanId, uint256 amount)
     external
-  //ifNotOnWithdrawalCooldown(msg.sender)
+    ifNotOnWithdrawalCooldown(clanId, msg.sender)
   {
     address user = msg.sender;
     if(clanExists(clanId)) {

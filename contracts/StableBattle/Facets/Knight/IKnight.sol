@@ -64,7 +64,7 @@ interface IKnightGetters {
 }
 
 interface IKnight is IKnightEvents, IKnightErrors, IKnightGetters {
-  function mintKnight(Pool p, Coin c) external;
+  function mintKnight(Pool p, Coin c) external returns(uint256);
 
   function burnKnight (uint256 knightId, uint256 heirId) external;
 }

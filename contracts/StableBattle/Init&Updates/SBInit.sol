@@ -92,12 +92,12 @@ contract SBInit is ConfigEvents {
 
   //Clan Facet
     ClanStorage.state().levelThresholds = [
-      0, 
-      40000  * BEER_DECIMALS,
-      110000 * BEER_DECIMALS,
-      230000 * BEER_DECIMALS,
-      430000 * BEER_DECIMALS,
-      760000 * BEER_DECIMALS
+      0,
+      40000  * (10 ** BEER_DECIMALS),
+      110000 * (10 ** BEER_DECIMALS),
+      230000 * (10 ** BEER_DECIMALS),
+      430000 * (10 ** BEER_DECIMALS),
+      760000 * (10 ** BEER_DECIMALS)
     ];
     ClanStorage.state().maxMembers = [10, 20, 22, 24, 26, 28, 30];
     ClanStorage.state().clanActivityCooldownConst = TWO_DAYS_IN_SECONDS;

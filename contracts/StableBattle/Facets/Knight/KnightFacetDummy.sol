@@ -7,7 +7,7 @@ import { IKnight } from "./IKnight.sol";
 contract KnightFacetDummy is IKnight {
 
 //Knight Facet
-  function mintKnight(Pool p, Coin c) external {}
+  function mintKnight(Pool p, Coin c) external returns(uint256) {}
 
   function burnKnight (uint256 knightId, uint256 heirId) external {}
 

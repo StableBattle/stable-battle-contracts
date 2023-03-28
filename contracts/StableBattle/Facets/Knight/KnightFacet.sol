@@ -19,8 +19,9 @@ contract KnightFacet is
     ifIsValidCoin(c)
     ifIsVaildPool(p)
     ifIsCompatible(p, c)
+    returns (uint256)
   {
-    _mintKnight(p, c);
+    return _mintKnight(p, c);
   }
 
   function burnKnight(uint256 knightId, uint256 heirId)

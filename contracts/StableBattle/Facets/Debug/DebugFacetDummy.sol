@@ -20,4 +20,6 @@ contract DebugFacetDummy is IDebug {
   function debugSetKnightPrice(Coin coin, uint256 newPrice) external {}
 
   function debugSetLevelThresholds(uint[] memory newThresholds) external {}
+  
+  function debugSetWithdrawalCooldown(uint256 clanId, address user, uint newCooldownEnd) external {}
 }

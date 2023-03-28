@@ -1,4 +1,9 @@
-export const DiamondLoupeFacet = "0x4c6B6D7874558f060D93a1c1C2EFC93542D23Cf5";
-export const OwnershipFacet = "0xB5f74adD59fD36c2ed4B69B9adA01fa0239Ee70A";
-export const ItemsFacet = "0xbc8c7e74C8d0568fC9F9096207F60292d6290DdB";
-export const ClanFacet = "0xfB7a1d33e880d75675a65915De393899B9327Bc3";
+export const DiamondLoupeFacet = "0x082b530F96cAa521DB928e861f525Afd9032599D";
+export const OwnershipFacet = "0x5A40a276c8ca05591bAd2f456E30B9a3f2a4FffC";
+export const ItemsFacet = "0x94207e83219fF54bD38aD6Ae34cf8BbE91989DFC";
+export const ClanFacet = "0x0133d4C5b8da48EDbBa67daD60C0F5634bf11Db3";
+export const KnightFacet = "0xF528654C9573fE4D197EA1F4c7c630E08BC0eF89";
+export const EtherscanFacet = "0x7dF1677D7501f6dfcA40beaF7B7591958c2FE9be";
+export const DebugFacet = "0xe693db118d232e76B96c980D0067E5f124E67488";
+export const AccessControlFacet = "0xEe6D3bc6278184FC8318609204fBbbFDbeDB419b";
+export const SiegeFacet = "0x559BdD8E333E69BFcdC422763bc974baE715fCDF";

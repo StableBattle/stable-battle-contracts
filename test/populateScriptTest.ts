@@ -13,5 +13,4 @@ describe('populateScriptTest', async function () {
   it('Should run populate script without errors', async () => {
     await populateClans();
   });
-
 })

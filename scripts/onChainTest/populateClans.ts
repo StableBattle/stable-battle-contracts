@@ -1,9 +1,9 @@
 import { BigNumber } from "ethers";
 import hre, { ethers } from "hardhat";
-import { SBD as SBD_address, BEER as BEER_address } from "../config/mumbai/main-contracts";
+import { SBD as SBD_address, BEER as BEER_address } from "../config/goerli/main-contracts";
 import { AAVE as AAVE_address, USDT as UDST_address } from "../config/sb-init-addresses";
 
-//Mint 30 knights
+//Mint 32 knights
 //Create 3 clans with levels of 0, 1, 3
 //Join knights in clans 5 in 0, 10 in 1, 15 in 3
 
@@ -65,22 +65,23 @@ export default async function populateClans() {
   tx = await SBD.clanWithdrawRequest(clanIds[2], (BigNumber.from(10).pow(BEER_decimals)).mul(100000)); await tx.wait();
   console.log(`Requested to withdraw ${100000} BEER tokens from ${clanIds[2]}`);
 //if(hre.network.name == "hardhat") { await hre.network.provider.send("hardhat_mine", ["0x3e8", "0x3c"]); }
+  tx = await SBD.debugSetWithdrawalCooldown(clanIds[2], user, 0); await tx.wait();
   tx = await SBD.clanWithdraw(clanIds[2], (BigNumber.from(10).pow(BEER_decimals)).mul(100000)); await tx.wait();
   console.log(`Withdrawn ${100000} BEER tokens from ${clanIds[2]}`);
   await bumpSBReward();
   const siegeReward = await SBD.getSiegeYield();
   console.log(`Siege reward is ${siegeReward} USDT`);
-  tx = await SBD.setClanName(clanIds[1], "🍆"); await tx.wait(10);
+  tx = await SBD.setClanName(clanIds[1], "🍆"); await tx.wait();
   const newName = await SBD.getClanName(clanIds[1]);
   console.log(`New clan name of clan ${clanIds[1]} is ${newName}`);
   try {
-    tx = await SBD.setSiegeWinner(clanIds[0], knightIds[0], user); await tx.wait(10);
+    tx = await SBD.setSiegeWinner(clanIds[0], knightIds[0], user); await tx.wait();
   } catch (error) {
     tx = await SBD.setSiegeWinner(clanIds[0], knightIds[0], user); await tx.wait();
   }
   console.log(`Made ${clanIds[0]} win the siege`);
   tx = await SBD.claimSiegeReward(user, siegeReward.div(2)); await tx.wait();
-  console.log(`User ${clanIds[0]} took ${siegeReward.div(2)} USDT from his reward`);
+  console.log(`User ${user} took ${siegeReward.div(2)} USDT from his reward`);
   tx = await SBD.burnKnight(knightIds[0], knightIds[3]); await tx.wait();
   console.log(`Burned ${knightIds[0]} and transfered his clan ${clanIds[0]} to ${knightIds[3]}`);
   tx = await SBD.abandonClan(clanIds[0], knightIds[3]); await tx.wait();
@@ -145,7 +146,8 @@ async function stakeInClan(n: number, clanId : BigNumber) {
   const stakeTx = await SBD.clanStake(clanId, realStake);
   await stakeTx.wait();
   console.log(`Staked ${n} BEER tokens into ${clanId}`);
-  const newClanLevel = (await SBD.getClanInfo(clanId))[3];
+//const newClanLevel = (await SBD.getClanInfo(clanId))[3];
+  const newClanLevel = await SBD.getClanLevel(clanId);
   const clanStake = await SBD.getClanStake(clanId);
   console.log(`Clan ${clanId} leveled up to level ${newClanLevel.toString()} with total stake of ${clanStake.toString()}`)
 }

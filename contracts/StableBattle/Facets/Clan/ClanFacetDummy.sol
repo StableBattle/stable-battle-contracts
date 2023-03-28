@@ -5,7 +5,7 @@ import { ClanRole } from "../../Meta/DataStructures.sol";
 import { IClan } from "./IClan.sol";
 
 contract ClanFacetDummy is IClan {
-  function createClan(uint256 knightId, string calldata clanName) external {}
+  function createClan(uint256 knightId, string calldata clanName) external returns(uint256) {}
 
   function abandonClan(uint256 clanId, uint256 ownerId) external {}
 

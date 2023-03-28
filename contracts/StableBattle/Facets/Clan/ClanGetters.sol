@@ -39,8 +39,9 @@ abstract contract ClanGetters is ClanConfigGetters {
     return ClanStorage.state().clanTotalMembers[clanId];
   }
   
+  // Returns the total clan stake, minus any pending withdrawals
   function _clanStake(uint clanId) internal view returns(uint256) {
-    uint256 stake =  ClanStorage.state().clanStake[clanId];
+    uint256 stake = ClanStorage.state().clanStake[clanId];
     uint256 withdrawed = 0;
     uint256 numOfPendingWithdrawals = ClanStorage.state().pendingWithdrawal[clanId].length();
     for(uint256 i; i < numOfPendingWithdrawals; ++i) {
@@ -56,11 +57,12 @@ abstract contract ClanGetters is ClanConfigGetters {
     uint256 stake = _clanStake(clanId);
     uint[] memory thresholds = ClanStorage.state().levelThresholds;
     uint maxLevel = thresholds.length;
-    uint newLevel = 1;
-    while(stake >= thresholds[newLevel] && newLevel < maxLevel) {
-      newLevel++;
+    for(uint newLevel = 1; newLevel < maxLevel; newLevel++) {
+      if(stake < thresholds[newLevel]) {
+        return newLevel;
+      }
     }
-    return newLevel;
+    return maxLevel;
   }
 
   function _clanLevelThresholds() internal view returns (uint[] memory) {

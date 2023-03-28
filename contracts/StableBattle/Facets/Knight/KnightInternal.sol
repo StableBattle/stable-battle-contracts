@@ -20,7 +20,7 @@ abstract contract KnightInternal is
   MetaModifiers,
   ExternalCalls
 {
-  function _mintKnight(Pool p, Coin c) internal {
+  function _mintKnight(Pool p, Coin c) internal returns (uint256) {
     uint256 knightPrice = _knightPrice(c);
     if (c != Coin.TEST) {
       // Check if user gave its approval for enough COIN
@@ -44,6 +44,7 @@ abstract contract KnightInternal is
     KnightStorage.state().knight[knightId] = Knight(p, c, msg.sender, 0);
 
     emit KnightMinted(knightId, msg.sender, p, c);
+    return knightId;
   }
 
   function _burnKnight(uint256 knightId, uint256 heirId) internal {
