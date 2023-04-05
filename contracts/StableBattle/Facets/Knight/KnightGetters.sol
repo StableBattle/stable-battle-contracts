@@ -12,23 +12,28 @@ import { MetaStorage } from "../../Meta/MetaStorage.sol";
 
 abstract contract KnightGetters {
   function _knightInfo(uint256 knightId) internal view virtual returns(Knight memory) {
-    return KnightStorage.state().knight[knightId];
+    return Knight(
+      _knightPool(knightId), 
+      _knightCoin(knightId), 
+      _knightOwner(knightId), 
+      _knightClan(knightId)
+    );
   }
 
   function _knightCoin(uint256 knightId) internal view virtual returns(Coin) {
-    return KnightStorage.state().knight[knightId].coin;
+    return KnightStorage.state().knightCoin[knightId];
   }
 
   function _knightPool(uint256 knightId) internal view virtual returns(Pool) {
-    return KnightStorage.state().knight[knightId].pool;
+    return KnightStorage.state().knightPool[knightId];
   }
 
   function _knightOwner(uint256 knightId) internal view virtual returns(address) {
-    return KnightStorage.state().knight[knightId].owner;
+    return KnightStorage.state().knightOwner[knightId];
   }
 
   function _knightClan(uint256 knightId) internal view virtual returns(uint256) {
-    return KnightStorage.state().knight[knightId].inClan;
+    return KnightStorage.state().knightClan[knightId];
   }
 
   function _knightPrice(Coin coin) internal view virtual returns (uint256) {

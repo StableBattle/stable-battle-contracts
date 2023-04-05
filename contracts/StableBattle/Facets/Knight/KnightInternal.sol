@@ -41,7 +41,10 @@ abstract contract KnightInternal is
     _mint(msg.sender, knightId, 1, "");
     KnightStorage.state().knightsMinted[p][c]++;
     //Initialize Knight
-    KnightStorage.state().knight[knightId] = Knight(p, c, msg.sender, 0);
+    KnightStorage.state().knightPool[knightId] = p;
+    KnightStorage.state().knightCoin[knightId] = c;
+    KnightStorage.state().knightOwner[knightId] = msg.sender;
+    KnightStorage.state().knightClan[knightId] = 0;
 
     emit KnightMinted(knightId, msg.sender, p, c);
     return knightId;
@@ -72,7 +75,10 @@ abstract contract KnightInternal is
       }
     }
     // Null the knight
-    KnightStorage.state().knight[knightId] = Knight(Pool.NONE, Coin.NONE, address(0), 0);
+    KnightStorage.state().knightPool[knightId] = Pool.NONE;
+    KnightStorage.state().knightCoin[knightId] = Coin.NONE;
+    KnightStorage.state().knightOwner[knightId] = address(0);
+    KnightStorage.state().knightClan[knightId] = 0;
     // Burn NFT
     _burn(msg.sender, knightId, 1);
     KnightStorage.state().knightsBurned[p][c]++;

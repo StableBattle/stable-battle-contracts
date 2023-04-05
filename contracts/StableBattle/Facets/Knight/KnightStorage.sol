@@ -6,7 +6,11 @@ import { Pool, Coin, Knight } from "../../Meta/DataStructures.sol";
 
 library KnightStorage {
   struct State {
-    mapping(uint256 => Knight) knight;
+    mapping(uint256 => Pool) knightPool;
+    mapping(uint256 => Coin) knightCoin;
+    mapping(uint256 => address) knightOwner;
+    mapping(uint256 => uint256) knightClan;
+  //mapping(uint256 => Knight) knight;
     mapping(Coin => uint256) knightPrice;
     mapping(Pool => mapping(Coin => uint256)) knightsMinted;
     mapping(Pool => mapping(Coin => uint256)) knightsBurned;

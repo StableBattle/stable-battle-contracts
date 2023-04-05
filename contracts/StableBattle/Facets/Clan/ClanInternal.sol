@@ -34,7 +34,7 @@ abstract contract ClanInternal is
   }
 
   function _abandonClan(uint256 clanId, uint256 leaderId) internal {
-    KnightStorage.state().knight[leaderId].inClan = 0;
+    KnightStorage.state().knightClan[leaderId] = 0;
     ClanStorage.state().clanLeader[clanId] = 0;
     emit ClanAbandoned(clanId, leaderId);
   }
@@ -124,7 +124,7 @@ abstract contract ClanInternal is
   function _kick(uint256 knightId, uint256 clanId) internal {
     _setClanRole(clanId, knightId, ClanRole.NONE);
     ClanStorage.state().clanTotalMembers[clanId]--;
-    KnightStorage.state().knight[knightId].inClan = 0;
+    KnightStorage.state().knightClan[knightId] = 0;
     if(_clanLeader(clanId) != 0) {
       ClanStorage.state().clanActivityCooldown[knightId] = block.timestamp + _clanActivityCooldownConst();
     }
@@ -133,7 +133,7 @@ abstract contract ClanInternal is
 
   function _approveJoinClan(uint256 knightId, uint256 clanId) internal {
     ClanStorage.state().clanTotalMembers[clanId]++;
-    KnightStorage.state().knight[knightId].inClan = clanId;
+    KnightStorage.state().knightClan[knightId] = clanId;
     ClanStorage.state().joinProposal[knightId] = 0;
     emit ClanKnightJoined(clanId, knightId);
   }
