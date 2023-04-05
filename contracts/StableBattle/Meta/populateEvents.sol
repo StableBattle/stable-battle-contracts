@@ -105,16 +105,12 @@ contract PopulateEvents {
     SB.burnKnight(knightIds[0], knightIds[3]);
     SB.abandonClan(clanIds[0], knightIds[3]);
     //Transfer knights back to me
-    knightIdsBack = new uint256[](knights - 1);
-    knightAmounts = new uint256[](knights - 1);
+    uint256[] memory knightIdsBack = new uint256[](knights - 1);
+    uint256[] memory knightAmounts = new uint256[](knights - 1);
     for (uint256 i = 0; i < knights - 1; i++) {
       knightIdsBack[i] = knightIds[i + 1];
       knightAmounts[i] = 1;
     }
     SB.safeBatchTransferFrom(address(this), address(this), knightIdsBack, knightAmounts, "");
-  }
-
-  function transferKnight(uint256 knightId, address to) external {
-    SB.safeBatchTransferFrom(address(this), to, knightIds, 1, "");
   }
 }
