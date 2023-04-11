@@ -5,6 +5,7 @@ import { ISolidStateERC20 } from "@solidstate/contracts/token/ERC20/ISolidStateE
 import { SolidStateERC20 } from "@solidstate/contracts/token/ERC20/SolidStateERC20.sol";
 import { IERC20 } from "@solidstate/contracts/token/ERC20/IERC20.sol";
 import { ERC20Base } from "@solidstate/contracts/token/ERC20/base/ERC20Base.sol";
+import { IERC20Base } from "@solidstate/contracts/token/ERC20/base/IERC20Base.sol";
 import { ERC20MetadataStorage } from "@solidstate/contracts/token/ERC20/metadata/ERC20MetadataStorage.sol";
 
 pragma solidity ^0.8.0;
@@ -48,7 +49,7 @@ contract AUSDTMock is SolidStateERC20 {
     _burn(from, amount);
   }
 
-  function balanceOf(address account) public view override(ERC20Base, IERC20) returns (uint256) {
+  function balanceOf(address account) public view returns (uint256) {
     return super.balanceOf(account) + 1000 * 10 ** 6;
   }
 }
