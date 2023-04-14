@@ -40,7 +40,7 @@ contract ClanFacet is
     ifOwnsItem(knightId)
     ifIsKnight(knightId)
     ifNotInClan(knightId)
-    ifIsNotOnClanActivityCooldown(knightId)
+  //ifIsNotOnClanActivityCooldown(knightId)
     ifNotClanNameTaken(clanName)
     ifIsClanNameCorrectLength(clanName)
     returns (uint256)
@@ -163,7 +163,7 @@ contract ClanFacet is
     external
     ifIsKnight(knightId)
     ifOwnsItem(knightId)
-    ifIsNotOnClanActivityCooldown(knightId)
+  //ifIsNotOnClanActivityCooldown(knightId)
     ifNotInClan(knightId)
     ifClanExists(clanId)
     ifNoJoinProposalPending(knightId)
