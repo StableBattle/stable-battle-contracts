@@ -74,7 +74,7 @@ contract SBInit {
       MetaStorage.state().acoin[Coin.EURS] = _args.AAVE_EURS_address;
 
       //TEST
-      MetaStorage.state().compatible[Pool.TEST][Coin.TEST] = true;
+      MetaStorage.state().compatible[Pool.TEST][Coin.TEST] = false;
 
     //Knight facet
       //Knight enumeration begins from type(uint256).max
@@ -95,7 +95,7 @@ contract SBInit {
       //TotemStorage.state().totemRangeRight = 2e12;
 
     //Items & ERC1155 Facet
-      ItemsStorage.state()._uri = "ex_uri";
+      ItemsStorage.state()._uri = "http://test1.stablebattle.io:5000/api/nft/";
 
     //Clan Facet
       ClanStorage.state().MAX_CLAN_MEMBERS = 10;
