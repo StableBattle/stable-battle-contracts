@@ -1,8 +1,8 @@
-import hre, { ethers } from "hardhat";
+import { ethers } from "hardhat";
 import { expect } from "chai";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 
-import { COIN, CoinInterface, POOL } from "./libraries/DataStructures";
+import { CoinInterface } from "./libraries/DataStructures";
 import SBFixture, { SBFixtureInterface } from "./libraries/SBFixture";
 import CoinSetup from "./libraries/CoinSetup";
 import { IStableBattle } from "../typechain-types";
@@ -13,13 +13,12 @@ describe('Contract Transition Test', async function () {
 
   let SB : SBFixtureInterface;
   let Coin : CoinInterface;
-  let SB006 : IStableBattle;
-  const uint256Max = BigNumber.from(2).pow(256).sub(1);
+  const SB006Address = "0xC0662fAee7C84A03B1e58d60256cafeeb08Ab85d";
+  const SB006 : IStableBattle = await ethers.getContractAt("IStableBattle", SB006Address);
 
   before(async () => {
     SB = await loadFixture(SBFixture);
     Coin = await loadFixture(CoinSetup);
-    SB006 = await ethers.getContractAt("IStableBattle", "0xC0662fAee7C84A03B1e58d60256cafeeb08Ab85d");
   });
 
   it("Confirm initial assumptions", async () => {
@@ -35,7 +34,7 @@ describe('Contract Transition Test', async function () {
 
   describe("Should stop SB006 and migrate knights from SB006 to SB", async () => {
     it("Should stop SB006 and migrate knights without errors", async () => {
-      await migrateSB006();
+      await migrateSB006(SB006Address);
     });
 
     it("Amount of knights minted is the same", async () => {

@@ -12,7 +12,8 @@ abstract contract AccessControlModifiers is IAccessControlErrors {
 
   modifier ifCallerIsAdmin() {
     if(!callerIsAdmin()) {
-      revert AccessControlModifiers_CallerIsNotAdmin(msg.sender);
+      //revert AccessControlModifiers_CallerIsNotAdmin(msg.sender);
+      revert ("Access Control Modifiers: Caller Is Not Admin");
     }
     _;
   }

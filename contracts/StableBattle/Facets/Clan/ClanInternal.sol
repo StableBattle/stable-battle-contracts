@@ -22,20 +22,21 @@ abstract contract ClanInternal is
 {
   using EnumerableMap for EnumerableMap.AddressToUintMap;
 //Creation, Abandonment and Leader Change
-  function _createClan(uint256 knightId, string calldata clanName) internal returns(uint clanId) {
+  function _createClan(uint256 knightId, string calldata clanName) internal returns(uint) {
     ClanStorage.state().clansInTotal++;
-    clanId = _clansInTotal();
+    uint256 clanId = _clansInTotal();
     ClanStorage.state().clanLeader[clanId] = knightId;
     emit ClanCreated(clanId, knightId);
     _setClanName(clanId, clanName);
-    _setClanLevel(clanId, 1);
     _approveJoinClan(knightId, clanId);
     _setClanRole(clanId, knightId, ClanRole.OWNER);
+    return clanId;
   }
 
   function _abandonClan(uint256 clanId, uint256 leaderId) internal {
     KnightStorage.state().knightClan[leaderId] = 0;
     ClanStorage.state().clanLeader[clanId] = 0;
+    ClanStorage.state().clanNameTaken[_clanName(clanId)] = false;
     emit ClanAbandoned(clanId, leaderId);
   }
 
@@ -52,6 +53,7 @@ abstract contract ClanInternal is
 
   function _setClanName(uint256 clanId, string calldata newClanName) internal {
     ClanStorage.state().clanName[clanId] = newClanName;
+    ClanStorage.state().clanNameTaken[newClanName] = true;
     emit ClanNewName(clanId, newClanName);
   }
 
@@ -103,11 +105,6 @@ abstract contract ClanInternal is
       _clanStake(clanId),
       newUserStake
     );
-  }
-
-  function _setClanLevel(uint256 clanId, uint256 newLevel) internal {
-    ClanStorage.state().clanLevel[clanId] = newLevel;
-    emit ClanNewLevel(clanId, newLevel);
   }
 
 //Join, Leave and Invite Proposals

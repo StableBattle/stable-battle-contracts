@@ -13,7 +13,8 @@ abstract contract KnightModifiers is IKnightErrors, KnightGetters {
   
   modifier ifIsKnight(uint256 knightId) {
     if(!isKnight(knightId)) {
-      revert KnightModifiers_WrongKnightId(knightId);
+    //revert KnightModifiers_WrongKnightId(knightId);
+      revert("Knight Modifiers: Wrong Knight Id");
     }
     _;
   }
@@ -24,7 +25,8 @@ abstract contract KnightModifiers is IKnightErrors, KnightGetters {
 
   modifier ifIsInAnyClan(uint256 knightId) {
     if(!isInAnyClan(knightId)) {
-      revert KnightModifiers_KnightNotInAnyClan(knightId);
+    //revert KnightModifiers_KnightNotInAnyClan(knightId);
+      revert("Knight Modifiers: Knight Not In Any Clan");
     }
     _;
   }
@@ -36,11 +38,14 @@ abstract contract KnightModifiers is IKnightErrors, KnightGetters {
   modifier ifIsInClan(uint256 knightId, uint256 clanId) {
     uint256 knightClan = _knightClan(knightId);
     if(knightClan != clanId) {
+      /*
       revert KnightModifiers_KnightNotInClan({
         knightId: knightId,
         wrongClanId: clanId,
         correctClanId: knightClan
       });
+      */
+      revert("Knight Modifiers: Knight Not In Clan");
     }
     _;
   }
@@ -52,7 +57,8 @@ abstract contract KnightModifiers is IKnightErrors, KnightGetters {
   modifier ifNotInClan(uint256 knightId) {
     uint256 clanId = _knightClan(knightId);
     if (clanId != 0) {
-      revert KnightModifiers_KnightInSomeClan(knightId, clanId);
+    //revert KnightModifiers_KnightInSomeClan(knightId, clanId);
+      revert("Knight Modifiers: Knight In Some Clan");
     }
     _;
   }

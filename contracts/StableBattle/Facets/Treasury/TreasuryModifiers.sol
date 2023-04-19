@@ -10,7 +10,8 @@ abstract contract TreasuryModifiers is ITreasuryErrors {
 
   modifier ifIsFromAddress(address castleHolderAddress) {
     if(!isFromAddress(castleHolderAddress)){
-      revert TreasuryModifiers_OnlyCallableByCastleHolder();
+    //revert TreasuryModifiers_OnlyCallableByCastleHolder();
+      revert("Treasury Modifiers: Only Callable By Castle Holder");
     }
     _;
   }

@@ -14,7 +14,8 @@ abstract contract ClanModifiers is IClanErrors, ClanGetters {
 
   modifier ifClanExists(uint256 clanId) {
     if(!clanExists(clanId)) {
-      revert ClanModifiers_ClanDoesntExist(clanId);
+    //revert ClanModifiers_ClanDoesntExist(clanId);
+      revert("Clan Modifiers: Clan Doesn't Exist");
     }
     _;
   }
@@ -25,7 +26,8 @@ abstract contract ClanModifiers is IClanErrors, ClanGetters {
 
   modifier ifIsClanLeader(uint256 knightId, uint clanId) {
     if(!isClanLeader(knightId, clanId)) {
-      revert ClanModifiers_KnightIsNotClanLeader(knightId, clanId);
+    //revert ClanModifiers_KnightIsNotClanLeader(knightId, clanId);
+      revert("Clan Modifiers: Knight Is Not Clan Leader");
     }
     _;
   }
@@ -36,7 +38,8 @@ abstract contract ClanModifiers is IClanErrors, ClanGetters {
 
   modifier ifIsNotClanLeader(uint256 knightId, uint clanId) {
     if(!isNotClanLeader(knightId, clanId)) {
-      revert ClanModifiers_KnightIsClanLeader(knightId, clanId);
+    //revert ClanModifiers_KnightIsClanLeader(knightId, clanId);
+      revert("Clan Modifiers: Knight Is Clan Leader");
     }
     _;
   }
@@ -47,7 +50,8 @@ abstract contract ClanModifiers is IClanErrors, ClanGetters {
 
   modifier ifIsNotOnClanActivityCooldown(uint256 knightId) {
     if (isOnClanActivityCooldown(knightId)) {
-      revert ClanModifiers_KnightOnClanActivityCooldown(knightId);
+    //revert ClanModifiers_KnightOnClanActivityCooldown(knightId);
+      revert("Clan Modifiers: Knight On Clan Activity Cooldown");
     }
     _;
   }
@@ -59,7 +63,8 @@ abstract contract ClanModifiers is IClanErrors, ClanGetters {
   modifier ifNoJoinProposalPending(uint256 knightId) {
     uint clanId = _clanJoinProposal(knightId);
     if (clanId != 0) {
-      revert ClanModifiers_JoinProposalToSomeClanExists(knightId, clanId);
+    //revert ClanModifiers_JoinProposalToSomeClanExists(knightId, clanId);
+      revert("Clan Modifiers: Join Proposal To Some Clan Exists");
     }
     _;
   }
@@ -70,14 +75,16 @@ abstract contract ClanModifiers is IClanErrors, ClanGetters {
 
   modifier ifNotClanOwner(uint knightId) {
     if (isClanOwner(knightId)) {
-      revert ClanModifiers_ClanOwnersCantCallThis(knightId);
+    //revert ClanModifiers_ClanOwnersCantCallThis(knightId);
+      revert("Clan Modifiers: Clan Owners Can't Call This");
     }
     _;
   }
 
   modifier ifIsClanOwner(uint knightId) {
     if (!isClanOwner(knightId)) {
-      revert ClanModifiers_NotClanOwner(knightId);
+    //revert ClanModifiers_NotClanOwner(knightId);
+      revert("Clan Modifiers: Not Clan Owner");
     }
     _;
   }
@@ -96,7 +103,8 @@ abstract contract ClanModifiers is IClanErrors, ClanGetters {
 
   modifier ifIsBelowMaxMembers(uint256 clanId) {
     if (!isBelowMaxMembers(clanId)) {
-      revert ClanModifiers_AboveMaxMembers(clanId);
+    //revert ClanModifiers_AboveMaxMembers(clanId);
+      revert("Clan Modifiers: Above Max Members");
     }
     _;
   }
@@ -107,14 +115,16 @@ abstract contract ClanModifiers is IClanErrors, ClanGetters {
 
   modifier ifNotOnClanKickCooldown(uint knightId) {
     if (isOnClanKickCooldown(knightId)) {
-      revert ClanModifiers_KickingMembersOnCooldownForThisKnight(knightId);
+    //revert ClanModifiers_KickingMembersOnCooldownForThisKnight(knightId);
+      revert("Clan Modifiers: Kicking Members On Cooldown For This Knight");
     }
     _;
   }
 
   modifier ifNotClanNameTaken(string calldata clanName) {
     if(_clanNameTaken(clanName)) {
-      revert ClanModifiers_ClanNameTaken(clanName);
+    //revert ClanModifiers_ClanNameTaken(clanName);
+      revert("Clan Modifiers: Clan Name Taken");
     }
     _;
   }
@@ -122,7 +132,8 @@ abstract contract ClanModifiers is IClanErrors, ClanGetters {
   modifier ifIsClanNameCorrectLength(string calldata clanName) {
     //This is NOT a correct way to calculate string length, should change it later
     if(bytes(clanName).length < 1 || bytes(clanName).length > 30) {
-      revert ClanModifiers_ClanNameWrongLength(clanName);
+    //revert ClanModifiers_ClanNameWrongLength(clanName);
+      revert("Clan Modifiers: Clan Name Wrong Length");
     }
     _;
   }
@@ -133,7 +144,8 @@ abstract contract ClanModifiers is IClanErrors, ClanGetters {
 
   modifier ifNotOnWithdrawalCooldown(uint256 clanId, address user) {
     if(isOnWithdrawalCooldown(clanId, user)) {
-      revert ClanModifiers_UserOnWithdrawalCooldown(user);
+    //revert ClanModifiers_UserOnWithdrawalCooldown(user);
+      revert("Clan Modifiers: User On Withdrawal Cooldown");
     }
     _;
   }
@@ -144,7 +156,8 @@ abstract contract ClanModifiers is IClanErrors, ClanGetters {
 
   modifier ifIsBelowPendingWithdrawal(uint256 clanId, address user, uint256 amount) {
     if(!isBelowPendingWithdrawal(clanId, user, amount)) {
-      revert ClanModifiers_WithdrawalAbovePending(clanId, user, amount);
+    //revert ClanModifiers_WithdrawalAbovePending(clanId, user, amount);
+      revert("Clan Modifiers: Withdrawal Above Pending");
     }
     _;
   }
@@ -155,7 +168,8 @@ abstract contract ClanModifiers is IClanErrors, ClanGetters {
 
   modifier ifIsBelowStake(uint256 clanId, address user, uint256 amount) {
     if(!isBelowStake(clanId, user, amount)) {
-      revert ClanModifiers_WithdrawalAmountAboveStake(clanId, user, amount);
+    //revert ClanModifiers_WithdrawalAmountAboveStake(clanId, user, amount);
+      revert("Clan Modifiers: Withdrawal Amount Above Stake");
     }
     _;
   }

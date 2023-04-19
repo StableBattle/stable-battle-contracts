@@ -17,7 +17,7 @@ library ClanStorage {
     mapping(uint256 => uint256) clanStake;
     //Clan => amount of members in clanId
     mapping(uint256 => uint256) clanTotalMembers;
-    //Clan => level of clanId
+    //!!!DEPRECATED TO BE REMOVED ON NEXT WIPE!!!
     mapping(uint256 => uint256) clanLevel;
     //Clan => name of said clan
     mapping(uint256 => string) clanName;

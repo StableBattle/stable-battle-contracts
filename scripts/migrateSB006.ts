@@ -5,9 +5,11 @@ import { SBD as newSBAddressHH } from "./config/hardhat/main-contracts";
 import { impersonateAccount } from "@nomicfoundation/hardhat-network-helpers";
 import { BigNumber, ContractTransaction } from "ethers";
 
-export default async function migrateSB006() {
+const fake006 = "0x410DF018E0e3FAA78595430D3fb97C58336d7c77";
+const real006 = "0xC0662fAee7C84A03B1e58d60256cafeeb08Ab85d";
+
+export default async function migrateSB006(SB006Address : string) {
 //Stop ERC1155 mints and transfers
-  const SB006Address = "0xC0662fAee7C84A03B1e58d60256cafeeb08Ab85d";
   const SB006 = await ethers.getContractAt("IStableBattle", SB006Address);
   const cut = [];
   //disable transfer, transfer batch & mintKnight
@@ -22,6 +24,7 @@ export default async function migrateSB006() {
   const StakeTransferContract = await ethers.getContractFactory("StakeTransfer");
   const stakeTransfer = await StakeTransferContract.deploy(
     hre.network.name == "goerli" ? newSBAddress : newSBAddressHH);
+  await stakeTransfer.deployed();
   const functionCall = stakeTransfer.interface.encodeFunctionData('transferStake');
   let tx : ContractTransaction;
   if(hre.network.name === "hardhat") {
@@ -48,13 +51,12 @@ export default async function migrateSB006() {
     const to = total.lt(from.add(300)) ? total : from.add(300);
     const tx = await newSB.debugInheritKnightOwnership(SB006.address, from, to);
     tx.wait();
-    console.log(`Transferred knights ${from} to ${to}`);
+    console.log(`Transferred knight mints ${from} to ${to}: ${tx.hash}`);
   }
   console.log('Completed knight migration');
 }
-/*
-pauseSB006().catch((error) => {
+
+migrateSB006(fake006).catch((error) => {
   console.error(error);
   process.exitCode = 1;
 });
-*/
