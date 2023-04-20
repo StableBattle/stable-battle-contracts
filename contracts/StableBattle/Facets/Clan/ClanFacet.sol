@@ -139,11 +139,13 @@ contract ClanFacet is
     address user = msg.sender;
     if(clanExists(clanId)) {
       if(!isBelowPendingWithdrawal(clanId, user, amount)) {
-        revert ClanModifiers_WithdrawalAbovePending(clanId, user, amount);
+      //revert ClanModifiers_WithdrawalAbovePending(clanId, user, amount);
+        revert("Withdrawal amount above pending withdrawal");
       }
     } else {
       if(!isBelowStake(clanId, user, amount)) {
-        revert ClanModifiers_WithdrawalAmountAboveStake(clanId, user, amount);
+      //revert ClanModifiers_WithdrawalAmountAboveStake(clanId, user, amount);
+        revert("Withdrawal amount above stake");
       } else {
         ClanStorage.state().pendingWithdrawal[clanId].set(user, _stakeOf(clanId, user));
       }
@@ -183,7 +185,8 @@ contract ClanFacet is
     {
       _withdrawJoin(knightId, clanId);
     } else {
-      revert ClanFacet_NoJoinProposal(knightId, clanId);
+    //revert ClanFacet_NoJoinProposal(knightId, clanId);
+      revert("No join proposal");
     }
   }
 
@@ -235,7 +238,8 @@ contract ClanFacet is
         ClanStorage.state().clanKickCooldown[callerId] = _clanKickCoolDownConst();
       }
     } else { 
-      revert ClanFacet_CantKickThisMember(knightId, clanId, callerId); 
+    //revert ClanFacet_CantKickThisMember(knightId, clanId, callerId);
+      revert("Can't kick this member");
     }
     emit ClanKnightKicked(clanId, knightId, callerId);
   }
@@ -254,10 +258,12 @@ contract ClanFacet is
   {
     ClanRole callerRole = _roleInClan(callerId);
     if(_clanJoinProposal(knightId) != clanId) {
-      revert ClanFacet_NoJoinProposal(knightId, clanId);
+    //revert ClanFacet_NoJoinProposal(knightId, clanId);
+      revert("No join proposal");
     }
     if(callerRole != ClanRole.OWNER && callerRole !=  ClanRole.ADMIN) {
-      revert ClanFacet_InsufficientRolePriveleges(callerId);
+    //revert ClanFacet_InsufficientRolePriveleges(callerId);
+      revert("Insufficient role priveleges");
     }
     _approveJoinClan(knightId, clanId);
     _setClanRole(clanId, knightId, ClanRole.PRIVATE);
@@ -277,10 +283,12 @@ contract ClanFacet is
   {
     ClanRole callerRole = _roleInClan(callerId);
     if(_clanJoinProposal(knightId) != clanId) {
-      revert ClanFacet_NoJoinProposal(knightId, clanId);
+    //revert ClanFacet_NoJoinProposal(knightId, clanId);
+      revert("No join proposal");
     }
     if(callerRole != ClanRole.OWNER && callerRole !=  ClanRole.ADMIN) {
-      revert ClanFacet_InsufficientRolePriveleges(callerId);
+    //revert ClanFacet_InsufficientRolePriveleges(callerId);
+      revert("Insufficient role priveleges");
     }
     _dismissJoinClan(knightId, clanId);
   }

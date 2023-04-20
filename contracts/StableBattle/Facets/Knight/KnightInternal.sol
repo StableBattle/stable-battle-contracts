@@ -50,30 +50,9 @@ abstract contract KnightInternal is
     return knightId;
   }
 
-  function _burnKnight(uint256 knightId, uint256 heirId) internal {
+  function _burnKnight(uint256 knightId) internal {
     Pool p = _knightPool(knightId);
     Coin c = _knightCoin(knightId);
-    //Leave or abandon clan
-    uint256 clanId = _knightClan(knightId);
-    uint256 leaderId = _clanLeader(clanId);
-    if (clanId != 0 && leaderId != 0) {
-      if (knightId == leaderId) {
-        if(heirId != 0) {
-          if(!isKnight(heirId)) {
-            revert KnightFacet_HeirIsNotKnight(heirId);
-          }
-          if(_knightClan(heirId) != clanId) {
-            revert KnightFacet_HeirIsNotInTheSameClan(clanId, heirId);
-          }
-          _setClanRole(clanId, knightId, ClanRole.ADMIN);
-          _setClanRole(clanId, heirId, ClanRole.OWNER);
-        } else {
-          _abandonClan(clanId, knightId);
-        }
-      } else {
-        _kick(knightId, clanId);
-      }
-    }
     // Null the knight
     KnightStorage.state().knightPool[knightId] = Pool.NONE;
     KnightStorage.state().knightCoin[knightId] = Coin.NONE;
