@@ -16,10 +16,15 @@ export default async function migrateSB006(SB006Address : string) {
   const safeTransferFromSelector = "0xf242432a";
   const safeBatchTransferFromSelector = "0x2eb2c2d6";
   const mintKnightSelector = "0xba837765";
+  const burnKnightSelector = "0x5872f118";
   cut.push({
     facetAddress: ethers.constants.AddressZero,
     action: FacetCutAction.Remove,
-    functionSelectors: [safeTransferFromSelector, safeBatchTransferFromSelector, mintKnightSelector]
+    functionSelectors: [
+      safeTransferFromSelector,
+      safeBatchTransferFromSelector,
+      mintKnightSelector,
+      burnKnightSelector]
   });
   const StakeTransferContract = await ethers.getContractFactory("StakeTransfer");
   const stakeTransfer = await StakeTransferContract.deploy(
@@ -56,7 +61,7 @@ export default async function migrateSB006(SB006Address : string) {
   console.log('Completed knight migration');
 }
 
-migrateSB006(fake006).catch((error) => {
+migrateSB006(real006).catch((error) => {
   console.error(error);
   process.exitCode = 1;
 });

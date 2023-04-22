@@ -1,1 +1,1 @@
-export const diamondCutFacetAddress = "0x6dA54A43098883b4ddC80275f68a4b64DCf0c56f"
+export const diamondCutFacetAddress = "0x69801f56b13a56fdf6c667d0ba2dF365efe9B0D9"

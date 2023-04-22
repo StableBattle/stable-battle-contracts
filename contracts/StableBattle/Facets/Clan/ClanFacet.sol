@@ -168,8 +168,25 @@ contract ClanFacet is
   //ifIsNotOnClanActivityCooldown(knightId)
     ifNotInClan(knightId)
     ifClanExists(clanId)
-    ifNoJoinProposalPending(knightId)
-  { _join(knightId, clanId); }
+  //ifNoJoinProposalPending(knightId)
+  {
+    if(clanId != 0) {
+      if(clanExists(clanId)) {
+        _join(knightId, clanId);
+      } else {
+      //revert ClanFacet_ClanDoesNotExist(clanId);
+        revert("Clan does not exist");
+      }
+    } else {
+      if(_clanJoinProposal(knightId) == clanId)
+      {
+        _withdrawJoin(knightId, clanId);
+      } else {
+      //revert ClanFacet_NoJoinProposal(knightId, clanId);
+        revert("No join proposal");
+      }
+    }
+  }
 
   /**
    * @dev Withdraw a clan join proposal
@@ -219,6 +236,7 @@ contract ClanFacet is
     external
     ifIsKnight(knightId)
     ifIsInClan(knightId, clanId)
+    ifIsInClan(caller, clanId)
     ifNotOnClanKickCooldown(callerId)
   {
     ClanRole callerRole = _roleInClan(callerId);

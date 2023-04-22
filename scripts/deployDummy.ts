@@ -1,12 +1,16 @@
 import hre from "hardhat";
 import verify from "./verify";
 import * as fs from "fs";
-
+import { SBD } from "./config/goerli/main-contracts";
 
 export default async function deployDummy(SBDAddress : string) {
+  console.log("Deploying Dummy:");
   const Dummy = await hre.ethers.getContractFactory("StableBattleDummy");
-  const dummy = await Dummy.deploy({ gasLimit: 3000000 });
+  console.log("Found Factory");
+  const dummy = await Dummy.deploy();
+  console.log("Deploy tx sent: ", dummy.deployTransaction.hash);
   await dummy.deployed();
+  console.log('Dummy deployed:', dummy.address);
 
   if (hre.network.name != "hardhat") {
     console.log("  Dummy");
@@ -29,3 +33,8 @@ export default async function deployDummy(SBDAddress : string) {
     { flag: 'w' }
   );
 }
+
+deployDummy(SBD).catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});
