@@ -236,7 +236,7 @@ contract ClanFacet is
     external
     ifIsKnight(knightId)
     ifIsInClan(knightId, clanId)
-    ifIsInClan(caller, clanId)
+    ifIsInClan(callerId, clanId)
     ifNotOnClanKickCooldown(callerId)
   {
     ClanRole callerRole = _roleInClan(callerId);
