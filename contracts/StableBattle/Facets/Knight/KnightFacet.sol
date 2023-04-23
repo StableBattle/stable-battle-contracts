@@ -6,12 +6,14 @@ import { IKnight } from "../Knight/IKnight.sol";
 
 import { KnightInternal } from "../Knight/KnightInternal.sol";
 import { ItemsModifiers } from "../Items/ItemsModifiers.sol";
+import { MetaModifiers } from "../../Meta/MetaModifiers.sol";
 import { KnightGettersExternal } from "../Knight/KnightGetters.sol";
 
 contract KnightFacet is 
   IKnight,
   KnightGettersExternal,
   ItemsModifiers,
+  MetaModifiers,
   KnightInternal
 {
   function mintKnight(Pool p, Coin c)

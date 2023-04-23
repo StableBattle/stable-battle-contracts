@@ -9,7 +9,6 @@ import { KnightStorage } from "../Knight/KnightStorage.sol";
 import { KnightGetters } from "../Knight/KnightGetters.sol";
 import { KnightModifiers } from "../Knight/KnightModifiers.sol";
 import { ClanInternal } from "../Clan/ClanInternal.sol";
-import { MetaModifiers } from "../../Meta/MetaModifiers.sol";
 import { ExternalCalls } from "../../Meta/ExternalCalls.sol";
 
 abstract contract KnightInternal is
@@ -17,7 +16,6 @@ abstract contract KnightInternal is
   KnightGetters,
   KnightModifiers,
   ClanInternal,
-  MetaModifiers,
   ExternalCalls
 {
   function _mintKnight(Pool p, Coin c) internal returns (uint256) {

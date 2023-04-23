@@ -53,8 +53,9 @@ contract SBInit is ConfigEvents {
 
   // Assign Meta Storage
     // Token & Villages
-      MetaStorage.state().BEER = _args.BEER_address;
-      MetaStorage.state().SBV = _args.SBV_address;
+    MetaStorage.state().BEER = _args.BEER_address;
+    MetaStorage.state().SBV = _args.SBV_address;
+    
     //AAVE
     MetaStorage.state().pool[Pool.AAVE] = _args.AAVE_address;
     

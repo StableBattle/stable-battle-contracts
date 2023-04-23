@@ -14,7 +14,8 @@ abstract contract MetaModifiers {
 
   modifier ifIsVaildPool(Pool pool) {
     if (!isVaildPool(pool)) {
-      revert InvalidPool(pool);
+    //revert InvalidPool(pool);
+      revert("MetaModifiers: Invalid pool");
     }
     _;
   }
@@ -27,7 +28,8 @@ abstract contract MetaModifiers {
 
   modifier ifIsValidCoin(Coin coin) {
     if (!isValidCoin(coin)) {
-      revert InvalidCoin(coin);
+    //revert InvalidCoin(coin);
+      revert("MetaModifiers: Invalid coin");
     }
     _;
   }
@@ -40,7 +42,8 @@ abstract contract MetaModifiers {
 
   modifier ifIsCompatible(Pool pool, Coin coin) {
     if (!isCompatible(pool, coin)) {
-      revert IncompatiblePoolCoin(pool, coin);
+    //revert IncompatiblePoolCoin(pool, coin);
+      revert("MetaModifiers: Incompatible pool coin");
     }
     _;
   }
@@ -53,7 +56,8 @@ abstract contract MetaModifiers {
 
   modifier ifIsSBV {
     if (!isSBV()) {
-      revert CallerNotSBV();
+    //revert CallerNotSBV();
+      revert("MetaModifiers: Caller not Stable Battle Villages");
     }
     _;
   }
@@ -66,7 +70,8 @@ abstract contract MetaModifiers {
 
   modifier ifIsBEER {
     if (!isBEER()) {
-      revert CallerNotBEER();
+    //revert CallerNotBEER();
+      revert("MetaModifiers: Caller not BEER token contract");
     }
     _;
   }
@@ -79,7 +84,8 @@ abstract contract MetaModifiers {
 
   modifier ifIsSBD {
     if (!isSBD()) {
-      revert CallerNotSBD();
+    //revert CallerNotSBD();
+      revert("MetaModifiers: Caller not main StableBattle contract");
     }
     _;
   }
