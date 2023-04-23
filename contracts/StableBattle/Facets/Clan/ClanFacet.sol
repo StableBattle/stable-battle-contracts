@@ -272,6 +272,7 @@ contract ClanFacet is
     external
     ifIsKnight(knightId)
     ifOwnsItem(callerId)
+    ifIsInClan(callerId, clanId)
     ifIsBelowMaxMembers(clanId)
   {
     ClanRole callerRole = _roleInClan(callerId);

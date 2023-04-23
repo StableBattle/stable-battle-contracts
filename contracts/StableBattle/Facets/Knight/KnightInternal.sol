@@ -26,7 +26,8 @@ abstract contract KnightInternal is
       // Check if user gave its approval for enough COIN
       uint256 allowance = COIN(c).allowance(msg.sender, address(this));
       if (allowance < knightPrice) {
-        revert KnightFacet_InsufficientFunds(allowance, knightPrice);
+      //revert KnightFacet_InsufficientFunds(allowance, knightPrice);
+        revert("KnightFacet: Insufficient allowance");
       }
       // Transfer enough COIN from user to contract
       COIN(c).transferFrom(msg.sender, address(this), knightPrice);
