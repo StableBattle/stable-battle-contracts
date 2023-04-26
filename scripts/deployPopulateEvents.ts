@@ -20,8 +20,8 @@ export default async function deployPopulateEvents() {
     AAVE_address[network],
     AUSDT_address[network]);
   await populateEvents.deployed();
-  
   console.log('PopulateEvents deployed:', populateEvents.address);
+
   fs.writeFileSync(
     `./scripts/config/${hre.network.name}/populate-events.ts`,
     `export const populateEventsAddress = "${populateEvents.address}"`,
@@ -32,11 +32,17 @@ export default async function deployPopulateEvents() {
     populateEvents.address,
     { flag: 'w' }
   );
-  await verify(populateEvents.address,
-    [UDST_address[network],
-    SBD_address, BEER_address,
-    AAVE_address[network],
-    AUSDT_address[network]]);
+  const USDT = await ethers.getContractAt('IERC20Mintable', UDST_address[network]);
+  const approveTx = await USDT.approve(populateEvents.address, 1000000 * 10 ** 6);
+  approveTx.wait();
+  console.log('1000000 USDT approved for PopulateEvents: ', approveTx.hash);
+  if(hre.network.name != "hardhat") {
+    await verify(populateEvents.address,
+      [UDST_address[network],
+      SBD_address, BEER_address,
+      AAVE_address[network],
+      AUSDT_address[network]]);
+  }
   return populateEvents.address;
 }
 

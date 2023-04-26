@@ -1,15 +1,13 @@
 import { expect } from "chai";
-import "@nomicfoundation/hardhat-chai-matchers";
+
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 
-import { POOL, COIN, CoinInterface } from "./libraries/DataStructures";
+import { CoinInterface } from "./libraries/DataStructures";
 import SBFixture, { SBFixtureInterface } from "./libraries/SBFixture";
 import CoinSetup from "./libraries/CoinSetup";
 import { BigNumber } from "ethers";
-import coinsFixture from "./libraries/coinsFixture";
 import { ethers } from "hardhat";
 import populateClans from "../scripts/onChainTest/populateClans";
-import { clan } from "../typechain-types/contracts/StableBattle/Facets";
 
 describe('ClanFacetTest', async function () {
   let SB : SBFixtureInterface;
@@ -293,6 +291,9 @@ describe('ClanFacetTest', async function () {
     expect(eventsKnightJoinedClan.length).to.equal(2);
     expect(await SB.Diamond.ClanFacet.getClanTotalMembers(clanId)).to.deep.equal(BigNumber.from(2));
     expect(await SB.Diamond.KnightFacet.getKnightClan(knight[1])).to.equal(clanId)
+
+    await SB.Diamond.ClanFacet.leaveClan(knight[2], clanId);
+    await SB.Diamond.ClanFacet.joinClan(knight[2], clanId);
   })
 
   it('Should dismiss user2', async () => {

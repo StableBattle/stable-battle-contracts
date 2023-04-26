@@ -1,7 +1,6 @@
 import hre from "hardhat";
 import { 
   ClanFacet,
-  DemoFightFacet,
   DiamondCutFacet,
   DiamondLoupeFacet,
   EtherscanFacet,
@@ -11,7 +10,6 @@ import {
   OwnershipFacet,
   SBVHookFacet,
   SiegeFacet,
-  TournamentFacet,
   TreasuryFacet
 } from "../../typechain-types";
 

@@ -10,14 +10,14 @@ export default async function updateStableBattle() {
   await newKnightFacet.deployed();
   console.log("New KnightFacet deployed: ", newKnightFacet.address);
   const cut = [
-  {
-    facetAddress: newKnightFacet.address,
-    action: FacetCutAction.Replace,
-    functionSelectors: [
-      StableBattle.interface.getSighash("mintKnight"),
-      StableBattle.interface.getSighash("burnKnight")
-    ]
-  }
+    {
+      facetAddress: newKnightFacet.address,
+      action: FacetCutAction.Replace,
+      functionSelectors: [
+        StableBattle.interface.getSighash("mintKnight"),
+        StableBattle.interface.getSighash("burnKnight")
+      ]
+    }
   ];
   console.log("Diamond cut: ", cut);
   const tx = await StableBattle.diamondCut(cut, hre.ethers.constants.AddressZero, "0x");

@@ -134,7 +134,7 @@ contract ClanFacet is
    */
   function clanWithdraw(uint256 clanId, uint256 amount)
     external
-    ifNotOnWithdrawalCooldown(clanId, msg.sender)
+  //ifNotOnWithdrawalCooldown(clanId, msg.sender)
   {
     address user = msg.sender;
     if(clanExists(clanId)) {

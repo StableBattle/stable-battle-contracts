@@ -1,11 +1,15 @@
 import { BigNumber } from "ethers";
 import hre, { ethers } from "hardhat";
-import { SBD as SBD_address, BEER as BEER_address } from "../config/goerli/main-contracts";
+import { SBD as SBD_GO, BEER as BEER_GO } from "../config/goerli/main-contracts";
+import { SBD as SBD_HH, BEER as BEER_HH } from "../config/hardhat/main-contracts";
 import { AAVE as AAVE_address, USDT as UDST_address } from "../config/sb-init-addresses";
 
 //Mint 32 knights
 //Create 3 clans with levels of 0, 1, 3
 //Join knights in clans 5 in 0, 10 in 1, 15 in 3
+
+const SBD_address = hre.network.name == "goerli" ? SBD_GO : SBD_HH;
+const BEER_address = hre.network.name == "goerli" ? BEER_GO : BEER_HH;
 
 export default async function populateClans() {
   const user = (await ethers.getSigners())[0].address;
@@ -15,18 +19,20 @@ export default async function populateClans() {
   const BEER = await hre.ethers.getContractAt("IBEER", BEER_address);
   const BEER_decimals = await BEER.decimals();
 
-  const knights = 32;
+  const knights = 35;
   const clans = 3;
   await mintAndApproveUSDT(knights * 1000);
   const knightIds = await bulkMintKnights(knights);
   const clanIds = await createClans(clans, knightIds);
   await stakeInClan(50000, clanIds[1]);
   await stakeInClan(250000, clanIds[2]);
+  // Knights from 3 to 7 to join clan 1
   await bulkJoinClan(clanIds[0], knightIds.slice(clans, clans + 4));
   //1 Admins, 2 Mods
   await assignClanRole(clanIds[0], knightIds[clans + 0], 3);
   await assignClanRole(clanIds[0], knightIds[clans + 1], 2);
   await assignClanRole(clanIds[0], knightIds[clans + 2], 2);
+  // Knights from 8 to 17 to join clan 2
   await bulkJoinClan(clanIds[1], knightIds.slice(clans + 5, clans + 14));
   //3 Admins, 4 Mods
   await assignClanRole(clanIds[1], knightIds[clans + 5], 3);
@@ -36,7 +42,8 @@ export default async function populateClans() {
   await assignClanRole(clanIds[1], knightIds[clans + 9], 2);
   await assignClanRole(clanIds[1], knightIds[clans + 10], 2);
   await assignClanRole(clanIds[1], knightIds[clans + 11], 2);
-  await bulkJoinClan(clanIds[2], knightIds.slice(clans + 15, clans+25));
+  // Knights from 18 to 28 to join clan 3
+  await bulkJoinClan(clanIds[2], knightIds.slice(clans + 15, clans + 25));
   //2 Admins, 5 Mods
   await assignClanRole(clanIds[2], knightIds[clans + 15], 3);
   await assignClanRole(clanIds[2], knightIds[clans + 16], 3);
@@ -192,8 +199,3 @@ async function bumpSBReward() {
   await AAVEsupplyTx.wait();
   console.log(`Added 1000 USDT to StableBattle yield`);
 }
-
-populateClans().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});

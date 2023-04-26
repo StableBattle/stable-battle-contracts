@@ -20,7 +20,10 @@ contract SiegeFacet is
   ItemsModifiers,
   KnightGetters
 {
-  function setSiegeWinner(uint256 clanId, uint256 knightId, address user) external ifCallerIsAdmin {
+  function setSiegeWinner(uint256 clanId, uint256 knightId, address user)
+    external 
+  //ifCallerIsAdmin
+  {
     uint256 reward = _siegeYield();
     if(_knightClan(knightId) != clanId) {
       revert();

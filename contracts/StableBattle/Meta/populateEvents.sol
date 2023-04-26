@@ -8,8 +8,10 @@ import { IStableBattle } from "../Meta/IStableBattle.sol";
 import { IBEER } from "../../BEER/IBEER.sol";
 import { IPool } from "@aave/core-v3/contracts/interfaces/IPool.sol";
 import { AToken } from "@aave/core-v3/contracts/protocol/tokenization/AToken.sol";
+import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
+import { ERC1155Receiver } from "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Receiver.sol";
 
-contract PopulateEvents {
+contract PopulateEvents is ERC1155Receiver {
   IERC20Mintable immutable USDT;
   IStableBattle immutable SB;
   IBEER immutable BEER;
@@ -18,6 +20,7 @@ contract PopulateEvents {
   uint256 constant numberOfKnights = 32;
   uint256 constant numberOfClans = 3;
   uint256[] knightIds = new uint256[](numberOfKnights);
+  uint256[] clanIds = new uint256[](numberOfClans);
 
   constructor(
     address _USDT,
@@ -35,14 +38,15 @@ contract PopulateEvents {
 
   function populateEvents() external {
     //Mint knights
-    USDT.mint(address(this), numberOfKnights * 1000 * 10 ** 6);
+    USDT.transferFrom(msg.sender, address(this), numberOfKnights * 1000 * 10 ** 6);
+    USDT.approve(address(SB), numberOfKnights * 1000 * 10 ** 6);
     for (uint256 i = 0; i < numberOfKnights; i++) {
       knightIds[i] = SB.mintKnight(Pool.AAVE, Coin.USDT);
     }
     //Form clans
-    uint256[] memory clanIds = new uint256[](numberOfClans);
     for (uint256 i = 0; i < numberOfClans; i++) {
-      string memory name = string(abi.encodePacked("Test Clan ", i));
+    //string memory name = string.concat("Test string", Strings.toString(i));
+      string memory name = i == 0 ? "Test clan 1" : i == 1 ? "Test clan 2" : "Test clan 3";
       clanIds[i] = SB.createClan(knightIds[i], name);
     }
     //Level up clans
@@ -52,37 +56,40 @@ contract PopulateEvents {
     //Level up clan 3
     SB.clanStake(clanIds[2], 250000 * 10 ** 18);
     //Bulk join in clan 1 and assign roles
+    // Knights from 3 to 7 to join clan 1
     for (uint256 i = 0; i < 5; i++) {
-      SB.joinClan(clanIds[0], knightIds[numberOfClans + i]);
+      SB.joinClan(knightIds[numberOfClans + i], clanIds[0]);
       SB.approveJoinClan(knightIds[numberOfClans + i], clanIds[0], knightIds[0]);
     }
-    SB.setClanRole(clanIds[1], knightIds[numberOfClans + 0], ClanRole.ADMIN, knightIds[0]);
-    SB.setClanRole(clanIds[1], knightIds[numberOfClans + 1], ClanRole.MOD, knightIds[0]);
-    SB.setClanRole(clanIds[1], knightIds[numberOfClans + 2], ClanRole.MOD, knightIds[0]);
+    SB.setClanRole(clanIds[0], knightIds[numberOfClans + 0], ClanRole.ADMIN, knightIds[0]);
+    SB.setClanRole(clanIds[0], knightIds[numberOfClans + 1], ClanRole.MOD, knightIds[0]);
+    SB.setClanRole(clanIds[0], knightIds[numberOfClans + 2], ClanRole.MOD, knightIds[0]);
     //Bulk join in clan 2 and assign roles
-    for (uint256 i = 0; i < 10; i++) {
-      SB.joinClan(clanIds[1], knightIds[numberOfClans + i]);
-      SB.approveJoinClan(knightIds[numberOfClans + i], clanIds[1], knightIds[2]);
+    // Knights from 8 to 17 to join clan 2
+    for (uint256 i = 5; i < 15; i++) {
+      SB.joinClan(knightIds[numberOfClans + i], clanIds[1]);
+      SB.approveJoinClan(knightIds[numberOfClans + i], clanIds[1], knightIds[1]);
     }
-    SB.setClanRole(clanIds[1], knightIds[numberOfClans + 5], ClanRole.ADMIN, knightIds[0]);
-    SB.setClanRole(clanIds[1], knightIds[numberOfClans + 6], ClanRole.ADMIN, knightIds[0]);
-    SB.setClanRole(clanIds[1], knightIds[numberOfClans + 7], ClanRole.ADMIN, knightIds[0]);
-    SB.setClanRole(clanIds[1], knightIds[numberOfClans + 8], ClanRole.MOD, knightIds[0]);
-    SB.setClanRole(clanIds[1], knightIds[numberOfClans + 9], ClanRole.MOD, knightIds[0]);
-    SB.setClanRole(clanIds[1], knightIds[numberOfClans + 10], ClanRole.MOD, knightIds[0]);
-    SB.setClanRole(clanIds[1], knightIds[numberOfClans + 11], ClanRole.MOD, knightIds[0]);
+    SB.setClanRole(clanIds[1], knightIds[numberOfClans + 5], ClanRole.ADMIN, knightIds[1]);
+    SB.setClanRole(clanIds[1], knightIds[numberOfClans + 6], ClanRole.ADMIN, knightIds[1]);
+    SB.setClanRole(clanIds[1], knightIds[numberOfClans + 7], ClanRole.ADMIN, knightIds[1]);
+    SB.setClanRole(clanIds[1], knightIds[numberOfClans + 8], ClanRole.MOD, knightIds[1]);
+    SB.setClanRole(clanIds[1], knightIds[numberOfClans + 9], ClanRole.MOD, knightIds[1]);
+    SB.setClanRole(clanIds[1], knightIds[numberOfClans + 10], ClanRole.MOD, knightIds[1]);
+    SB.setClanRole(clanIds[1], knightIds[numberOfClans + 11], ClanRole.MOD, knightIds[1]);
     //Bulk join in clan 3 and assign roles
-    for (uint256 i = 0; i < 5; i++) {
-      SB.joinClan(clanIds[2], knightIds[numberOfClans + i]);
-      SB.approveJoinClan(knightIds[numberOfClans + i], clanIds[2], knightIds[0]);
+    // Knights from 18 to 28 to join clan 3
+    for (uint256 i = 15; i < 26; i++) {
+      SB.joinClan(knightIds[numberOfClans + i], clanIds[2]);
+      SB.approveJoinClan(knightIds[numberOfClans + i], clanIds[2], knightIds[2]);
     }
-    SB.setClanRole(clanIds[1], knightIds[numberOfClans + 15], ClanRole.ADMIN, knightIds[0]);
-    SB.setClanRole(clanIds[1], knightIds[numberOfClans + 16], ClanRole.ADMIN, knightIds[0]);
-    SB.setClanRole(clanIds[1], knightIds[numberOfClans + 17], ClanRole.MOD, knightIds[0]);
-    SB.setClanRole(clanIds[1], knightIds[numberOfClans + 18], ClanRole.MOD, knightIds[0]);
-    SB.setClanRole(clanIds[1], knightIds[numberOfClans + 19], ClanRole.MOD, knightIds[0]);
-    SB.setClanRole(clanIds[1], knightIds[numberOfClans + 20], ClanRole.MOD, knightIds[0]);
-    SB.setClanRole(clanIds[1], knightIds[numberOfClans + 21], ClanRole.MOD, knightIds[0]);
+    SB.setClanRole(clanIds[2], knightIds[numberOfClans + 15], ClanRole.ADMIN, knightIds[2]);
+    SB.setClanRole(clanIds[2], knightIds[numberOfClans + 16], ClanRole.ADMIN, knightIds[2]);
+    SB.setClanRole(clanIds[2], knightIds[numberOfClans + 17], ClanRole.MOD, knightIds[2]);
+    SB.setClanRole(clanIds[2], knightIds[numberOfClans + 18], ClanRole.MOD, knightIds[2]);
+    SB.setClanRole(clanIds[2], knightIds[numberOfClans + 19], ClanRole.MOD, knightIds[2]);
+    SB.setClanRole(clanIds[2], knightIds[numberOfClans + 20], ClanRole.MOD, knightIds[2]);
+    SB.setClanRole(clanIds[2], knightIds[numberOfClans + 21], ClanRole.MOD, knightIds[2]);
     //Add a few more events
     SB.leaveClan(knightIds[numberOfClans + 22], clanIds[2]);
     SB.kickFromClan(knightIds[numberOfClans + 23], clanIds[2], knightIds[2]);
@@ -93,11 +100,13 @@ contract PopulateEvents {
     SB.joinClan(knightIds[numberOfClans + 27], clanIds[2]);
     SB.joinClan(knightIds[numberOfClans + 28], clanIds[2]);
     SB.clanWithdrawRequest(clanIds[2], 100000 * 10 ** 18);
-    SB.debugSetWithdrawalCooldown(clanIds[2], address(this), 0);
+  //SB.debugSetWithdrawalCooldown(clanIds[2], address(this), 0);
     SB.clanWithdraw(clanIds[2], 100000 * 10 ** 18);
     //Bump siege reward
-    USDT.mint(address(this), 1000 * 10 ** 6);
-    AAVE.supply(address(USDT), 1000 * 10 ** 6, address(SB), 0);
+    uint256 bumpAmount = 1000 * 10 ** 6;
+    USDT.transferFrom(msg.sender, address(this), bumpAmount);
+    USDT.approve(address(AAVE), bumpAmount);
+    AAVE.supply(address(USDT), bumpAmount, address(SB), 0);
     //Claim siege reward
     uint256 siegeReward = SB.getSiegeYield();
     SB.setClanName(clanIds[1], "New name for clan 2");
@@ -112,6 +121,26 @@ contract PopulateEvents {
       knightIdsBack[i] = knightIds[i + 1];
       knightAmounts[i] = 1;
     }
-    SB.safeBatchTransferFrom(address(this), address(this), knightIdsBack, knightAmounts, "");
+    SB.safeBatchTransferFrom(address(this), msg.sender, knightIdsBack, knightAmounts, "");
+  }
+
+  function onERC1155Received(
+    address operator,
+    address from,
+    uint256 id,
+    uint256 value,
+    bytes calldata data
+  ) external returns (bytes4) {
+    return bytes4(keccak256("onERC1155Received(address,address,uint256,uint256,bytes)"));
+  }
+
+  function onERC1155BatchReceived(
+    address operator,
+    address from,
+    uint256[] calldata ids,
+    uint256[] calldata values,
+    bytes calldata data
+  ) external returns (bytes4) {
+    return bytes4(keccak256("onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"));
   }
 }

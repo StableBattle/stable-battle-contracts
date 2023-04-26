@@ -1,28 +1,30 @@
-import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 //import populateClans from "../scripts/onChainTest/populateClans";
 import deployPopulateEvents from "../scripts/deployPopulateEvents";
-import SBFixture, { SBFixtureInterface } from "./libraries/SBFixture";
-import { ethers } from "hardhat";
-import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { PopulateEvents } from "../typechain-types";
-
+import { IERC20Mintable, IStableBattle, PopulateEvents } from "../typechain-types";
+import deployStableBattle from "../scripts/deployStableBattle";
+import { SBD } from "../scripts/config/hardhat/main-contracts";
+import hre from "hardhat";
+import { USDT as UDST_address } from "../scripts/config/sb-init-addresses";
 
 describe("populateScriptTest", async function () {
-  let SB : SBFixtureInterface;
-  let accounts : SignerWithAddress[];
+  let StableBattle : IStableBattle;
   let populateEvents : PopulateEvents;
+  let USDT : IERC20Mintable;
+  const wallet = new hre.ethers.Wallet(process.env.PRIVATE_KEY as string, hre.ethers.provider);
 
   before(async function () {
-    SB = await loadFixture(SBFixture);
-    accounts = await ethers.getSigners();
+    await deployStableBattle();
+    StableBattle = await hre.ethers.getContractAt("IStableBattle", SBD);
+    USDT = await hre.ethers.getContractAt("IERC20Mintable", UDST_address[hre.network.name]);
   });
 
   it("Should deploy populate script without errors", async () => {
     const popEventsAddress = await deployPopulateEvents();
-    populateEvents = await ethers.getContractAt("PopulateEvents", popEventsAddress);
+    USDT.connect(wallet).approve(popEventsAddress, 1000000 * 10 ** 6);
+    populateEvents = await hre.ethers.getContractAt("PopulateEvents", popEventsAddress);
   });
 
-  it("Should run popualte events without errors", async () => {
-    populateEvents.populateEvents();
+  it("Should run populateEvents without errors", async () => {
+    await populateEvents.connect(wallet).populateEvents();
   });
 })
