@@ -6,7 +6,6 @@ import { Coin, Pool, Role } from "../Meta/DataStructures.sol";
 
 import { ClanStorage } from "../Facets/Clan/ClanStorage.sol";
 import { KnightStorage } from "../Facets/Knight/KnightStorage.sol";
-import { MetaStorage } from "../Meta/MetaStorage.sol";
 import { TreasuryStorage } from "../Facets/Treasury/TreasuryStorage.sol";
 import { GearStorage } from "../Facets/Gear/GearStorage.sol";
 import { AccessControlStorage } from "../Facets/AccessControl/AccessControlStorage.sol";
@@ -78,26 +77,6 @@ contract SBUpgrade_0_0_6_to_0_0_18 is ConfigEvents {
     ds.supportedInterfaces[type(IDiamondCut).interfaceId] = true;
     ds.supportedInterfaces[type(IDiamondLoupe).interfaceId] = true;
     ds.supportedInterfaces[type(IERC1155).interfaceId] = true;
-
-  // Assign Meta Storage
-    // Token & Villages
-    MetaStorage.state().BEER = _args.BEER_address;
-    MetaStorage.state().SBV = _args.SBV_address;
-    //AAVE
-    MetaStorage.state().pool[Pool.AAVE] = _args.AAVE_address;
-    
-    MetaStorage.state().coin[Coin.USDT] = _args.USDT_address;
-    MetaStorage.state().coin[Coin.USDC] = _args.USDC_address;
-    MetaStorage.state().coin[Coin.EURS] = _args.EURS_address;
-    
-    MetaStorage.state().acoin[Coin.USDT] = _args.AAVE_USDT_address;
-    MetaStorage.state().acoin[Coin.USDC] = _args.AAVE_USDC_address;
-    MetaStorage.state().acoin[Coin.EURS] = _args.AAVE_EURS_address;
-
-    MetaStorage.state().compatible[Pool.AAVE][Coin.USDT] = true;
-    MetaStorage.state().compatible[Pool.AAVE][Coin.USDC] = true;
-    //Test
-    MetaStorage.state().compatible[Pool.TEST][Coin.TEST] = true;
 
   //Knight facet
     //Knight enumeration begins from type(uint256).max

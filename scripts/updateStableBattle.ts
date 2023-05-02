@@ -1,22 +1,23 @@
 import hre from "hardhat";
-import { SBD } from "./config/goerli/main-contracts";
+//import { SBD } from "./config/goerli/main-contracts";
 import { FacetCutAction } from "./libraries/diamond";
 
 export default async function updateStableBattle() {
+  const SBD = "0x6551C3EC64aA6E97097467Bd0fD69B4D49c155Be";
   const StableBattle = await hre.ethers.getContractAt("IStableBattle", SBD);
   
-  const NewKnightFacet = await hre.ethers.getContractFactory("KnightFacet");
-  const newKnightFacet = await NewKnightFacet.deploy();
-  await newKnightFacet.deployed();
-  console.log("New KnightFacet deployed: ", newKnightFacet.address);
+  const NewClanFacet = await hre.ethers.getContractFactory("ClanFacet");
+  const newClanFacet = await NewClanFacet.deploy();
+  await newClanFacet.deployed();
+  console.log("New ClanFacet deployed: ", newClanFacet.address);
+  const newSigHashes = Object.keys(NewClanFacet.interface.functions)
+    .map((key) => hre.ethers.utils.id(key).substring(0, 10));
+  console.log("New ClanFacet sig hashes: ", newSigHashes);
   const cut = [
     {
-      facetAddress: newKnightFacet.address,
+      facetAddress: newClanFacet.address,
       action: FacetCutAction.Replace,
-      functionSelectors: [
-        StableBattle.interface.getSighash("mintKnight"),
-        StableBattle.interface.getSighash("burnKnight")
-      ]
+      functionSelectors: newSigHashes
     }
   ];
   console.log("Diamond cut: ", cut);

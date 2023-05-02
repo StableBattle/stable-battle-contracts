@@ -5,39 +5,50 @@ pragma solidity ^0.8.10;
 import { Coin, Pool } from "../Meta/DataStructures.sol";
 
 import { IERC20 } from "@solidstate/contracts/token/ERC20/IERC20.sol";
-import { IPool } from "@aave/core-v3/contracts/interfaces/IPool.sol";
-import { AToken } from "@aave/core-v3/contracts/protocol/tokenization/AToken.sol";
 import { IBEER } from "../../BEER/IBEER.sol";
 import { ISBV } from "../../SBV/ISBV.sol";
 
-import { MetaStorage } from "./MetaStorage.sol";
+import { SetupAddressLib } from "../Init&Updates/SetupAddressLib.sol";
+import { BEERAddressLib } from "../Init&Updates/BEERAddressLib.sol";
+import { VillagesAddressLib } from "../Init&Updates/VillagesAddressLib.sol";
+
+interface IAAVEBasic {
+  function supply(
+    address asset,
+    uint256 amount,
+    address onBehalfOf,
+    uint16 referralCode
+  ) external;
+
+  function withdraw(
+    address asset,
+    uint256 amount,
+    address to
+  ) external returns (uint256);
+}
 
 abstract contract ExternalCalls {
   function BEER() internal view virtual returns(IBEER) {
-    return IBEER(MetaStorage.state().BEER);
+    return IBEER(BEERAddressLib.BEERAddress);
   }
 
   function SBV() internal view virtual returns(ISBV) {
-    return ISBV(MetaStorage.state().SBV);
+    return ISBV(VillagesAddressLib.VillagesAddress);
   }
 
-  function AAVE() internal view virtual returns(IPool) {
-    return IPool(MetaStorage.state().pool[Pool.AAVE]);
+  function AAVE() internal view virtual returns(IAAVEBasic) {
+    return IAAVEBasic(SetupAddressLib.getPoolAddress(Pool.AAVE));
   }
 
   function COIN(Coin coin) internal view virtual returns(IERC20) {
-    return IERC20(MetaStorage.state().coin[coin]);
+    return IERC20(SetupAddressLib.getACoinAddress(coin));
   }
 
-  function ACOIN(Coin coin) internal view virtual returns(AToken) {
-    return AToken(MetaStorage.state().acoin[coin]);
+  function ACOIN(Coin coin) internal view virtual returns(IERC20) {
+    return IERC20(SetupAddressLib.getACoinAddress(coin));
   }
 
   function PoolAddress(Pool pool) internal view virtual returns(address) {
-    return MetaStorage.state().pool[pool];
-  }
-
-  function PoolAndCoinCompatibility(Pool p, Coin c) internal view returns(bool) {
-    return MetaStorage.state().compatible[p][c];
+    return SetupAddressLib.getPoolAddress(pool);
   }
 }

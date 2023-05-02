@@ -6,8 +6,8 @@ import { Pool, Coin, ClanRole } from "../Meta/DataStructures.sol";
 import { IERC20Mintable } from "../Meta/IERC20Mintable.sol";
 import { IStableBattle } from "../Meta/IStableBattle.sol";
 import { IBEER } from "../../BEER/IBEER.sol";
-import { IPool } from "@aave/core-v3/contracts/interfaces/IPool.sol";
-import { AToken } from "@aave/core-v3/contracts/protocol/tokenization/AToken.sol";
+import { IAAVEBasic } from "./ExternalCalls.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
 import { ERC1155Receiver } from "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Receiver.sol";
 
@@ -15,8 +15,8 @@ contract PopulateEvents is ERC1155Receiver {
   IERC20Mintable immutable USDT;
   IStableBattle immutable SB;
   IBEER immutable BEER;
-  IPool immutable AAVE;
-  AToken immutable AUSDT;
+  IAAVEBasic immutable AAVE;
+  IERC20 immutable AUSDT;
   uint256 constant numberOfKnights = 32;
   uint256 constant numberOfClans = 3;
   uint256[] knightIds = new uint256[](numberOfKnights);
@@ -32,8 +32,8 @@ contract PopulateEvents is ERC1155Receiver {
     USDT = IERC20Mintable(_USDT);
     SB = IStableBattle(_SB);
     BEER = IBEER(_BEER);
-    AAVE = IPool(_AAVE);
-    AUSDT = AToken(_AUSDT);
+    AAVE = IAAVEBasic(_AAVE);
+    AUSDT = IERC20(_AUSDT);
   }
 
   function populateEvents() external {
@@ -130,7 +130,9 @@ contract PopulateEvents is ERC1155Receiver {
     uint256 id,
     uint256 value,
     bytes calldata data
-  ) external returns (bytes4) {
+  ) external pure returns (bytes4) {
+    //Dummy code to avoid warnings
+    operator; from; id; value; data;
     return bytes4(keccak256("onERC1155Received(address,address,uint256,uint256,bytes)"));
   }
 
@@ -140,7 +142,9 @@ contract PopulateEvents is ERC1155Receiver {
     uint256[] calldata ids,
     uint256[] calldata values,
     bytes calldata data
-  ) external returns (bytes4) {
+  ) external pure returns (bytes4) {
+    //Dummy code to avoid warnings
+    operator; from; ids; values; data;
     return bytes4(keccak256("onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"));
   }
 }

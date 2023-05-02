@@ -3,12 +3,11 @@ pragma solidity ^0.8.0;
 
 import { UpgradeableProxyOwnable } from "@solidstate/contracts/proxy/upgradeable/UpgradeableProxyOwnable.sol";
 import { ERC721MetadataStorage } from "@solidstate/contracts/token/ERC721/metadata/ERC721MetadataStorage.sol";
-import { SBVStorage } from "./SBVStorage.sol";
 
 contract SBVProxy is UpgradeableProxyOwnable {
   using ERC721MetadataStorage for ERC721MetadataStorage.Layout;
 
-  constructor(address implementation, address owner, address diamond) {
+  constructor(address implementation, address owner) {
   //Init ERC20
     ERC721MetadataStorage.Layout storage l = ERC721MetadataStorage.layout();
 
@@ -19,8 +18,6 @@ contract SBVProxy is UpgradeableProxyOwnable {
     _setImplementation(implementation);
   //Set owner
     _transferOwnership(owner);
-  //Set StableBattle address
-    SBVStorage.state().SBD = diamond;
   }
 
   receive() external payable {}

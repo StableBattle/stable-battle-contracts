@@ -5,6 +5,7 @@ import * as fs from "fs";
 import initSBD from "./initSBD";
 import verify from "./verify";
 import deployDummy from "./deployDummy";
+import generateDeployAddressLib from "./generateDeployAddressLib";
 
 export default async function deployStableBattle() {
   const accounts = await hre.ethers.getSigners();
@@ -40,6 +41,8 @@ export default async function deployStableBattle() {
   const StableBattleDiamond = await hre.ethers.getContractFactory('Diamond');
   const SBD = await StableBattleDiamond.deploy(contractOwner.address, diamondCutFacet.address, { gasLimit: 3000000 });
   await SBD.deployed();
+  generateDeployAddressLib(SBD.address, "StableBattle");
+  await hre.run("compile");
   console.log('StableBattle Diamond deployed:', SBD.address);
 
   // deploy StableBattleToken
@@ -47,17 +50,21 @@ export default async function deployStableBattle() {
   const BEERImplementation = await hre.ethers.getContractFactory('BEERImplementation');
   const implementationBEER = await BEERImplementation.deploy();
   await implementationBEER.deployed();
-  const BEER = await BEERProxy.deploy(implementationBEER.address, contractOwner.address, SBD.address);
+  const BEER = await BEERProxy.deploy(implementationBEER.address, contractOwner.address);
   await BEER.deployed();
-  console.log('StableBattle Token deployed:', BEER.address);
+  generateDeployAddressLib(BEER.address, "BEER");
+  await hre.run("compile");
+  console.log('BEER deployed:', BEER.address);
 
   // deploy StableBattleVillages
   const SBVProxy = await hre.ethers.getContractFactory('SBVProxy');
   const SBVImplementation = await hre.ethers.getContractFactory('SBVImplementation');
   const implementationSBV = await SBVImplementation.deploy();
   await implementationSBV.deployed();
-  const SBV = await SBVProxy.deploy(implementationSBV.address, contractOwner.address, SBD.address);
+  const SBV = await SBVProxy.deploy(implementationSBV.address, contractOwner.address);
   await SBV.deployed();
+  generateDeployAddressLib(SBV.address, "Villages");
+  await hre.run("compile");
   console.log('StableBattle Villages deployed:', SBV.address);
 
   // write their addresses in the config files
@@ -115,8 +122,3 @@ ${SBV.address}`,
     });
   }
 }
-
-deployStableBattle().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});

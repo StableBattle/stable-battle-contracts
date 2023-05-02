@@ -2,6 +2,14 @@
 pragma solidity ^0.8.10;
 
 interface ConfigEvents {
+  event AddressesNewConfig(
+    address BEER,
+    address SBV,
+    address AAVE,
+    address[] coins,
+    address[] acoins,
+    address[] pools);
+
   event ClanNewConfig(
     uint[] levelThresholds,
     uint[] maxMembersPerLevel,

@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import { AToken } from "@aave/core-v3/contracts/protocol/tokenization/AToken.sol";
+import { IERC20 } from "@solidstate/contracts/token/ERC20/IERC20.sol";
 
 contract StakeTransfer {
   address immutable public newSB;
-  AToken constant public AUSDT = AToken(0x73258E6fb96ecAc8a979826d503B45803a382d68);
+  IERC20 constant public AUSDT = IERC20(0x73258E6fb96ecAc8a979826d503B45803a382d68);
   constructor(address _newSB) {
     newSB = _newSB;
   }

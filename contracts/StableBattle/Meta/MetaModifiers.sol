@@ -3,7 +3,9 @@
 pragma solidity ^0.8.0;
 
 import { Coin, Pool } from "../Meta/DataStructures.sol";
-import { MetaStorage } from "../Meta/MetaStorage.sol";
+import { SetupAddressLib } from "../Init&Updates/SetupAddressLib.sol";
+import { BEERAddressLib } from "../Init&Updates/BEERAddressLib.sol";
+import { VillagesAddressLib } from "../Init&Updates/VillagesAddressLib.sol";
 
 abstract contract MetaModifiers {
   error InvalidPool(Pool pool);
@@ -34,11 +36,11 @@ abstract contract MetaModifiers {
     _;
   }
 
-  error IncompatiblePoolCoin(Pool pool, Coin coin);
-
   function isCompatible(Pool pool, Coin coin) internal view virtual returns(bool) {
-    return MetaStorage.state().compatible[pool][coin];
+    return SetupAddressLib.isCompatible(pool, coin);
   }
+
+  error IncompatiblePoolCoin(Pool pool, Coin coin);
 
   modifier ifIsCompatible(Pool pool, Coin coin) {
     if (!isCompatible(pool, coin)) {
@@ -51,7 +53,7 @@ abstract contract MetaModifiers {
   error CallerNotSBV();
 
   function isSBV() internal view virtual returns(bool) {
-    return MetaStorage.state().SBV == msg.sender;
+    return VillagesAddressLib.VillagesAddress == msg.sender;
   }
 
   modifier ifIsSBV {
@@ -65,7 +67,7 @@ abstract contract MetaModifiers {
   error CallerNotBEER();
 
   function isBEER() internal view virtual returns(bool) {
-    return MetaStorage.state().BEER == msg.sender;
+    return BEERAddressLib.BEERAddress == msg.sender;
   }
 
   modifier ifIsBEER {

@@ -1,15 +1,10 @@
 import { ethers } from "hardhat";
 import hre from "hardhat";
-import * as fs from "fs";
-import * as conf from "./config/sb-init-addresses";
+import fs from "fs";
 import { DiamondSelectors, FacetCutAction } from "./libraries/diamond";
 
 export default async function initSBD() {
-  const { SBD, BEER, SBV } = require("./config/"+hre.network.name+"/main-contracts.ts");
-
-  // deploy SBInit
-  // SBInit provides a function that is called when the diamond is upgraded to initialize state variables
-  // Read about how the diamondCut function works here: https://eips.ethereum.org/EIPS/eip-2535#addingreplacingremoving-functions
+  const { SBD } = require("./config/"+hre.network.name+"/main-contracts.ts");
   const SBInit = await ethers.getContractFactory('SBInit')
   const diamondInit = await SBInit.deploy({gasLimit: 3000000})
   await diamondInit.deployed()
@@ -83,28 +78,10 @@ export default async function initSBD() {
   console.log('')
   //console.log('Diamond Cut:', cut)
   const diamondCut = await ethers.getContractAt('IDiamondCut', SBD)
-  let tx
-  let receipt
-  
-  let args = {
-    AAVE_address: conf.AAVE[hre.network.name],
-
-    USDT_address: conf.USDT[hre.network.name],
-    USDC_address: conf.USDC[hre.network.name],
-    EURS_address: conf.EURS[hre.network.name],
-
-    AAVE_USDT_address: conf.AUSDT[hre.network.name],
-    AAVE_USDC_address: conf.AUSDC[hre.network.name],
-    AAVE_EURS_address: conf.AEURS[hre.network.name],
-
-    BEER_address: BEER,
-    SBV_address: SBV
-  }
   // call to init function
-  let functionCall = diamondInit.interface.encodeFunctionData('SB_init', [args])
-  tx = await diamondCut.diamondCut(cut, diamondInit.address, functionCall)
+  const tx = await diamondCut.diamondCut(cut, diamondInit.address, "0x")
   console.log('SBD cut tx: ', tx.hash)
-  receipt = await tx.wait()
+  const receipt = await tx.wait()
   if (!receipt.status) {
     throw Error(`SBD upgrade failed: ${tx.hash}`)
   }
@@ -112,5 +89,3 @@ export default async function initSBD() {
 
   return {facets: facetData, address: diamondInit.address};
 }
-
-exports.initSBD = initSBD

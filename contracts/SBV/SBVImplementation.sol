@@ -27,11 +27,11 @@ contract SBVImplementation is
   }
 
   function _beforeTokenTransfer(
-        address from,
-        address to,
-        uint256 tokenId
-    ) internal virtual override {
-        super._beforeTokenTransfer(from, to, tokenId);
-        SBVHook().SBV_hook(tokenId, to, (from == address(0)));
-    }
+    address from,
+    address to,
+    uint256 tokenId
+  ) internal virtual override {
+    super._beforeTokenTransfer(from, to, tokenId);
+    SBVHook().SBV_hook(tokenId, to, (from == address(0)));
+  }
 }

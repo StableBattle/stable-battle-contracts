@@ -2,13 +2,12 @@
   "scripts": {
     "compile": "npx hardhat compile",
     "clean": "npx hardhat clean",
-    "deploy": "npx hardhat run --network goerli scripts/deployStableBattle.ts",
-    "populate": "npx hardhat run --network goerli scripts/deployPopulateEvents.ts",
+    "deploy": "npx hardhat run --network goerli deploy/deploy.ts",
+    "populate": "npx hardhat run --network goerli deploy/deployPopulateEvents.ts",
     "approve": "npx hardhat run --network goerli scripts/helpers/approveUSDT.ts",
     "test": "npx hardhat test"
   },
   "dependencies": {
-    "@aave/core-v3": "^1.13.1",
     "@nomiclabs/hardhat-waffle": "^2.0.3",
     "@openzeppelin/contracts": "^4.7.3",
     "@solidstate/contracts": "^0.0.41",

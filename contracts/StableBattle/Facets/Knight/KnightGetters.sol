@@ -7,7 +7,7 @@ import { Coin, Pool, Knight } from "../../Meta/DataStructures.sol";
 import { IKnightGetters } from "../Knight/IKnight.sol";
 
 import { KnightStorage } from "../Knight/KnightStorage.sol";
-import { MetaStorage } from "../../Meta/MetaStorage.sol";
+import { SetupAddressLib } from "../../Init&Updates/SetupAddressLib.sol";
 
 
 abstract contract KnightGetters {
@@ -166,7 +166,7 @@ abstract contract KnightGettersExternal is IKnightGetters, KnightGetters {
     return _totalKnightSupply();
   }
 
-  function getPoolAndCoinCompatibility(Pool p, Coin c) external view returns (bool) {
-    return MetaStorage.state().compatible[p][c];
+  function getPoolAndCoinCompatibility(Pool p, Coin c) external pure returns (bool) {
+    return SetupAddressLib.isCompatible(p, c);
   }
 }
