@@ -20,56 +20,15 @@ import { IBEER } from "../../BEER/IBEER.sol";
 
 import { ConfigEvents } from "./ConfigEvents.sol";
 
+import { BEERAddressLib } from "./BEERAddressLib.sol";
+
 uint constant ONE_HOUR_IN_SECONDS = 60 * 60;
 uint constant TWO_DAYS_IN_SECONDS = 2 * 24 * 60 * 60;
 uint constant TWO_WEEKS_IN_SECONDS = 60 * 60 * 24 * 14;
 
-
-library OldMetaStorage {
-  struct State {
-    // StableBattle EIP20 Token address
-    address SBT;
-    // StableBattle EIP721 Village address
-    address SBV;
-
-    mapping (Pool => address) pool;
-    mapping (Coin => address) coin;
-    mapping (Pool => mapping (Coin => bool)) compatible;
-    mapping (Coin => address) acoin;
-
-    mapping (address => bool) admins;
-  }
-
-  bytes32 internal constant STORAGE_SLOT = keccak256("Meta.storage");
-
-  function state() internal pure returns (State storage l) {
-    bytes32 slot = STORAGE_SLOT;
-    assembly {
-      l.slot := slot
-    }
-  }
-}
-
-contract SBUpgrade_0_0_6_to_0_0_18 is ConfigEvents {
-  struct Args {
-    address AAVE_address;
-
-    address USDT_address;
-    address USDC_address;
-    address EURS_address;
-
-    address AAVE_USDT_address;
-    address AAVE_USDC_address;
-    address AAVE_EURS_address;
-
-    address BEER_address;
-    address SBV_address;
-  }
-
-  function SB_update(Args memory _args) external {
-  // Just in case null hanging storage values from old meta storage
-    OldMetaStorage.state().admins[msg.sender] = false;
-    uint256 BEER_DECIMALS = IBEER(_args.BEER_address).decimals();
+contract DiamondInit is ConfigEvents {
+  function init() external {
+    uint256 BEER_DECIMALS = IBEER(BEERAddressLib.BEERAddress).decimals();
   // Assign supported interfaces
     LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
     ds.supportedInterfaces[type(IERC165).interfaceId] = true;

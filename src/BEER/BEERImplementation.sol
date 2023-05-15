@@ -6,6 +6,7 @@ import { ERC20BaseStorage } from "solidstate-solidity/token/ERC20/base/ERC20Base
 import { IBEER } from "./IBEER.sol";
 import { BEERGetters } from "./BEERGetters.sol";
 import { OwnableInternal } from "solidstate-solidity/access/ownable/OwnableInternal.sol";
+import { DiamondAddressLib } from "../StableBattle/Init&Updates/DiamondAddressLib.sol";
 
 contract BEERImplementation is 
   IBEER,
@@ -40,5 +41,9 @@ contract BEERImplementation is
     } else {
       return ERC20BaseStorage.layout().allowances[holder][spender];
     }
+  }
+
+  function diamondAddress() external pure returns(address) {
+    return DiamondAddressLib.DiamondAddress;
   }
 }

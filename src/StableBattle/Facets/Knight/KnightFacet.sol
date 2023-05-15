@@ -18,8 +18,6 @@ contract KnightFacet is
 {
   function mintKnight(Pool p, Coin c)
     external
-    ifIsValidCoin(c)
-    ifIsVaildPool(p)
     ifIsCompatible(p, c)
     returns (uint256)
   {
@@ -30,8 +28,6 @@ contract KnightFacet is
     external
     ifOwnsItem(knightId)
     ifIsKnight(knightId)
-    ifIsVaildPool(_knightPool(knightId))
-    ifIsValidCoin(_knightCoin(knightId))
     ifIsCompatible(_knightPool(knightId), _knightCoin(knightId))
   {
     //Leave or abandon clan

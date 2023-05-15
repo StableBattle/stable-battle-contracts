@@ -14,7 +14,7 @@ import { EtherscanFacetDummy } from "../Etherscan/EtherscanFacetDummy.sol";
 import { DebugFacetDummy } from "../Debug/DebugFacetDummy.sol";
 import { AccessControlDummy } from "../AccessControl/AccessControlDummy.sol";
 import { SiegeFacetDummy } from "../Siege/SiegeFacetDummy.sol";
-import { ConfigEvents } from "../../Init&Updates/SBInit.sol";
+import { ConfigEvents } from "../../Init&Updates/ConfigEvents.sol";
 
 import { IStableBattle } from "../../Meta/IStableBattle.sol";
 import { IERC165 } from "solidstate-solidity/interfaces/IERC165.sol";

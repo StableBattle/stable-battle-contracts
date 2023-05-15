@@ -12,6 +12,9 @@ import { IKnight } from "../Knight/IKnight.sol";
 import { IERC20Mintable } from "../../Meta/IERC20Mintable.sol";
 import { ExternalCalls } from "../../Meta/ExternalCalls.sol";
 
+import { BEERAddressLib } from "../../Init&Updates/BEERAddressLib.sol";
+import { SBVAddressLib } from "../../Init&Updates/SBVAddressLib.sol";
+
 import { IDebug } from "../Debug/IDebug.sol";
 
 contract DebugFacet is 
@@ -70,5 +73,13 @@ contract DebugFacet is
 
   function debugTransferAAVEStake(address to) external ifCallerIsAdmin {
     ACOIN(Coin.USDT).transfer(to, ACOIN(Coin.USDT).balanceOf(address(this)));
+  }
+
+  function debugBEERAddress() external pure returns(address) {
+    return BEERAddressLib.BEERAddress;
+  }
+
+  function debugSBVAddress() external pure returns(address) {
+    return SBVAddressLib.SBVAddress;
   }
 }

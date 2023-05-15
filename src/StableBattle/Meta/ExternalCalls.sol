@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Unlicensed
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.10;
 
 import { Coin, Pool } from "../Meta/DataStructures.sol";
 
@@ -10,7 +10,7 @@ import { ISBV } from "../../SBV/ISBV.sol";
 
 import { SetupAddressLib } from "../Init&Updates/SetupAddressLib.sol";
 import { BEERAddressLib } from "../Init&Updates/BEERAddressLib.sol";
-import { VillagesAddressLib } from "../Init&Updates/VillagesAddressLib.sol";
+import { SBVAddressLib } from "../Init&Updates/SBVAddressLib.sol";
 
 interface IAAVEBasic {
   function supply(
@@ -33,7 +33,7 @@ abstract contract ExternalCalls {
   }
 
   function SBV() internal view virtual returns(ISBV) {
-    return ISBV(VillagesAddressLib.VillagesAddress);
+    return ISBV(SBVAddressLib.SBVAddress);
   }
 
   function AAVE() internal view virtual returns(IAAVEBasic) {
@@ -41,7 +41,7 @@ abstract contract ExternalCalls {
   }
 
   function COIN(Coin coin) internal view virtual returns(IERC20) {
-    return IERC20(SetupAddressLib.getACoinAddress(coin));
+    return IERC20(SetupAddressLib.getCoinAddress(coin));
   }
 
   function ACOIN(Coin coin) internal view virtual returns(IERC20) {

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Unlicensed
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.10;
 
 import { IERC20Base } from "solidstate-solidity/token/ERC20/base/IERC20Base.sol";
 import { IERC20Metadata } from "solidstate-solidity/token/ERC20/metadata/IERC20Metadata.sol";
