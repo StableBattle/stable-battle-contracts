@@ -10,3 +10,6 @@
 [submodule "lib/solidity-stringutils"]
 	path = lib/solidity-stringutils
 	url = https://github.com/Arachnid/solidity-stringutils
+[submodule "lib/ERC721A-Upgradeable"]
+	path = lib/ERC721A-Upgradeable
+	url = https://github.com/chiru-labs/ERC721A-Upgradeable
