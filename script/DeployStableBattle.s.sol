@@ -87,18 +87,13 @@ contract DeployStableBattle is DiamondHelper, IDeployErrors {
 
     // Sanity checks
     for (uint i = 0; i < cut.length; i++) {
-      if(cut[i].facetAddress == address(0)) {
-        revert ZeroAddressInCut(i);
-      }
-      if(!(
-        cut[i].action == IDiamondCut.FacetCutAction.Add || 
-        cut[i].action == IDiamondCut.FacetCutAction.Replace ||
-        cut[i].action == IDiamondCut.FacetCutAction.Remove
-      )) {
-        revert InvalidActionInCut(i);
-      }
-      if(cut[i].functionSelectors.length == 0) {
-        revert NoSelectorsInCut(i);
+      if (cut[i].action != IDiamondCut.FacetCutAction.Remove) {
+        if(cut[i].facetAddress == address(0)) {
+          revert ZeroAddressInCut(i);
+        }
+        if(cut[i].functionSelectors.length == 0) {
+          revert NoSelectorsInCut(i);
+        }
       }
     }
 

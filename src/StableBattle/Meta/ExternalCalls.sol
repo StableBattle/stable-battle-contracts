@@ -33,14 +33,14 @@ abstract contract ExternalCalls {
   IAAVEBasic constant AAVE = IAAVEBasic(SetupAddressLib.AAVE);
 
   function COIN(Coin coin) internal pure virtual returns(IERC20) {
-    return IERC20(SetupAddressLib.getCoinAddress(coin));
+    return IERC20(SetupAddressLib.CoinAddress(coin));
   }
 
   function ACOIN(Coin coin) internal pure virtual returns(IERC20) {
-    return IERC20(SetupAddressLib.getACoinAddress(coin));
+    return IERC20(SetupAddressLib.ACoinAddress(coin));
   }
 
   function PoolAddress(Pool pool) internal pure virtual returns(address) {
-    return SetupAddressLib.getPoolAddress(pool);
+    return SetupAddressLib.PoolAddress(pool);
   }
 }
