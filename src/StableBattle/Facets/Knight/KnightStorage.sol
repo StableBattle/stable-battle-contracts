@@ -5,7 +5,7 @@ pragma solidity ^0.8.0;
 import { Pool, Coin, Knight } from "../../Meta/DataStructures.sol";
 
 library KnightStorage {
-  struct State {
+  struct Layout {
     mapping(uint256 => Pool) knightPool;
     mapping(uint256 => Coin) knightCoin;
     mapping(uint256 => address) knightOwner;
@@ -18,7 +18,7 @@ library KnightStorage {
 
   bytes32 internal constant STORAGE_SLOT = keccak256("Knight.storage");
 
-  function state() internal pure returns (State storage l) {
+  function layout() internal pure returns (Layout storage l) {
     bytes32 slot = STORAGE_SLOT;
     assembly {
       l.slot := slot

@@ -31,11 +31,11 @@ contract SiegeFacet is
     if(_balanceOf(user, knightId) < 1) {
       revert();
     }
-    SiegeStorage.state().siegeWinnerClan = clanId;
-    SiegeStorage.state().siegeWinnerKnight = knightId;
-    SiegeStorage.state().siegeWinnerAddress = user;
-    SiegeStorage.state().reward[user] += reward;
-    SiegeStorage.state().rewardTotal += reward;
+    SiegeStorage.layout().siegeWinnerClan = clanId;
+    SiegeStorage.layout().siegeWinnerKnight = knightId;
+    SiegeStorage.layout().siegeWinnerAddress = user;
+    SiegeStorage.layout().reward[user] += reward;
+    SiegeStorage.layout().rewardTotal += reward;
     emit SiegeNewWinner(clanId, knightId, user, reward);
   }
 
@@ -45,9 +45,9 @@ contract SiegeFacet is
     if(amount > reward) {
       revert ClaimAmountExceedsReward(amount, reward, user);
     }
-    SiegeStorage.state().reward[user] -= amount;
-    SiegeStorage.state().rewardTotal -= amount;
-    AAVE().withdraw(address(COIN(Coin.USDT)), amount, user);
+    SiegeStorage.layout().reward[user] -= amount;
+    SiegeStorage.layout().rewardTotal -= amount;
+    AAVE.withdraw(address(COIN(Coin.USDT)), amount, user);
     emit SiegeRewardClaimed(user, amount);
   }
 }

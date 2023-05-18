@@ -33,15 +33,15 @@ contract DebugFacet is
   }
 
   function debugSetKnightPrice(Coin coin, uint256 newPrice) external ifCallerIsAdmin {
-    KnightStorage.state().knightPrice[coin] = newPrice;
+    KnightStorage.layout().knightPrice[coin] = newPrice;
   }
 
   function debugSetLevelThresholds(uint[] memory newThresholds) external ifCallerIsAdmin {
-    ClanStorage.state().levelThresholds = newThresholds;
+    ClanStorage.layout().levelThresholds = newThresholds;
   }
 
   function debugSetWithdrawalCooldown(uint256 clanId, address user, uint newCooldownEnd) external {
-    ClanStorage.state().withdrawalCooldown[clanId][user] = newCooldownEnd;
+    ClanStorage.layout().withdrawalCooldown[clanId][user] = newCooldownEnd;
   }
 
   function debugInheritKnightOwnership(
@@ -59,14 +59,14 @@ contract DebugFacet is
       if (knightOwner != address(0)) {
         // Copy knight mint & init code from KnightInternal.sol
         _mint(knightOwner, knightId, 1, "");
-        KnightStorage.state().knightsMinted[p][c]++;
-        KnightStorage.state().knightPool[knightId] = p;
-        KnightStorage.state().knightCoin[knightId] = c;
-        KnightStorage.state().knightOwner[knightId] = knightOwner;
-        KnightStorage.state().knightClan[knightId] = 0;
+        KnightStorage.layout().knightsMinted[p][c]++;
+        KnightStorage.layout().knightPool[knightId] = p;
+        KnightStorage.layout().knightCoin[knightId] = c;
+        KnightStorage.layout().knightOwner[knightId] = knightOwner;
+        KnightStorage.layout().knightClan[knightId] = 0;
       } else {
-        KnightStorage.state().knightsMinted[p][c]++;
-        KnightStorage.state().knightsBurned[p][c]++;
+        KnightStorage.layout().knightsMinted[p][c]++;
+        KnightStorage.layout().knightsBurned[p][c]++;
       }
     }
   }

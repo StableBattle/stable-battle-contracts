@@ -22,6 +22,7 @@ import { Diamond } from "../src/StableBattle/Diamond/Diamond.sol";
 import { IStableBattle } from "../src/StableBattle/Meta/IStableBattle.sol";
 import { IItems } from "../src/StableBattle/Facets/Items/IItems.sol";
 import { DebugFacet } from "../src/StableBattle/Facets/Debug/DebugFacet.sol";
+import { IUpgradeableProxyOwnable } from "solidstate-solidity/proxy/upgradeable/IUpgradeableProxyOwnable.sol";
 
 //BEER
 import { BEERImplementation } from "../src/BEER/BEERImplementation.sol";
@@ -47,15 +48,19 @@ contract DeployStableBattle is DiamondHelper, IDeployErrors {
   bool constant verbose = false;
 
   function deployBEER(address owner, bytes32 salt) public returns (IBEER) {
-    BEERImplementation BEERImplementationContract = new BEERImplementation{salt: salt}();
-    BEERProxy BEERProxyContract = new BEERProxy{salt: salt}(address(BEERImplementationContract), owner);
+    BEERProxy BEERProxyContract = new BEERProxy{salt: salt}(owner);
+    BEERImplementation BEERImplementationContract = new BEERImplementation();
+    IUpgradeableProxyOwnable(payable(address(BEERProxyContract)))
+      .setImplementation(address(BEERImplementationContract));
     IBEER BEER = IBEER(address(BEERProxyContract));
     return BEER;
   }
 
   function deploySBV(address owner, bytes32 salt) public returns (ISBV) {
-    SBVImplementation SBVImplementationContract = new SBVImplementation{salt: salt}();
-    SBVProxy SBVProxyContract = new SBVProxy{salt: salt}(address(SBVImplementationContract), owner);
+    SBVProxy SBVProxyContract = new SBVProxy{salt: salt}(owner);
+    SBVImplementation SBVImplementationContract = new SBVImplementation();
+    IUpgradeableProxyOwnable(payable(address(SBVProxyContract)))
+      .setImplementation(address(SBVImplementationContract));
     ISBV SBV = ISBV(address(SBVProxyContract));
     return SBV;
   }
@@ -64,14 +69,14 @@ contract DeployStableBattle is DiamondHelper, IDeployErrors {
     //Deploy diamondCutFacet
     DiamondCutFacet diamondCutFacet = new DiamondCutFacet{salt: salt}();
     
-    //Deploy Diamond & regen its address lib
+    //Deploy StableBattle Diamond
     Diamond SBD = new Diamond{salt: salt}(owner, address(diamondCutFacet));
     IStableBattle StableBattle = IStableBattle(address(SBD));
 
-    //Deploy BEER & regen its address lib
+    //Deploy BEER
     IBEER BEER = deployBEER(owner, salt);
 
-    //Deploy Villages & regen its address lib
+    //Deploy Villages
     ISBV SBV = deploySBV(owner, salt);
 
     //deploy init contract

@@ -29,7 +29,7 @@ library GoerliAddressLib {
   address constant AUSDCAddress = 0x1Ee669290939f8a8864497Af3BC83728715265FF;
   address constant AEURSAddress = 0xaA63E0C86b531E2eDFE9F91F6436dF20C301963D;
 
-  address internal constant AAVE = 0x368EedF3f56ad10b9bC57eed4Dac65B26Bb667f6;
+  address internal constant AAVEAddress = 0x368EedF3f56ad10b9bC57eed4Dac65B26Bb667f6;
 
   bytes internal constant compatibility = abi.encode([
     //NONE
@@ -67,7 +67,7 @@ library GoerliAddressLib {
   }
 
   function getPoolAddress(Pool p) internal pure returns (address) {
-    if (p == Pool.AAVE) return AAVE;
+    if (p == Pool.AAVE) return AAVEAddress;
     return address(0);
   }
 

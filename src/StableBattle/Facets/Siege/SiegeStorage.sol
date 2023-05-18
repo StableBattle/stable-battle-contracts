@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 library SiegeStorage {
-  struct State {
+  struct Layout {
     //Id of a last clan that won the siege
     uint256 siegeWinnerClan;
     //Id of a last clan that won the siege
@@ -17,7 +17,7 @@ library SiegeStorage {
 
   bytes32 internal constant STORAGE_SLOT = keccak256("Siege.storage");
 
-  function state() internal pure returns (State storage l) {
+  function layout() internal pure returns (Layout storage l) {
     bytes32 slot = STORAGE_SLOT;
     assembly {
       l.slot := slot
@@ -25,22 +25,22 @@ library SiegeStorage {
   }
 
   function _siegeRewardTotal() internal view returns(uint256) {
-    return state().rewardTotal;
+    return layout().rewardTotal;
   }
 
   function _siegeReward(address user) internal view returns(uint256) {
-    return state().reward[user];
+    return layout().reward[user];
   }
 
   function _siegeWinnerClan() internal view returns(uint256) {
-    return state().siegeWinnerClan;
+    return layout().siegeWinnerClan;
   }
 
   function _siegeWinnerKnight() internal view returns(uint256) {
-    return state().siegeWinnerKnight;
+    return layout().siegeWinnerKnight;
   }
 
   function _siegeWinnerAddress() internal view returns(address) {
-    return state().siegeWinnerAddress;
+    return layout().siegeWinnerAddress;
   }
 }

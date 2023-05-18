@@ -7,23 +7,23 @@ import { ITreasuryGetters } from "../Treasury/ITreasury.sol";
 
 abstract contract TreasuryGetters {
   function _castleTax() internal view virtual returns(uint) {
-    return TreasuryStorage.state().castleTax;
+    return TreasuryStorage.layout().castleTax;
   }
 
   function _lastBlock() internal view virtual returns(uint) {
-    return TreasuryStorage.state().lastBlock;
+    return TreasuryStorage.layout().lastBlock;
   }
 
   function _rewardPerBlock() internal view virtual returns(uint) {
-    return TreasuryStorage.state().rewardPerBlock;
+    return TreasuryStorage.layout().rewardPerBlock;
   }
 
   function _villageAmount() internal view virtual returns(uint256) {
-    return TreasuryStorage.state().villageAmount;
+    return TreasuryStorage.layout().villageAmount;
   }
 
   function _villageOwner(uint256 villageId) internal view virtual returns(address) {
-    return TreasuryStorage.state().villageOwner[villageId];
+    return TreasuryStorage.layout().villageOwner[villageId];
   }
 }
 

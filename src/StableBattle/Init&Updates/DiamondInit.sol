@@ -40,24 +40,24 @@ contract DiamondInit is ConfigEvents {
   //Knight facet
     //Knight enumeration begins from type(uint256).max
     ///for better compactibility with adding new item types in the future
-    KnightStorage.state().knightPrice[Coin.USDT] = 1e9;
-    KnightStorage.state().knightPrice[Coin.USDC] = 1e9;
+    KnightStorage.layout().knightPrice[Coin.USDT] = 1e9;
+    KnightStorage.layout().knightPrice[Coin.USDC] = 1e9;
 
   //Gear Facet
     //all items in [256, 1e12) are gear
-    GearStorage.state().gearRangeLeft = 256; //type(uint8).max + 1 See unequipGear in GearFacet
-    GearStorage.state().gearRangeRight = 1e12;
+    GearStorage.layout().gearRangeLeft = 256; //type(uint8).max + 1 See unequipGear in GearFacet
+    GearStorage.layout().gearRangeRight = 1e12;
   
   //Totem Facet
     //all items in [1e12, 2e12) are totems
-    //TotemStorage.state().totemRangeLeft = 1e12;
-    //TotemStorage.state().totemRangeRight = 2e12;
+    //TotemStorage.layout().totemRangeLeft = 1e12;
+    //TotemStorage.layout().totemRangeRight = 2e12;
 
   //Items & ERC1155 Facet
     ERC1155MetadataStorage.layout().baseURI = "http://test1.stablebattle.io:5000/api/nft/";
 
   //Clan Facet
-    ClanStorage.state().levelThresholds = [
+    ClanStorage.layout().levelThresholds = [
       0,
       40000  * (10 ** BEER_DECIMALS),
       110000 * (10 ** BEER_DECIMALS),
@@ -65,27 +65,27 @@ contract DiamondInit is ConfigEvents {
       430000 * (10 ** BEER_DECIMALS),
       760000 * (10 ** BEER_DECIMALS)
     ];
-    ClanStorage.state().maxMembers = [10, 20, 22, 24, 26, 28, 30];
-    ClanStorage.state().clanActivityCooldownConst = TWO_DAYS_IN_SECONDS;
-    ClanStorage.state().clanKickCoolDownConst = ONE_HOUR_IN_SECONDS;
-    ClanStorage.state().clanStakeWithdrawCooldownConst = TWO_WEEKS_IN_SECONDS;
+    ClanStorage.layout().maxMembers = [10, 20, 22, 24, 26, 28, 30];
+    ClanStorage.layout().clanActivityCooldownConst = TWO_DAYS_IN_SECONDS;
+    ClanStorage.layout().clanKickCoolDownConst = ONE_HOUR_IN_SECONDS;
+    ClanStorage.layout().clanStakeWithdrawCooldownConst = TWO_WEEKS_IN_SECONDS;
 
     emit ClanNewConfig(
-      ClanStorage.state().levelThresholds,
-      ClanStorage.state().maxMembers,
-      ClanStorage.state().clanActivityCooldownConst,
-      ClanStorage.state().clanKickCoolDownConst,
-      ClanStorage.state().clanStakeWithdrawCooldownConst
+      ClanStorage.layout().levelThresholds,
+      ClanStorage.layout().maxMembers,
+      ClanStorage.layout().clanActivityCooldownConst,
+      ClanStorage.layout().clanKickCoolDownConst,
+      ClanStorage.layout().clanStakeWithdrawCooldownConst
     );
 
   //Treasury Facet
-    TreasuryStorage.state().castleTax = 37;
-    TreasuryStorage.state().lastBlock = block.number;
-    TreasuryStorage.state().rewardPerBlock = 100;
+    TreasuryStorage.layout().castleTax = 37;
+    TreasuryStorage.layout().lastBlock = block.number;
+    TreasuryStorage.layout().rewardPerBlock = 100;
 
   //AccessControl Facet
-    AccessControlStorage.state().role[msg.sender] = Role.ADMIN;
-    AccessControlStorage.state().role[0xFcB5320ad1C7c5221709A2d25bAdcb64B1ffF860] = Role.ADMIN;
-    AccessControlStorage.state().role[0xdff7D2C6E777aE6F15782571a17e5DEE8aa21326] = Role.ADMIN;
+    AccessControlStorage.layout().role[msg.sender] = Role.ADMIN;
+    AccessControlStorage.layout().role[0xFcB5320ad1C7c5221709A2d25bAdcb64B1ffF860] = Role.ADMIN;
+    AccessControlStorage.layout().role[0xdff7D2C6E777aE6F15782571a17e5DEE8aa21326] = Role.ADMIN;
   }
 }

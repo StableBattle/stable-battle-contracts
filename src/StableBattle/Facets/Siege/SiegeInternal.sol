@@ -8,6 +8,6 @@ import { SiegeStorage } from "../Siege/SiegeStorage.sol";
 contract SiegeInternal is ClanGetters {
   function _setSiegeWinnerKnight(uint256 clanId) internal returns(uint256 knightId) {
     knightId = _clanLeader(clanId);
-    SiegeStorage.state().siegeWinnerKnight = knightId;
+    SiegeStorage.layout().siegeWinnerKnight = knightId;
   }
 }

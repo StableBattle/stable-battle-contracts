@@ -5,7 +5,7 @@ pragma solidity ^0.8.0;
 import { gearSlot } from "../../Meta/DataStructures.sol";
 
 library GearStorage {
-  struct State {
+  struct Layout {
     uint256 gearRangeLeft;
     uint256 gearRangeRight;
     //knightId => gearSlot => itemId
@@ -25,7 +25,7 @@ library GearStorage {
 
   bytes32 internal constant STORAGE_SLOT = keccak256("Gear.storage");
 
-  function state() internal pure returns (State storage l) {
+  function layout() internal pure returns (Layout storage l) {
     bytes32 slot = STORAGE_SLOT;
     assembly {
       l.slot := slot

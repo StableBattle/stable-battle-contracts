@@ -21,28 +21,28 @@ abstract contract KnightGetters {
   }
 
   function _knightCoin(uint256 knightId) internal view virtual returns(Coin) {
-    return KnightStorage.state().knightCoin[knightId];
+    return KnightStorage.layout().knightCoin[knightId];
   }
 
   function _knightPool(uint256 knightId) internal view virtual returns(Pool) {
-    return KnightStorage.state().knightPool[knightId];
+    return KnightStorage.layout().knightPool[knightId];
   }
 
   function _knightOwner(uint256 knightId) internal view virtual returns(address) {
-    return KnightStorage.state().knightOwner[knightId];
+    return KnightStorage.layout().knightOwner[knightId];
   }
 
   function _knightClan(uint256 knightId) internal view virtual returns(uint256) {
-    return KnightStorage.state().knightClan[knightId];
+    return KnightStorage.layout().knightClan[knightId];
   }
 
   function _knightPrice(Coin coin) internal view virtual returns (uint256) {
-    return KnightStorage.state().knightPrice[coin];
+    return KnightStorage.layout().knightPrice[coin];
   }
 
   //returns amount of minted knights for a particular coin & pool
   function _knightsMinted(Pool pool, Coin coin) internal view virtual returns (uint256) {
-    return KnightStorage.state().knightsMinted[pool][coin];
+    return KnightStorage.layout().knightsMinted[pool][coin];
   }
 
   //returns amount of minted knights for any coin in a particular pool
@@ -68,7 +68,7 @@ abstract contract KnightGetters {
 
   //returns amount of burned knights for a particular coin & pool
   function _knightsBurned(Pool pool, Coin coin) internal view virtual returns (uint256) {
-    return KnightStorage.state().knightsBurned[pool][coin];
+    return KnightStorage.layout().knightsBurned[pool][coin];
   }
 
   //returns amount of burned knights for any coin in a particular pool

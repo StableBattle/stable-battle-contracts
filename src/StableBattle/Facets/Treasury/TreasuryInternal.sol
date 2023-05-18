@@ -35,15 +35,15 @@ contract TreasuryInternal is
     owners[villageAmount] = _siegeWinnerAddress();
     rewards[villageAmount] = reward * _castleTax();
     //Mint reward tokens
-    TreasuryStorage.state().lastBlock = block.number;
-    BEER().treasuryMint(owners, rewards);
+    TreasuryStorage.layout().lastBlock = block.number;
+    BEER.treasuryMint(owners, rewards);
   }
 
   function _setTax(uint8 tax) internal {
     if (tax > 90) {
       revert TreasuryFacet_CantSetTaxAboveThreshold(90);
     }
-    TreasuryStorage.state().castleTax = tax;
+    TreasuryStorage.layout().castleTax = tax;
     emit NewTaxSet(tax);
   }
 }

@@ -9,19 +9,19 @@ import { ERC1155BaseInternal } from "solidstate-solidity/token/ERC1155/base/ERC1
 
 abstract contract GearGetters is ERC1155BaseInternal {
   function _gearSlotOf(uint256 itemId) internal view virtual returns(gearSlot) {
-    return GearStorage.state().gearSlot[itemId];
+    return GearStorage.layout().gearSlot[itemId];
   }
 
   function _gearName(uint256 itemId) internal view virtual returns(string memory) {
-    return GearStorage.state().gearName[itemId];
+    return GearStorage.layout().gearName[itemId];
   }
 
   function _equipmentInSlot(uint256 knightId, gearSlot slot) internal view virtual returns(uint256) {
-    return GearStorage.state().knightSlotItem[knightId][slot];
+    return GearStorage.layout().knightSlotItem[knightId][slot];
   }
 
   function _notEquippable(address account, uint256 itemId) internal view virtual returns(uint256) {
-    return GearStorage.state().notEquippable[account][itemId];
+    return GearStorage.layout().notEquippable[account][itemId];
   }
 
   function _gearEquipable(address account, uint256 itemId) internal view returns(uint256) { 

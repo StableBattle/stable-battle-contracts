@@ -32,8 +32,8 @@ contract GearInternal is
     require(slot != gearSlot.NONE,
       "ForgeFacet: Can't create gear of type NONE");
 
-    GearStorage.state().gearSlot[id] = slot;
-    GearStorage.state().gearName[id] = name;
+    GearStorage.layout().gearSlot[id] = slot;
+    GearStorage.layout().gearName[id] = name;
     emit GearCreated(id, slot, name);
   }
 
@@ -46,11 +46,11 @@ contract GearInternal is
       require(_gearEquipable(msg.sender, itemId) > 0,
         "GearFacet: This item is not equipable (either equipped on other character or part of ongoing lending or sell order)");
       //Equip new gear
-      GearStorage.state().knightSlotItem[knightId][_gearSlotOf(itemId)] = itemId;
-      GearStorage.state().notEquippable[msg.sender][itemId]++;
+      GearStorage.layout().knightSlotItem[knightId][_gearSlotOf(itemId)] = itemId;
+      GearStorage.layout().notEquippable[msg.sender][itemId]++;
       //Unequip old gear
       if (oldItemId != 0) {
-        GearStorage.state().notEquippable[msg.sender][oldItemId]--;
+        GearStorage.layout().notEquippable[msg.sender][oldItemId]--;
       }
       emit GearEquipped(knightId, _gearSlotOf(itemId), itemId);
     }
@@ -59,10 +59,10 @@ contract GearInternal is
   function _unequipItem(uint256 knightId, gearSlot slot) internal {
     uint256 oldItemId = _equipmentInSlot(knightId, slot);
     //Uneqip slot
-    GearStorage.state().knightSlotItem[knightId][slot] = 0;
+    GearStorage.layout().knightSlotItem[knightId][slot] = 0;
     //Unequip item
     if (oldItemId != 0) {
-      GearStorage.state().notEquippable[msg.sender][oldItemId]--;
+      GearStorage.layout().notEquippable[msg.sender][oldItemId]--;
     }
   }
 

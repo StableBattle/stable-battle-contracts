@@ -14,57 +14,24 @@ import { Script } from "forge-std/Script.sol";
 import { RegenLibs } from  "./RegenLibs.s.sol";
 import { console2 } from  "forge-std/console2.sol";
 
-contract GenerateDiamondAddressLib is Script, RegenLibs {
+contract GenerateAddressLib is Script, RegenLibs {
   function run() public {
     uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
     address deployerAddress = vm.envAddress("PUBLIC_KEY");
 
-    vm.broadcast(deployerPrivateKey);
-    //Precalc diamondCutFacet address
+    vm.startBroadcast(deployerPrivateKey);
+    //Precalc StableBattle Diamond address
     DiamondCutFacet diamondCutFacet = new DiamondCutFacet{salt: 0}();
     Diamond StableBattle = new Diamond{salt: 0}(deployerAddress, address(diamondCutFacet));
-    vm.stopBroadcast();
+    //Precalc BEER address
+    BEERProxy BEER = new BEERProxy{salt: 0}(address(deployerAddress));
+    //Precalc SBV address
+    SBVProxy SBV = new SBVProxy{salt: 0}(address(deployerAddress));
 
-    console2.log("Diamond address: ", address(StableBattle));
+    console2.log("StableBattle address: ", address(StableBattle));
+    console2.log("BEER address: ", address(BEER));
+    console2.log("SBV address: ", address(SBV));
 
   //updateAddressLib(address(StableBattle), "Diamond");
-  }
-}
-
-contract GenerateBEERAddressLib is Script, RegenLibs {
-  function run() public {
-    uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
-    address deployerAddress = vm.envAddress("PUBLIC_KEY");
-
-    vm.broadcast(deployerPrivateKey);
-    //Precalc BEER Implementation address
-    BEERImplementation BEERImplementationContract = new BEERImplementation{salt: 0}();
-
-    //Precalc BEER Proxy address
-    BEERProxy BEERProxyContract = new BEERProxy{salt: 0}(address(BEERImplementationContract), deployerAddress);
-    vm.stopBroadcast();
-
-    console2.log("BEER address: ", address(BEERProxyContract));
-
-  //updateAddressLib(address(BEERProxyContract), "BEER");
-  }
-}
-
-contract GenerateSBVAddressLib is Script, RegenLibs {
-  function run() public {
-    uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
-    address deployerAddress = vm.envAddress("PUBLIC_KEY");
-
-    vm.broadcast(deployerPrivateKey);
-    //Precalc SBV Implementation address
-    SBVImplementation SBVImplementationContract = new SBVImplementation{salt: 0}();
-
-    //Precalc SBV Proxy address
-    SBVProxy SBVProxyContract = new SBVProxy{salt: 0}(address(SBVImplementationContract), deployerAddress);
-    vm.stopBroadcast();
-
-    console2.log("Villages address: ", address(SBVProxyContract));
-
-  //updateAddressLib(address(SBVProxyContract), "SBV");
   }
 }

@@ -7,7 +7,7 @@ import { IAccessControlErrors } from "./IAccessControl.sol";
 
 abstract contract AccessControlModifiers is IAccessControlErrors {
   function callerIsAdmin() internal view returns(bool) {
-    return AccessControlStorage.state().role[msg.sender] == Role.ADMIN;
+    return AccessControlStorage.layout().role[msg.sender] == Role.ADMIN;
   }
 
   modifier ifCallerIsAdmin() {

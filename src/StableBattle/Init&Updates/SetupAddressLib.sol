@@ -6,42 +6,46 @@ import { Coin, Pool } from "../Meta/DataStructures.sol";
 import { GoerliAddressLib } from "./GoerliAddressLib.sol";
 
 library SetupAddressLib {
+  address constant AAVE = GoerliAddressLib.AAVEAddress;
+
+  address constant USDT = GoerliAddressLib.USDTAddress;
+  address constant USDC = GoerliAddressLib.USDCAddress;
+  address constant EURS = GoerliAddressLib.EURSAddress;
+
+  address constant AUSDT = GoerliAddressLib.AUSDTAddress;
+  address constant AUSDC = GoerliAddressLib.AUSDCAddress;
+  address constant AEURS = GoerliAddressLib.AEURSAddress;
+
   function getCoinAddress(Coin c) internal pure returns (address) {
   //return abi.decode(GoerliAddressLib.coin, (address[]))[uint8(c)];
-    if(c == Coin.NONE) return address(0);
-    if(c == Coin.TEST) return address(0);
-    if(c == Coin.USDT) return GoerliAddressLib.USDTAddress;
-    if(c == Coin.USDC) return GoerliAddressLib.USDCAddress;
-    if(c == Coin.EURS) return GoerliAddressLib.EURSAddress;
-    return address(0);
+    return
+      c == Coin.USDT ? USDT :
+      c == Coin.USDC ? USDC :
+      c == Coin.EURS ? EURS :
+      address(0);
   }
 
   function getACoinAddress(Coin c) internal pure returns (address) {
   //return abi.decode(GoerliAddressLib.acoin, (address[]))[uint8(c)];
-    if(c == Coin.NONE) return address(0);
-    if(c == Coin.TEST) return address(0);
-    if(c == Coin.USDT) return GoerliAddressLib.AUSDTAddress;
-    if(c == Coin.USDC) return GoerliAddressLib.AUSDCAddress;
-    if(c == Coin.EURS) return GoerliAddressLib.AEURSAddress;
-    return address(0);
+    return
+      c == Coin.USDT ? AUSDT :
+      c == Coin.USDC ? AUSDC :
+      c == Coin.EURS ? AEURS :
+      address(0);
   }
 
   function getPoolAddress(Pool p) internal pure returns (address) {
-    if (p == Pool.AAVE) return GoerliAddressLib.AAVE;
-    return address(0);
+    return
+      p == Pool.AAVE ? AAVE :
+      address(0);
   }
 
   function isCompatible(Pool p, Coin c) internal pure returns (bool) {
   //return abi.decode(GoerliAddressLib.compatibility, (bool[][]))[uint8(p)][uint8(c)];
-    if(p == Pool.NONE) return false;
-    if(p == Pool.TEST) return false;
-    if(p == Pool.AAVE) {
-      if(c == Coin.NONE) return false;
-      if(c == Coin.TEST) return false;
-      if(c == Coin.USDT) return true;
-      if(c == Coin.USDC) return false;
-      if(c == Coin.EURS) return false;
-    }
-    return false;
+    return
+      p == Pool.AAVE ?
+        c == Coin.USDT ? true :
+        false :
+      false;
   }
 }

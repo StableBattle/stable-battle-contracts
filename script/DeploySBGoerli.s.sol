@@ -15,7 +15,7 @@ contract DeploySBGoerli is Script, DeployStableBattle {
 
     vm.startBroadcast(deployerPrivateKey);
 
-    (IStableBattle StableBattle, IBEER BEER, ISBV SBV ) = deployStableBattle(deployerAddress, 0);
+    (IStableBattle StableBattle, IBEER BEER, ISBV SBV) = deployStableBattle(deployerAddress, 0);
 
     vm.stopBroadcast();
 

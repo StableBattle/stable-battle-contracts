@@ -28,27 +28,19 @@ interface IAAVEBasic {
 }
 
 abstract contract ExternalCalls {
-  function BEER() internal view virtual returns(IBEER) {
-    return IBEER(BEERAddressLib.BEERAddress);
-  }
+  IBEER constant BEER = IBEER(BEERAddressLib.BEERAddress);
+  ISBV constant SBV = ISBV(SBVAddressLib.SBVAddress);
+  IAAVEBasic constant AAVE = IAAVEBasic(SetupAddressLib.AAVE);
 
-  function SBV() internal view virtual returns(ISBV) {
-    return ISBV(SBVAddressLib.SBVAddress);
-  }
-
-  function AAVE() internal view virtual returns(IAAVEBasic) {
-    return IAAVEBasic(SetupAddressLib.getPoolAddress(Pool.AAVE));
-  }
-
-  function COIN(Coin coin) internal view virtual returns(IERC20) {
+  function COIN(Coin coin) internal pure virtual returns(IERC20) {
     return IERC20(SetupAddressLib.getCoinAddress(coin));
   }
 
-  function ACOIN(Coin coin) internal view virtual returns(IERC20) {
+  function ACOIN(Coin coin) internal pure virtual returns(IERC20) {
     return IERC20(SetupAddressLib.getACoinAddress(coin));
   }
 
-  function PoolAddress(Pool pool) internal view virtual returns(address) {
+  function PoolAddress(Pool pool) internal pure virtual returns(address) {
     return SetupAddressLib.getPoolAddress(pool);
   }
 }
