@@ -3,5 +3,5 @@
 pragma solidity ^0.8.0;
 
 library DiamondAddressLib {
-  address internal constant DiamondAddress = 0xBe008a309FE5BC229a009e0359e99d4e3Cd402e1;
+  address internal constant DiamondAddress = 0x6551C3EC64aA6E97097467Bd0fD69B4D49c155Be;
 }

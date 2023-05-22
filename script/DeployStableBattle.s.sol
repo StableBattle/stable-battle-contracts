@@ -36,14 +36,12 @@ import { ISBV } from "../src/SBV/ISBV.sol";
 
 //Helper scripts
 import { DiamondHelper } from  "./DiamondHelper.s.sol";
-import { Strings } from "openzeppelin-contracts/utils/Strings.sol";
 import { strings } from "solidity-stringutils/strings.sol";
 import { IDeployErrors } from "./IDeployErrors.s.sol";
 
 import { console2 } from  "forge-std/console2.sol";
 
 contract DeployStableBattle is DiamondHelper, IDeployErrors {
-  using Strings for uint256;
   using strings for *;
   bool constant verbose = false;
 
@@ -85,17 +83,6 @@ contract DeployStableBattle is DiamondHelper, IDeployErrors {
     // Deploy facets and add them to FacetCut array
     IDiamondCut.FacetCut[] memory cut = deployFacets();
 
-    // Sanity checks
-    for (uint i = 0; i < cut.length; i++) {
-      if (cut[i].action != IDiamondCut.FacetCutAction.Remove) {
-        if(cut[i].facetAddress == address(0)) {
-          revert ZeroAddressInCut(i);
-        }
-        if(cut[i].functionSelectors.length == 0) {
-          revert NoSelectorsInCut(i);
-        }
-      }
-    }
 
     // Debug output
     if(verbose) {
@@ -196,6 +183,18 @@ contract DeployStableBattle is DiamondHelper, IDeployErrors {
       action: IDiamondCut.FacetCutAction.Add,
       functionSelectors: generateSelectors(type(TreasuryFacet).name)
     }));
+
+    // Sanity checks
+    for (uint i = 0; i < cut.length; i++) {
+      if (cut[i].action != IDiamondCut.FacetCutAction.Remove) {
+        if(cut[i].facetAddress == address(0)) {
+          revert ZeroAddressInCut(i);
+        }
+        if(cut[i].functionSelectors.length == 0) {
+          revert NoSelectorsInCut(i);
+        }
+      }
+    }
 
     return cut;
   }

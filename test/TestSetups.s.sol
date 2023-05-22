@@ -6,12 +6,12 @@ import { Pool, Coin } from "../src/StableBattle/Meta/DataStructures.sol";
 import { IStableBattle } from "../src/StableBattle/Meta/IStableBattle.sol";
 import { IBEER } from "../src/BEER/IBEER.sol";
 import { ISBV } from "../src/SBV/ISBV.sol";
-import { IERC20Metadata } from "openzeppelin-contracts/token/ERC20/extensions/IERC20Metadata.sol";
+import { IERC20 } from "openzeppelin-contracts/token/ERC20/IERC20.sol";
 import { DeployStableBattle } from "../script/DeployStableBattle.s.sol";
 import { SetupAddressLib } from "../src/StableBattle/Init&Updates/SetupAddressLib.sol";
 
 abstract contract TestSetups is Test, DeployStableBattle {
-  IERC20Metadata constant USDT = IERC20Metadata(SetupAddressLib.USDT);
+  IERC20 constant USDT = IERC20(SetupAddressLib.USDT);
   address immutable deployerAddress = vm.envAddress("PUBLIC_KEY");
   address immutable richUSDTAddress = vm.envAddress("PUBLIC_KEY");
   string goerliForkURL = vm.envString("GOERLI_INFURA_URL");

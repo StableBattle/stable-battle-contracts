@@ -2,6 +2,14 @@
 src = "src"
 out = "out"
 libs = ["lib"]
+remappings = [
+  "ds-test/=lib/forge-std/lib/ds-test/src/",
+  "forge-std/=lib/forge-std/src/",
+  "openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+  "solidity-stringutils/=lib/solidity-stringutils/src/",
+  "solidstate-solidity/=lib/solidstate-solidity/contracts/",
+  "ERC721A-Upgradeable/=lib/ERC721A-Upgradeable/contracts"
+]
 fs_permissions = [{ access = "read-write", path = "./"}]
 ffi = true
 deny_warnings = false
