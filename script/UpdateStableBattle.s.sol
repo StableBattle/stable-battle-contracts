@@ -202,7 +202,7 @@ contract UpdateStableBattle is DiamondHelper {
 {
     bytes4[] memory selectors = generateSelectors(facetName);
     // Find facet to replace
-    uint256 facetIndex;
+    uint256 facetIndex = type(uint256).max;
     for (uint256 i = 0; i < facets.length; i++) {
       for(uint256 j = 0; j < facets[i].functionSelectors.length; j++) {
         for(uint256 k = 0; k < selectors.length; k++) {
@@ -212,6 +212,14 @@ contract UpdateStableBattle is DiamondHelper {
           }
         }
       }
+    }
+    if(facetIndex == type(uint256).max) {
+      cut = new IDiamondCut.FacetCut[](1);
+      cut[0] = IDiamondCut.FacetCut({
+        facetAddress: facetAddress,
+        action: IDiamondCut.FacetCutAction.Add,
+        functionSelectors: selectors
+      }); 
     }
     IDiamondLoupe.Facet memory oldFacet = facets[facetIndex];
     bytes4[] memory oldSelectors = oldFacet.functionSelectors;
