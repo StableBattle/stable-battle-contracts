@@ -2,7 +2,7 @@ import hre, { ethers } from "hardhat";
 import { SBD as SBD_GO, BEER as BEER_GO } from "./config/goerli/main-contracts";
 import { SBD as SBD_HH, BEER as BEER_HH } from "./config/hardhat/main-contracts";
 import { AAVE as AAVE_address, AUSDT as AUSDT_address, USDT as UDST_address } from "./config/sb-init-addresses";
-import * as fs from "fs";
+import fs from "fs";
 import verify from "./verify";
 
 export default async function deployPopulateEvents() {
@@ -45,8 +45,3 @@ export default async function deployPopulateEvents() {
   }
   return populateEvents.address;
 }
-
-deployPopulateEvents().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});

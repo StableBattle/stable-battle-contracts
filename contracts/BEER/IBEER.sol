@@ -13,4 +13,6 @@ interface IBEER is ISolidStateERC20, IBEEREvents {
   function burn(address account, uint256 amount) external;
 
   function treasuryMint(address[] memory accounts, uint256[] memory amounts) external;
+
+  function diamondAddress() external pure returns(address);
 }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Unlicensed
-pragma solidity ^0.8.10;
+pragma solidity ^0.8.0;
 
 import { Coin, Pool, ClanRole } from "../../Meta/DataStructures.sol";
 import { IKnight } from "../Knight/IKnight.sol";
@@ -18,8 +18,6 @@ contract KnightFacet is
 {
   function mintKnight(Pool p, Coin c)
     external
-    ifIsValidCoin(c)
-    ifIsVaildPool(p)
     ifIsCompatible(p, c)
     returns (uint256)
   {
@@ -30,8 +28,6 @@ contract KnightFacet is
     external
     ifOwnsItem(knightId)
     ifIsKnight(knightId)
-    ifIsVaildPool(_knightPool(knightId))
-    ifIsValidCoin(_knightCoin(knightId))
     ifIsCompatible(_knightPool(knightId), _knightCoin(knightId))
   {
     //Leave or abandon clan

@@ -5,6 +5,7 @@ import { ISBV } from "./ISBV.sol";
 import { SolidStateERC721 } from "@solidstate/contracts/token/ERC721/SolidStateERC721.sol";
 import { SBVGetters } from "./SBVGetters.sol";
 import { OwnableInternal } from "@solidstate/contracts/access/ownable/OwnableInternal.sol";
+import { DiamondAddressLib } from "../StableBattle/Init&Updates/DiamondAddressLib.sol";
 
 contract SBVImplementation is 
   ISBV,
@@ -33,5 +34,9 @@ contract SBVImplementation is
   ) internal virtual override {
     super._beforeTokenTransfer(from, to, tokenId);
     SBVHook().SBV_hook(tokenId, to, (from == address(0)));
+  }
+
+  function diamondAddress() external pure returns(address) {
+    return DiamondAddressLib.DiamondAddress;
   }
 }

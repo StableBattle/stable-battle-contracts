@@ -79,6 +79,8 @@ export default async function initSBD() {
   //console.log('Diamond Cut:', cut)
   const diamondCut = await ethers.getContractAt('IDiamondCut', SBD)
   // call to init function
+  const initPayload = diamondInit.interface.encodeFunctionData('init')
+  console.log('initPayload:', initPayload)
   const tx = await diamondCut.diamondCut(cut, diamondInit.address, "0x")
   console.log('SBD cut tx: ', tx.hash)
   const receipt = await tx.wait()

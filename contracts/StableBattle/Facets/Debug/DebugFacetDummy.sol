@@ -24,4 +24,8 @@ contract DebugFacetDummy is IDebug {
   function debugSetWithdrawalCooldown(uint256 clanId, address user, uint newCooldownEnd) external {}
 
   function debugInheritKnightOwnership(address oldContractAddress, uint256 firstIdOffset, uint256 lastIdOffset) external {}
+
+  function debugBEERAddress() external pure returns(address) {}
+
+  function debugSBVAddress() external pure returns(address) {}
 }

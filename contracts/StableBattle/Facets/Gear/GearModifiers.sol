@@ -6,8 +6,8 @@ import { IGearErrors } from "../Gear/IGear.sol";
 
 abstract contract GearModifiers is IGearErrors {
   function isGear(uint256 id) internal view returns(bool) {
-    return id >= GearStorage.state().gearRangeLeft && 
-           id <  GearStorage.state().gearRangeRight;
+    return id >= GearStorage.layout().gearRangeLeft && 
+           id <  GearStorage.layout().gearRangeRight;
   }
   
   modifier ifIsGear(uint256 id) {

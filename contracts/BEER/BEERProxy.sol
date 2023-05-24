@@ -7,15 +7,15 @@ import { ERC20MetadataStorage } from "@solidstate/contracts/token/ERC20/metadata
 contract BEERProxy is UpgradeableProxyOwnable {
   using ERC20MetadataStorage for ERC20MetadataStorage.Layout;
   
-  constructor(address implementation, address owner) {
+  constructor(address owner) {
   //Init ERC20
     ERC20MetadataStorage.Layout storage l = ERC20MetadataStorage.layout();
 
-    l.setName("BEER");
-    l.setSymbol("BEER");
-    l.setDecimals(18);
+    l.name = "BEER";
+    l.symbol = "BEER";
+    l.decimals = 18;
   //Set implementation
-    _setImplementation(implementation);
+  //_setImplementation(implementation);
   //Set owner
     _transferOwnership(owner);
   }

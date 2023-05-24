@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 
 import { KnightGetters } from "./KnightGetters.sol";
 import { IKnightErrors } from "./IKnight.sol";
+import { ClanStorage } from "../Clan/ClanStorage.sol";
 
 abstract contract KnightModifiers is IKnightErrors, KnightGetters {
 
@@ -51,12 +52,13 @@ abstract contract KnightModifiers is IKnightErrors, KnightGetters {
   }
 
   function notInClan(uint256 knightId) internal view virtual returns(bool) {
-    return _knightClan(knightId) == 0;
+    uint256 clanId = _knightClan(knightId);
+    // Either not in clan or clan abandoned
+    return clanId == 0 || ClanStorage.layout().clanLeader[clanId] == 0;
   }
 
   modifier ifNotInClan(uint256 knightId) {
-    uint256 clanId = _knightClan(knightId);
-    if (clanId != 0) {
+    if (!notInClan(knightId)) {
     //revert KnightModifiers_KnightInSomeClan(knightId, clanId);
       revert("Knight Modifiers: Knight In Some Clan");
     }

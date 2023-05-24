@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: Unlicensed
-
-pragma solidity ^0.8.10;
+pragma solidity ^0.8.0;
 
 import { Coin, Pool, Knight, ClanRole } from "../../Meta/DataStructures.sol";
 
@@ -33,17 +32,17 @@ abstract contract KnightInternal is
       COIN(c).approve(PoolAddress(p), knightPrice);
     }
     if (p == Pool.AAVE) {
-      AAVE().supply(address(COIN(c)), knightPrice, address(this), 0);
+      AAVE.supply(address(COIN(c)), knightPrice, address(this), 0);
     }
     // Mint NFT for the user
     uint256 knightId = type(uint256).max - _knightsMintedTotal();
     _mint(msg.sender, knightId, 1, "");
-    KnightStorage.state().knightsMinted[p][c]++;
+    KnightStorage.layout().knightsMinted[p][c]++;
     //Initialize Knight
-    KnightStorage.state().knightPool[knightId] = p;
-    KnightStorage.state().knightCoin[knightId] = c;
-    KnightStorage.state().knightOwner[knightId] = msg.sender;
-    KnightStorage.state().knightClan[knightId] = 0;
+    KnightStorage.layout().knightPool[knightId] = p;
+    KnightStorage.layout().knightCoin[knightId] = c;
+    KnightStorage.layout().knightOwner[knightId] = msg.sender;
+    KnightStorage.layout().knightClan[knightId] = 0;
 
     emit KnightMinted(knightId, msg.sender, p, c);
     return knightId;
@@ -53,16 +52,13 @@ abstract contract KnightInternal is
     Pool p = _knightPool(knightId);
     Coin c = _knightCoin(knightId);
     // Null the knight
-    KnightStorage.state().knightPool[knightId] = Pool.NONE;
-    KnightStorage.state().knightCoin[knightId] = Coin.NONE;
-    KnightStorage.state().knightOwner[knightId] = address(0);
-    KnightStorage.state().knightClan[knightId] = 0;
+    KnightStorage.layout().knightOwner[knightId] = address(0);
     // Burn NFT
     _burn(msg.sender, knightId, 1);
-    KnightStorage.state().knightsBurned[p][c]++;
+    KnightStorage.layout().knightsBurned[p][c]++;
     if (p == Pool.AAVE) {
     // Withraw price in Coin from AAVE to the user
-      AAVE().withdraw(address(COIN(c)), _knightPrice(c), msg.sender);
+      AAVE.withdraw(address(COIN(c)), _knightPrice(c), msg.sender);
     }
     emit KnightBurned(knightId, msg.sender, p, c);
   }

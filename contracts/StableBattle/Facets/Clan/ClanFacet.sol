@@ -111,7 +111,7 @@ contract ClanFacet is
     ifClanExists(clanId)
   { 
     _clanStake(clanId, amount); 
-    BEER().transferFrom(msg.sender, address(this), amount);
+    BEER.transferFrom(msg.sender, address(this), amount);
   }
 
   /**
@@ -147,11 +147,11 @@ contract ClanFacet is
       //revert ClanModifiers_WithdrawalAmountAboveStake(clanId, user, amount);
         revert("Withdrawal amount above stake");
       } else {
-        ClanStorage.state().pendingWithdrawal[clanId].set(user, _stakeOf(clanId, user));
+        ClanStorage.layout().pendingWithdrawal[clanId].set(user, _stakeOf(clanId, user));
       }
     }
     _clanWithdraw(clanId, amount);
-    BEER().transfer(user, amount);
+    BEER.transfer(user, amount);
   }
 
 //Join, Leave and Invite Proposals
@@ -253,7 +253,7 @@ contract ClanFacet is
       _kick(knightId, clanId);
       //Moderators go on one hour cooldown after kick
       if (callerRole == ClanRole.MOD) {
-        ClanStorage.state().clanKickCooldown[callerId] = _clanKickCoolDownConst();
+        ClanStorage.layout().clanKickCooldown[callerId] = _clanKickCoolDownConst();
       }
     } else { 
     //revert ClanFacet_CantKickThisMember(knightId, clanId, callerId);

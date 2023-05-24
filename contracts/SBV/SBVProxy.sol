@@ -7,7 +7,7 @@ import { ERC721MetadataStorage } from "@solidstate/contracts/token/ERC721/metada
 contract SBVProxy is UpgradeableProxyOwnable {
   using ERC721MetadataStorage for ERC721MetadataStorage.Layout;
 
-  constructor(address implementation, address owner) {
+  constructor(address owner) {
   //Init ERC20
     ERC721MetadataStorage.Layout storage l = ERC721MetadataStorage.layout();
 
@@ -15,7 +15,7 @@ contract SBVProxy is UpgradeableProxyOwnable {
     l.symbol = "SBV";
     l.baseURI = "";
   //Set implementation
-    _setImplementation(implementation);
+  //_setImplementation(implementation);
   //Set owner
     _transferOwnership(owner);
   }

@@ -6,20 +6,43 @@ import { Coin, Pool } from "../Meta/DataStructures.sol";
 import { GoerliAddressLib } from "./GoerliAddressLib.sol";
 
 library SetupAddressLib {
-  function getCoinAddress(Coin c) internal pure returns (address) {
-    return abi.decode(GoerliAddressLib.coin, (address[]))[uint8(c)];
+  address constant AAVE = GoerliAddressLib.AAVE;
+
+  address constant USDT = GoerliAddressLib.USDT;
+  address constant USDC = GoerliAddressLib.USDC;
+  address constant EURS = GoerliAddressLib.EURS;
+
+  address constant AUSDT = GoerliAddressLib.AUSDT;
+  address constant AUSDC = GoerliAddressLib.AUSDC;
+  address constant AEURS = GoerliAddressLib.AEURS;
+
+  function CoinAddress(Coin c) internal pure returns (address) {
+    return
+      c == Coin.USDT ? USDT :
+      c == Coin.USDC ? USDC :
+      c == Coin.EURS ? EURS :
+      address(0);
   }
 
-  function getACoinAddress(Coin c) internal pure returns (address) {
-    return abi.decode(GoerliAddressLib.acoin, (address[]))[uint8(c)];
+  function ACoinAddress(Coin c) internal pure returns (address) {
+    return
+      c == Coin.USDT ? AUSDT :
+      c == Coin.USDC ? AUSDC :
+      c == Coin.EURS ? AEURS :
+      address(0);
   }
 
-  function getPoolAddress(Pool p) internal pure returns (address) {
-    if (p == Pool.AAVE) return GoerliAddressLib.AAVE;
-    return address(0);
+  function PoolAddress(Pool p) internal pure returns (address) {
+    return
+      p == Pool.AAVE ? AAVE :
+      address(0);
   }
 
   function isCompatible(Pool p, Coin c) internal pure returns (bool) {
-    return abi.decode(GoerliAddressLib.compatibility, (bool[][]))[uint8(p)][uint8(c)];
+    return
+      p == Pool.AAVE ?
+        c == Coin.USDT ? true :
+        false :
+      false;
   }
 }

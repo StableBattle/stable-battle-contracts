@@ -2,14 +2,14 @@
 pragma solidity ^0.8.0;
 
 import { IClan } from "../StableBattle/Facets/Clan/IClan.sol";
-import { StableBattleAddressLib } from "../StableBattle/Init&Updates/StableBattleAddressLib.sol";
+import { DiamondAddressLib } from "../StableBattle/Init&Updates/DiamondAddressLib.sol";
 
 abstract contract BEERGetters {
   function Clan() internal pure returns(IClan) {
-    return IClan(StableBattleAddressLib.StableBattleAddress);
+    return IClan(DiamondAddressLib.DiamondAddress);
   }
 
   function SBD() internal pure returns(address) {
-    return StableBattleAddressLib.StableBattleAddress;
+    return DiamondAddressLib.DiamondAddress;
   }
 }

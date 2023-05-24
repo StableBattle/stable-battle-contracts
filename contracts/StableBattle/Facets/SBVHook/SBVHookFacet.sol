@@ -8,8 +8,8 @@ import { TreasuryGetters } from "../Treasury/TreasuryGetters.sol";
 
 contract SBVHookFacet is ISBVHook, MetaModifiers, TreasuryGetters {
   function SBV_hook(uint id, address newOwner, bool mint) external ifIsSBV {
-    TreasuryStorage.state().villageOwner[id] = newOwner;
-    if (mint == true) { TreasuryStorage.state().villageAmount++; }
+    TreasuryStorage.layout().villageOwner[id] = newOwner;
+    if (mint == true) { TreasuryStorage.layout().villageAmount++; }
     emit VillageInfoUpdated(id, newOwner, _villageAmount());
   }
 }

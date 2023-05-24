@@ -32,8 +32,8 @@ abstract contract SiegeGetters is ExternalCalls {
     uint256 stakeTotal = ACOIN(Coin.USDT).balanceOf(address(this));
     uint256 knightStake = 
       (
-        KnightStorage.state().knightsMinted[Pool.AAVE][Coin.USDT] - 
-        KnightStorage.state().knightsBurned[Pool.AAVE][Coin.USDT]
+        KnightStorage.layout().knightsMinted[Pool.AAVE][Coin.USDT] - 
+        KnightStorage.layout().knightsBurned[Pool.AAVE][Coin.USDT]
       ) * 1e9;
     return stakeTotal - knightStake - _siegeRewardTotal();
   }

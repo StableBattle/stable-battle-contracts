@@ -5,7 +5,7 @@ pragma solidity ^0.8.0;
 import { Coin, Pool } from "../Meta/DataStructures.sol";
 import { SetupAddressLib } from "../Init&Updates/SetupAddressLib.sol";
 import { BEERAddressLib } from "../Init&Updates/BEERAddressLib.sol";
-import { VillagesAddressLib } from "../Init&Updates/VillagesAddressLib.sol";
+import { SBVAddressLib } from "../Init&Updates/SBVAddressLib.sol";
 
 abstract contract MetaModifiers {
   error InvalidPool(Pool pool);
@@ -53,7 +53,7 @@ abstract contract MetaModifiers {
   error CallerNotSBV();
 
   function isSBV() internal view virtual returns(bool) {
-    return VillagesAddressLib.VillagesAddress == msg.sender;
+    return SBVAddressLib.SBVAddress == msg.sender;
   }
 
   modifier ifIsSBV {

@@ -70,5 +70,9 @@ contract ClanFacetDummy is IClan {
 
   function getClanName(uint256 clanId) external view returns(string memory) {}
 
+  function getClanNameTaken(string calldata clanName) external view returns(bool) {}
+
   function getClanUserInfo(uint256 clanId, address user) external view returns(uint256, uint256, uint256) {}
+
+  function getClansInTotal() external view returns(uint256) {}
 }

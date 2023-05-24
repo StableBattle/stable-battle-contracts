@@ -9,15 +9,15 @@ import { EnumerableMap } from "@openzeppelin/contracts/utils/structs/EnumerableM
 
 abstract contract ClanConfigGetters {
   function _clanActivityCooldownConst() internal view returns(uint) {
-    return ClanStorage.state().clanActivityCooldownConst;
+    return ClanStorage.layout().clanActivityCooldownConst;
   }
 
   function _clanKickCoolDownConst() internal view returns(uint) {
-    return ClanStorage.state().clanKickCoolDownConst;
+    return ClanStorage.layout().clanKickCoolDownConst;
   }
 
   function _clanStakeWithdrawCooldownConst() internal view returns(uint) {
-    return ClanStorage.state().clanStakeWithdrawCooldownConst;
+    return ClanStorage.layout().clanStakeWithdrawCooldownConst;
   }
 }
 
@@ -32,20 +32,20 @@ abstract contract ClanGetters is ClanConfigGetters {
   }
 
   function _clanLeader(uint clanId) internal view returns(uint256) {
-    return ClanStorage.state().clanLeader[clanId];
+    return ClanStorage.layout().clanLeader[clanId];
   }
 
   function _clanTotalMembers(uint clanId) internal view returns(uint) {
-    return ClanStorage.state().clanTotalMembers[clanId];
+    return ClanStorage.layout().clanTotalMembers[clanId];
   }
   
   // Returns the total clan stake, minus any pending withdrawals
   function _clanStake(uint clanId) internal view returns(uint256) {
-    uint256 stake = ClanStorage.state().clanStake[clanId];
+    uint256 stake = ClanStorage.layout().clanStake[clanId];
     uint256 withdrawed = 0;
-    uint256 numOfPendingWithdrawals = ClanStorage.state().pendingWithdrawal[clanId].length();
+    uint256 numOfPendingWithdrawals = ClanStorage.layout().pendingWithdrawal[clanId].length();
     for(uint256 i; i < numOfPendingWithdrawals; ++i) {
-      (address user, uint256 pendingWithdraw) = ClanStorage.state().pendingWithdrawal[clanId].at(i);
+      (address user, uint256 pendingWithdraw) = ClanStorage.layout().pendingWithdrawal[clanId].at(i);
       if(_withdrawalCooldown(clanId, user) <= block.timestamp) {
         withdrawed += pendingWithdraw;
       }
@@ -55,7 +55,7 @@ abstract contract ClanGetters is ClanConfigGetters {
 
   function _clanLevel(uint256 clanId) internal view returns(uint) {
     uint256 stake = _clanStake(clanId);
-    uint[] memory thresholds = ClanStorage.state().levelThresholds;
+    uint[] memory thresholds = ClanStorage.layout().levelThresholds;
     uint maxLevel = thresholds.length;
     for(uint newLevel = 1; newLevel < maxLevel; newLevel++) {
       if(stake < thresholds[newLevel]) {
@@ -66,64 +66,64 @@ abstract contract ClanGetters is ClanConfigGetters {
   }
 
   function _clanLevelThresholds() internal view returns (uint[] memory) {
-    return ClanStorage.state().levelThresholds;
+    return ClanStorage.layout().levelThresholds;
   }
 
   function _clanLevelThreshold(uint256 level) internal view returns (uint) {
-    return ClanStorage.state().levelThresholds[level];
+    return ClanStorage.layout().levelThresholds[level];
   }
 
   function _clanMaxLevel() internal view returns (uint) {
-    return ClanStorage.state().levelThresholds.length;
+    return ClanStorage.layout().levelThresholds.length;
   }
 
   function _clansInTotal() internal view returns(uint256) {
-    return ClanStorage.state().clansInTotal;
+    return ClanStorage.layout().clansInTotal;
   }
 
   function _clanActivityCooldown(uint256 knightId) internal view returns(uint256) {
-    return ClanStorage.state().clanActivityCooldown[knightId];
+    return ClanStorage.layout().clanActivityCooldown[knightId];
   }
 
   function _clanJoinProposal(uint256 knightId) internal view returns(uint256) {
-    return ClanStorage.state().joinProposal[knightId];
+    return ClanStorage.layout().joinProposal[knightId];
   }
 
   function _roleInClan(uint256 knightId) internal view returns(ClanRole) {
-    return ClanStorage.state().roleInClan[knightId];
+    return ClanStorage.layout().roleInClan[knightId];
   }
 
   function _clanKickCooldown(uint256 knightId) internal view returns(uint) {
-    return ClanStorage.state().clanKickCooldown[knightId];
+    return ClanStorage.layout().clanKickCooldown[knightId];
   }
 
   function _clanName(uint256 clanId) internal view returns(string memory) {
-    return ClanStorage.state().clanName[clanId];
+    return ClanStorage.layout().clanName[clanId];
   }
 
   function _clanNameTaken(string calldata clanName) internal view returns(bool) {
-    return ClanStorage.state().clanNameTaken[clanName];
+    return ClanStorage.layout().clanNameTaken[clanName];
   }
 
   function _clanMaxMembers() internal view returns(uint256[] memory) {
-    return ClanStorage.state().maxMembers;
+    return ClanStorage.layout().maxMembers;
   }
 
   function _clanMaxMembers(uint256 clanId) internal view returns(uint256) {
-    return ClanStorage.state().maxMembers[_clanLevel(clanId) - 1];
+    return ClanStorage.layout().maxMembers[_clanLevel(clanId) - 1];
   }
 
   function _stakeOf(uint clanId, address user) internal view returns(uint256) {
-    return ClanStorage.state().stake[user][clanId];
+    return ClanStorage.layout().stake[user][clanId];
   }
 
   function _pendingWithdrawal(uint256 clanId, address user) internal view returns(uint256) {
-    (bool exists, uint256 amount) = ClanStorage.state().pendingWithdrawal[clanId].tryGet(user);
+    (bool exists, uint256 amount) = ClanStorage.layout().pendingWithdrawal[clanId].tryGet(user);
     return exists ? amount : 0;
   }
 
   function _withdrawalCooldown(uint256 clanId, address user) internal view returns(uint256) {
-    return ClanStorage.state().withdrawalCooldown[clanId][user];
+    return ClanStorage.layout().withdrawalCooldown[clanId][user];
   }
 }
 
@@ -216,5 +216,9 @@ abstract contract ClanGettersExternal is IClanGetters, ClanGetters {
 
   function getClanUserInfo(uint256 clanId, address user) external view returns(uint256, uint256, uint256) {
     return (_stakeOf(clanId, user), _pendingWithdrawal(clanId, user), _withdrawalCooldown(clanId, user));
+  }
+
+  function getClansInTotal() external view returns(uint256) {
+    return _clansInTotal();
   }
 }

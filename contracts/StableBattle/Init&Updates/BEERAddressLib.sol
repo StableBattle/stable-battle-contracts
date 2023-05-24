@@ -3,5 +3,5 @@
 pragma solidity ^0.8.0;
 
 library BEERAddressLib {
-  address internal constant BEERAddress = 0x6F9E4514d9599f6C43aF4952aFA15372FfE33b9C;
+  address internal constant BEERAddress = 0x2ac41Df3aE710769DAe63c4fe82c789d47Ff30e5;
 }

@@ -7,7 +7,7 @@ import "solidity-coverage";
 import "dotenv/config";
 
 const config: HardhatUserConfig = {
-  solidity: "0.8.10",
+  solidity: "0.8.18",
 //mocha: { timeout: 100000000 },
   networks: {
     hardhat: {
@@ -19,8 +19,8 @@ const config: HardhatUserConfig = {
       */
       forking: {
         url: process.env.GOERLI_ALCHEMY_URL || "",
-        blockNumber: 8455800,
-      },
+        blockNumber: 9000000
+      }
     },
     mumbai: {
       url: process.env.MUMBAI_ALCHEMY_URL || "",

@@ -6,7 +6,7 @@ import { Clan, ClanRole } from "../../Meta/DataStructures.sol";
 import { EnumerableMap } from "@openzeppelin/contracts/utils/structs/EnumerableMap.sol";
 
 library ClanStorage {
-  struct State {
+  struct Layout {
     uint[] levelThresholds;
     uint[] maxMembers;
     uint256 clansInTotal;
@@ -50,7 +50,7 @@ library ClanStorage {
 
   bytes32 internal constant STORAGE_SLOT = keccak256("Clan.storage");
 
-  function state() internal pure returns (State storage l) {
+  function layout() internal pure returns (Layout storage l) {
     bytes32 slot = STORAGE_SLOT;
     assembly {
       l.slot := slot

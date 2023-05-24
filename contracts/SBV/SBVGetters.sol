@@ -2,10 +2,10 @@
 pragma solidity ^0.8.0;
 
 import { ISBVHook } from "../StableBattle/Facets/SBVHook/ISBVHook.sol";
-import { StableBattleAddressLib } from "../StableBattle/Init&Updates/StableBattleAddressLib.sol";
+import { DiamondAddressLib } from "../StableBattle/Init&Updates/DiamondAddressLib.sol";
 
 contract SBVGetters {
   function SBVHook() internal pure returns(ISBVHook) {
-    return ISBVHook(StableBattleAddressLib.StableBattleAddress);
+    return ISBVHook(DiamondAddressLib.DiamondAddress);
   }
 }
