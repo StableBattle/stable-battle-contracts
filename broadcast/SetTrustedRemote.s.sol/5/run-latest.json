@@ -1,0 +1,68 @@
+{
+  "transactions": [
+    {
+      "hash": "0xf9c40fc14456d92fa69b6d376cfa3ba18eae751a0f692c36ca1ab0353c6d16e5",
+      "transactionType": "CALL",
+      "contractName": null,
+      "contractAddress": "0x4F12D5D6b380a839efC3428e7B7B4EBcFd04E5DD",
+      "function": "setTrustedRemote(uint16,bytes)",
+      "arguments": [
+        "10102 \u001b[2;49;39m[1.01e4]\u001b[0m",
+        "0x4f12d5d6b380a839efc3428e7b7b4ebcfd04e5dd4f12d5d6b380a839efc3428e7b7b4ebcfd04e5dd"
+      ],
+      "rpc": "https://goerli.infura.io/v3/2bbee4e3b0b3410dac5e8e061d56266d",
+      "transaction": {
+        "type": "0x02",
+        "from": "0xfcb5320ad1c7c5221709a2d25badcb64b1fff860",
+        "to": "0x4f12d5d6b380a839efc3428e7b7b4ebcfd04e5dd",
+        "gas": "0x23c07",
+        "value": "0x0",
+        "data": "0xeb8d72b70000000000000000000000000000000000000000000000000000000000002776000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000284f12d5d6b380a839efc3428e7b7b4ebcfd04e5dd4f12d5d6b380a839efc3428e7b7b4ebcfd04e5dd000000000000000000000000000000000000000000000000",
+        "nonce": "0x1095",
+        "accessList": []
+      },
+      "additionalContracts": [],
+      "isFixedGasLimit": false
+    }
+  ],
+  "receipts": [
+    {
+      "transactionHash": "0xf9c40fc14456d92fa69b6d376cfa3ba18eae751a0f692c36ca1ab0353c6d16e5",
+      "transactionIndex": "0x5",
+      "blockHash": "0x18f2fb2426324ac91f67da5a0689fcba6175d53c013e514566b436bb6ecdff28",
+      "blockNumber": "0x8adff3",
+      "from": "0xFcB5320ad1C7c5221709A2d25bAdcb64B1ffF860",
+      "to": "0x4F12D5D6b380a839efC3428e7B7B4EBcFd04E5DD",
+      "cumulativeGasUsed": "0x4242f0",
+      "gasUsed": "0x18722",
+      "contractAddress": null,
+      "logs": [
+        {
+          "address": "0x4F12D5D6b380a839efC3428e7B7B4EBcFd04E5DD",
+          "topics": [
+            "0xfa41487ad5d6728f0b19276fa1eddc16558578f5109fc39d2dc33c3230470dab"
+          ],
+          "data": "0x0000000000000000000000000000000000000000000000000000000000002776000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000284f12d5d6b380a839efc3428e7b7b4ebcfd04e5dd4f12d5d6b380a839efc3428e7b7b4ebcfd04e5dd000000000000000000000000000000000000000000000000",
+          "blockHash": "0x18f2fb2426324ac91f67da5a0689fcba6175d53c013e514566b436bb6ecdff28",
+          "blockNumber": "0x8adff3",
+          "transactionHash": "0xf9c40fc14456d92fa69b6d376cfa3ba18eae751a0f692c36ca1ab0353c6d16e5",
+          "transactionIndex": "0x5",
+          "logIndex": "0x8",
+          "removed": false
+        }
+      ],
+      "status": "0x1",
+      "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000200000000000000000000008000000000000000000040000000000000000000000000000000080000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "type": "0x2",
+      "effectiveGasPrice": "0x178a61413"
+    }
+  ],
+  "libraries": [],
+  "pending": [],
+  "path": "/Users/zeu/Documents/Work/StableBattle/stable-battle-foundry-contracts/broadcast/SetTrustedRemote.s.sol/5/run-latest.json",
+  "returns": {},
+  "timestamp": 1685598292,
+  "chain": 5,
+  "multi": false,
+  "commit": "548270b"
+}

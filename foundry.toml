@@ -19,8 +19,10 @@ optimizer_runs = 200
 
 [rpc_endpoints]
 goerli = "${GOERLI_INFURA_URL}"
+bsc_testnet = "${BSCTESTNET_URL}"
 
 [etherscan]
 goerli = { key = "${ETHERSCAN_API_KEY}" }
+bsc_testnet = { key = "${BSCSCAN_API_KEY}" }
 
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config

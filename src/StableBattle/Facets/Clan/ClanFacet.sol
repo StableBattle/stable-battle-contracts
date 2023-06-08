@@ -178,9 +178,9 @@ contract ClanFacet is
         revert("Clan does not exist");
       }
     } else {
-      if(_clanJoinProposal(knightId) == clanId)
+      if(_clanJoinProposal(knightId) != 0)
       {
-        _withdrawJoin(knightId, clanId);
+        _withdrawJoin(knightId, _clanJoinProposal(knightId));
       } else {
       //revert ClanFacet_NoJoinProposal(knightId, clanId);
         revert("No join proposal");
@@ -273,7 +273,7 @@ contract ClanFacet is
     ifIsKnight(knightId)
     ifOwnsItem(callerId)
     ifIsInClan(callerId, clanId)
-    ifIsBelowMaxMembers(clanId)
+  //ifIsBelowMaxMembers(clanId)
   {
     ClanRole callerRole = _roleInClan(callerId);
     if(_clanJoinProposal(knightId) != clanId) {

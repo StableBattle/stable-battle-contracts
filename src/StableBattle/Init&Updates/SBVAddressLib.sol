@@ -3,5 +3,5 @@
 pragma solidity ^0.8.0;
 
 library SBVAddressLib {
-  address internal constant SBVAddress = 0x609293BBb5e4fD43e99D4ad165A6AA3286107647;
+  address internal constant SBVAddress = 0x1ca6FE8FEb12Ec200d02479a6751A629173123b2;
 }

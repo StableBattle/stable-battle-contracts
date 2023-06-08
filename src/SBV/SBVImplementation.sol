@@ -2,26 +2,27 @@
 pragma solidity ^0.8.0;
 
 import { ISBV } from "./ISBV.sol";
+import { ISBVHook } from "../StableBattle/Facets/SBVHook/ISBVHook.sol";
 import { SolidStateERC721 } from "solidstate-solidity/token/ERC721/SolidStateERC721.sol";
-import { SBVGetters } from "./SBVGetters.sol";
 import { OwnableInternal } from "solidstate-solidity/access/ownable/OwnableInternal.sol";
 import { DiamondAddressLib } from "../StableBattle/Init&Updates/DiamondAddressLib.sol";
 
 contract SBVImplementation is 
   ISBV,
   SolidStateERC721,
-  SBVGetters,
   OwnableInternal
 {
+  ISBVHook internal constant StableBattle = ISBVHook(DiamondAddressLib.DiamondAddress);
+
   function adminMint(address to, uint256 tokenId)
-  external
+    external
   //onlyOwner
   {
     _mint(to, tokenId);
   }
 
   function adminBurn(uint256 tokenId)
-  external
+    external
   //onlyOwner
   {
     _burn(tokenId);
@@ -31,12 +32,9 @@ contract SBVImplementation is
     address from,
     address to,
     uint256 tokenId
-  ) internal virtual override {
+  ) internal override {
     super._beforeTokenTransfer(from, to, tokenId);
-    SBVHook().SBV_hook(tokenId, to, (from == address(0)));
-  }
-
-  function diamondAddress() external pure returns(address) {
-    return DiamondAddressLib.DiamondAddress;
+    bool isMint = (from == address(0));
+    StableBattle.SBV_hook(tokenId, to, isMint);
   }
 }

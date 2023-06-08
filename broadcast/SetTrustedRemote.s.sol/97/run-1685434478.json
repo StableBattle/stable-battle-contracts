@@ -1,0 +1,35 @@
+{
+  "transactions": [
+    {
+      "hash": "0xa9591db00ed91c7584dd74115673d01083894bcab40bec3cccc766753b2decf3",
+      "transactionType": "CALL",
+      "contractName": null,
+      "contractAddress": "0x51a4fF6a2bfD283771Adcd993CB6c069c33A3CAe",
+      "function": null,
+      "arguments": null,
+      "rpc": "https://data-seed-prebsc-2-s2.binance.org:8545",
+      "transaction": {
+        "type": "0x00",
+        "from": "0xfcb5320ad1c7c5221709a2d25badcb64b1fff860",
+        "to": "0x51a4ff6a2bfd283771adcd993cb6c069c33a3cae",
+        "gas": "0x23c07",
+        "value": "0x0",
+        "data": "0xeb8d72b7000000000000000000000000000000000000000000000000000000000000277600000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000028fcb5320ad1c7c5221709a2d25badcb64b1fff860fcb5320ad1c7c5221709a2d25badcb64b1fff860000000000000000000000000000000000000000000000000",
+        "nonce": "0x9d"
+      },
+      "additionalContracts": [],
+      "isFixedGasLimit": false
+    }
+  ],
+  "receipts": [],
+  "libraries": [],
+  "pending": [
+    "0xa9591db00ed91c7584dd74115673d01083894bcab40bec3cccc766753b2decf3"
+  ],
+  "path": "/Users/zeu/Documents/Work/StableBattle/stable-battle-foundry-contracts/broadcast/SetTrustedRemote.s.sol/97/run-latest.json",
+  "returns": {},
+  "timestamp": 1685434478,
+  "chain": 97,
+  "multi": false,
+  "commit": "548270b"
+}

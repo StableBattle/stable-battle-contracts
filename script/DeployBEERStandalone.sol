@@ -3,25 +3,22 @@ pragma solidity ^0.8.0;
 
 import "forge-std/Script.sol";
 import { DeployStableBattle } from "./DeployStableBattle.s.sol";
-import { IStableBattle } from "../src/StableBattle/Meta/IStableBattle.sol";
 import { IBEER } from "../src/BEER/IBEER.sol";
-import { ISBV } from "../src/SBV/ISBV.sol";
 
-contract DeploySBGoerli is Script, DeployStableBattle {
-  function run() external {
+contract DeployBEERStandalone is Script, DeployStableBattle {
+  function run() external returns(IBEER) {
     //read env variables and choose EOA for transaction signing
     uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
     address deployerAddress = vm.envAddress("PUBLIC_KEY");
 
     vm.startBroadcast(deployerPrivateKey);
 
-    (IStableBattle StableBattle, IBEER BEER, ISBV SBV) = deployStableBattle(deployerAddress, 0);
+    IBEER BEER = deployBEER(deployerAddress, bytes32(type(uint256).max - 3));
 
     vm.stopBroadcast();
 
-    //check addresses
-    console2.log("StableBattle Address: ", address(StableBattle));
     console2.log("BEER Address: ", address(BEER));
-    console2.log("SBV Address: ", address(SBV));
+
+    return BEER;
   }
 }
