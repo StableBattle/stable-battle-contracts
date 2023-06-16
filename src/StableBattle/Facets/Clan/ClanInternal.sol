@@ -7,15 +7,14 @@ import { IClanEvents, IClanErrors } from "../Clan/IClan.sol";
 import { ClanStorage } from "../Clan/ClanStorage.sol";
 import { KnightStorage } from "../Knight/KnightStorage.sol";
 import { KnightModifiers } from "../Knight/KnightModifiers.sol";
-import { ClanGetters } from "../Clan/ClanGetters.sol";
 import { ClanModifiers } from "../Clan/ClanModifiers.sol";
 import { ItemsModifiers } from "../Items/ItemsModifiers.sol";
 import { EnumerableMap } from "openzeppelin-contracts/utils/structs/EnumerableMap.sol";
+import { ClanSetupLib } from "../Clan/ClanSetupLib.sol";
 
 abstract contract ClanInternal is 
   IClanEvents,
   IClanErrors,
-  ClanGetters,
   ClanModifiers,
   KnightModifiers,
   ItemsModifiers
@@ -24,7 +23,7 @@ abstract contract ClanInternal is
 //Creation, Abandonment and Leader Change
   function _createClan(uint256 knightId, string calldata clanName) internal returns(uint) {
     ClanStorage.layout().clansInTotal++;
-    uint256 clanId = _clansInTotal();
+    uint256 clanId = ClanStorage.layout().clansInTotal;
     ClanStorage.layout().clanLeader[clanId] = knightId;
     emit ClanCreated(clanId, knightId);
     _setClanName(clanId, clanName);
@@ -36,7 +35,7 @@ abstract contract ClanInternal is
   function _abandonClan(uint256 clanId, uint256 leaderId) internal {
     KnightStorage.layout().knightClan[leaderId] = 0;
     ClanStorage.layout().clanLeader[clanId] = 0;
-    ClanStorage.layout().clanNameTaken[_clanName(clanId)] = false;
+    ClanStorage.layout().clanNameTaken[ClanStorage.layout().clanName[clanId]] = false;
     emit ClanAbandoned(clanId, leaderId);
   }
 
@@ -64,14 +63,14 @@ abstract contract ClanInternal is
     ClanStorage.layout().clanStake[clanId] += amount;
 
     uint256 newUserStake = 
-      _withdrawalCooldown(clanId, user) <= block.timestamp ?
-        _stakeOf(clanId, user) - _pendingWithdrawal(clanId, user) :
-        _stakeOf(clanId, user);
+      ClanStorage.layout().withdrawalCooldown[clanId][user] <= block.timestamp ?
+        ClanStorage.layout().stake[user][clanId] - ClanStorage.pendingWithdrawal(clanId, user) :
+        ClanStorage.layout().stake[user][clanId];
     emit ClanStakeAdded(
       user,
       clanId,
       amount,
-      _clanStake(clanId),
+      ClanStorage.clanStake(clanId),
       newUserStake
     );
   }
@@ -79,13 +78,19 @@ abstract contract ClanInternal is
   function _clanWithdrawRequest(uint256 clanId, uint256 amount) internal {
     address user = msg.sender;
     ClanStorage.layout().pendingWithdrawal[clanId].set(user, amount);
-    ClanStorage.layout().withdrawalCooldown[clanId][user] = block.timestamp + _clanStakeWithdrawCooldownConst();
-    emit ClanStakeWithdrawRequest(user, clanId, amount, block.timestamp + _clanStakeWithdrawCooldownConst());
+    ClanStorage.layout().withdrawalCooldown[clanId][user] = 
+      block.timestamp + ClanSetupLib.clanStakeWithdrawCooldownConst;
+    emit ClanStakeWithdrawRequest(
+      user,
+      clanId,
+      amount,
+      block.timestamp + ClanSetupLib.clanStakeWithdrawCooldownConst
+    );
   }
 
   function _clanWithdraw(uint256 clanId, uint256 amount) internal {
     address user = msg.sender;
-    uint256 userWithdrawAllowance = _pendingWithdrawal(clanId, user);
+    uint256 userWithdrawAllowance = ClanStorage.pendingWithdrawal(clanId, user);
     if (userWithdrawAllowance == amount) {
       ClanStorage.layout().pendingWithdrawal[clanId].remove(user);
     } else {
@@ -95,14 +100,14 @@ abstract contract ClanInternal is
     ClanStorage.layout().clanStake[clanId] -= amount;
 
     uint256 newUserStake = 
-      _withdrawalCooldown(clanId, user) <= block.timestamp ?
-        _stakeOf(clanId, user) - _pendingWithdrawal(clanId, user) :
-        _stakeOf(clanId, user);
+      ClanStorage.layout().withdrawalCooldown[clanId][user] <= block.timestamp ?
+        ClanStorage.layout().stake[user][clanId] - ClanStorage.pendingWithdrawal(clanId, user) :
+        ClanStorage.layout().stake[user][clanId];
     emit ClanStakeWithdrawn(
       user,
       clanId,
       amount,
-      _clanStake(clanId),
+      ClanStorage.clanStake(clanId),
       newUserStake
     );
   }
@@ -122,8 +127,9 @@ abstract contract ClanInternal is
     _setClanRole(clanId, knightId, ClanRole.NONE);
     ClanStorage.layout().clanTotalMembers[clanId]--;
     KnightStorage.layout().knightClan[knightId] = 0;
-    if(_clanLeader(clanId) != 0) {
-      ClanStorage.layout().clanActivityCooldown[knightId] = block.timestamp + _clanActivityCooldownConst();
+    if(ClanStorage.layout().clanLeader[clanId] != 0) {
+      ClanStorage.layout().clanActivityCooldown[knightId] =
+        block.timestamp + ClanSetupLib.clanActivityCooldownConst;
     }
     emit ClanKnightQuit(clanId, knightId);
   }

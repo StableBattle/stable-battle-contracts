@@ -10,8 +10,6 @@ interface IDebug {
 
   function debugSetKnightPrice(Coin coin, uint256 newPrice) external;
 
-  function debugSetLevelThresholds(uint[] memory newThresholds) external;
-
   function debugSetWithdrawalCooldown(uint256 clanId, address user, uint newCooldownEnd) external;
 
   function debugInheritKnightOwnership(address oldContractAddress, uint256 firstIdOffset, uint256 lastIdOffset) external;

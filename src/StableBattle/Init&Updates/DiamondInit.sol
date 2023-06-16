@@ -5,6 +5,8 @@ import { LibDiamond } from "../Diamond/LibDiamond.sol";
 import { Coin, Pool, Role } from "../Meta/DataStructures.sol";
 
 import { ClanStorage } from "../Facets/Clan/ClanStorage.sol";
+import { ClanSetupLib } from "../Facets/Clan/ClanSetupLib.sol";
+import { BEERSetupLib } from "../../BEER/BEERSetupLib.sol";
 import { KnightStorage } from "../Facets/Knight/KnightStorage.sol";
 import { TreasuryStorage } from "../Facets/Treasury/TreasuryStorage.sol";
 import { GearStorage } from "../Facets/Gear/GearStorage.sol";
@@ -28,7 +30,6 @@ uint constant TWO_WEEKS_IN_SECONDS = 60 * 60 * 24 * 14;
 
 contract DiamondInit is ConfigEvents {
   function init() external {
-    uint256 BEER_DECIMALS = IBEER(BEERAddressLib.BEERAddress).decimals();
   // Assign supported interfaces
     LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
     ds.supportedInterfaces[type(IERC165).interfaceId] = true;
@@ -36,12 +37,6 @@ contract DiamondInit is ConfigEvents {
     ds.supportedInterfaces[type(IDiamondCut).interfaceId] = true;
     ds.supportedInterfaces[type(IDiamondLoupe).interfaceId] = true;
     ds.supportedInterfaces[type(IERC1155).interfaceId] = true;
-
-  //Knight facet
-    //Knight enumeration begins from type(uint256).max
-    ///for better compactibility with adding new item types in the future
-    KnightStorage.layout().knightPrice[Coin.USDT] = 1e9;
-    KnightStorage.layout().knightPrice[Coin.USDC] = 1e9;
 
   //Gear Facet
     //all items in [256, 1e12) are gear
@@ -56,26 +51,12 @@ contract DiamondInit is ConfigEvents {
   //Items & ERC1155 Facet
     ERC1155MetadataStorage.layout().baseURI = "http://test1.stablebattle.io:5000/api/nft/";
 
-  //Clan Facet
-    ClanStorage.layout().levelThresholds = [
-      0,
-      40000  * (10 ** BEER_DECIMALS),
-      110000 * (10 ** BEER_DECIMALS),
-      230000 * (10 ** BEER_DECIMALS),
-      430000 * (10 ** BEER_DECIMALS),
-      760000 * (10 ** BEER_DECIMALS)
-    ];
-    ClanStorage.layout().maxMembers = [10, 20, 22, 24, 26, 28, 30];
-    ClanStorage.layout().clanActivityCooldownConst = TWO_DAYS_IN_SECONDS;
-    ClanStorage.layout().clanKickCoolDownConst = ONE_HOUR_IN_SECONDS;
-    ClanStorage.layout().clanStakeWithdrawCooldownConst = TWO_WEEKS_IN_SECONDS;
-
     emit ClanNewConfig(
-      ClanStorage.layout().levelThresholds,
-      ClanStorage.layout().maxMembers,
-      ClanStorage.layout().clanActivityCooldownConst,
-      ClanStorage.layout().clanKickCoolDownConst,
-      ClanStorage.layout().clanStakeWithdrawCooldownConst
+      ClanSetupLib.clanStakeLevelThresholds(),
+      ClanSetupLib.maxMembersPerLevel(),
+      ClanSetupLib.clanActivityCooldownConst,
+      ClanSetupLib.clanKickCoolDownConst,
+      ClanSetupLib.clanStakeWithdrawCooldownConst
     );
 
   //Treasury Facet

@@ -8,12 +8,14 @@ interface ConfigEvents {
     address AAVE,
     address[] coins,
     address[] acoins,
-    address[] pools);
+    address[] pools
+  );
 
   event ClanNewConfig(
     uint[] levelThresholds,
     uint[] maxMembersPerLevel,
     uint clanActivityCooldownConst,
     uint clanKickCoolDownConst,
-    uint clanStakeWithdrawCooldownConst);
+    uint clanStakeWithdrawCooldownConst
+  );
 }

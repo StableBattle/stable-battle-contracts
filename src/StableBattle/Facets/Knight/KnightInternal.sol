@@ -5,20 +5,18 @@ import { Coin, Pool, Knight, ClanRole } from "../../Meta/DataStructures.sol";
 
 import { IKnightEvents, IKnightErrors } from "../Knight/IKnight.sol";
 import { KnightStorage } from "../Knight/KnightStorage.sol";
-import { KnightGetters } from "../Knight/KnightGetters.sol";
 import { KnightModifiers } from "../Knight/KnightModifiers.sol";
 import { ClanInternal } from "../Clan/ClanInternal.sol";
 import { ExternalCalls } from "../../Meta/ExternalCalls.sol";
 
 abstract contract KnightInternal is
   IKnightEvents,
-  KnightGetters,
   KnightModifiers,
   ClanInternal,
   ExternalCalls
 {
   function _mintKnight(Pool p, Coin c) internal returns (uint256) {
-    uint256 knightPrice = _knightPrice(c);
+    uint256 knightPrice = KnightStorage.layout().knightPrice[c];
     if (c != Coin.TEST) {
       // Check if user gave its approval for enough COIN
       uint256 allowance = COIN(c).allowance(msg.sender, address(this));
@@ -35,7 +33,7 @@ abstract contract KnightInternal is
       AAVE.supply(address(COIN(c)), knightPrice, address(this), 0);
     }
     // Mint NFT for the user
-    uint256 knightId = type(uint256).max - _knightsMintedTotal();
+    uint256 knightId = type(uint256).max - KnightStorage.knightsMintedTotal();
     _mint(msg.sender, knightId, 1, "");
     KnightStorage.layout().knightsMinted[p][c]++;
     //Initialize Knight
@@ -49,8 +47,8 @@ abstract contract KnightInternal is
   }
 
   function _burnKnight(uint256 knightId) internal {
-    Pool p = _knightPool(knightId);
-    Coin c = _knightCoin(knightId);
+    Pool p = KnightStorage.layout().knightPool[knightId];
+    Coin c = KnightStorage.layout().knightCoin[knightId];
     // Null the knight
     KnightStorage.layout().knightOwner[knightId] = address(0);
     // Burn NFT
@@ -58,7 +56,7 @@ abstract contract KnightInternal is
     KnightStorage.layout().knightsBurned[p][c]++;
     if (p == Pool.AAVE) {
     // Withraw price in Coin from AAVE to the user
-      AAVE.withdraw(address(COIN(c)), _knightPrice(c), msg.sender);
+      AAVE.withdraw(address(COIN(c)), KnightStorage.layout().knightPrice[c], msg.sender);
     }
     emit KnightBurned(knightId, msg.sender, p, c);
   }

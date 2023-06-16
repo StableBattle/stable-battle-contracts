@@ -2,14 +2,14 @@
 
 pragma solidity ^0.8.0;
 
-import { KnightGetters } from "./KnightGetters.sol";
 import { IKnightErrors } from "./IKnight.sol";
 import { ClanStorage } from "../Clan/ClanStorage.sol";
+import { KnightStorage } from "./KnightStorage.sol";
 
-abstract contract KnightModifiers is IKnightErrors, KnightGetters {
+abstract contract KnightModifiers is IKnightErrors {
 
   function isKnight(uint256 knightId) internal view virtual returns(bool) {
-    return knightId >= type(uint256).max - _knightsMintedTotal();
+    return knightId >= type(uint256).max - KnightStorage.knightsMintedTotal();
   }
   
   modifier ifIsKnight(uint256 knightId) {
@@ -21,7 +21,7 @@ abstract contract KnightModifiers is IKnightErrors, KnightGetters {
   }
 
   function isInAnyClan(uint256 knightId) internal view virtual returns(bool) {
-    return _knightClan(knightId) != 0;
+    return KnightStorage.layout().knightClan[knightId] != 0;
   }
 
   modifier ifIsInAnyClan(uint256 knightId) {
@@ -33,11 +33,11 @@ abstract contract KnightModifiers is IKnightErrors, KnightGetters {
   }
 
   function isInClan(uint256 knightId, uint256 clanId) internal view virtual returns(bool) {
-    return _knightClan(knightId) == clanId;
+    return KnightStorage.layout().knightClan[knightId] == clanId;
   }
 
   modifier ifIsInClan(uint256 knightId, uint256 clanId) {
-    uint256 knightClan = _knightClan(knightId);
+    uint256 knightClan = KnightStorage.layout().knightClan[knightId];
     if(knightClan != clanId) {
       /*
       revert KnightModifiers_KnightNotInClan({
@@ -52,7 +52,7 @@ abstract contract KnightModifiers is IKnightErrors, KnightGetters {
   }
 
   function notInClan(uint256 knightId) internal view virtual returns(bool) {
-    uint256 clanId = _knightClan(knightId);
+    uint256 clanId = KnightStorage.layout().knightClan[knightId];
     // Either not in clan or clan abandoned
     return clanId == 0 || ClanStorage.layout().clanLeader[clanId] == 0;
   }

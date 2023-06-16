@@ -36,10 +36,6 @@ contract DebugFacet is
     KnightStorage.layout().knightPrice[coin] = newPrice;
   }
 
-  function debugSetLevelThresholds(uint[] memory newThresholds) external ifCallerIsAdmin {
-    ClanStorage.layout().levelThresholds = newThresholds;
-  }
-
   function debugSetWithdrawalCooldown(uint256 clanId, address user, uint newCooldownEnd) external {
     ClanStorage.layout().withdrawalCooldown[clanId][user] = newCooldownEnd;
   }

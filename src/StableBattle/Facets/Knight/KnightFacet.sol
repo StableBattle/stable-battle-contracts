@@ -8,6 +8,8 @@ import { KnightInternal } from "../Knight/KnightInternal.sol";
 import { ItemsModifiers } from "../Items/ItemsModifiers.sol";
 import { MetaModifiers } from "../../Meta/MetaModifiers.sol";
 import { KnightGettersExternal } from "../Knight/KnightGetters.sol";
+import { ClanStorage } from "../Clan/ClanStorage.sol";
+import { KnightStorage } from "../Knight/KnightStorage.sol";
 
 contract KnightFacet is 
   IKnight,
@@ -28,11 +30,14 @@ contract KnightFacet is
     external
     ifOwnsItem(knightId)
     ifIsKnight(knightId)
-    ifIsCompatible(_knightPool(knightId), _knightCoin(knightId))
+    ifIsCompatible(
+      KnightStorage.layout().knightPool[knightId],
+      KnightStorage.layout().knightCoin[knightId]
+    )
   {
     //Leave or abandon clan
-    uint256 clanId = _knightClan(knightId);
-    uint256 leaderId = _clanLeader(clanId);
+    uint256 clanId = KnightStorage.layout().knightClan[knightId];
+    uint256 leaderId = ClanStorage.layout().clanLeader[clanId];
     if (clanId != 0 && leaderId != 0) {
       if (knightId == leaderId) {
         if(heirId != 0) {
@@ -44,7 +49,7 @@ contract KnightFacet is
           //revert KnightFacet_HeirIsNotKnight(heirId);
             revert("KnightFacet: Heir is not knight");
           }
-          if(_knightClan(heirId) != clanId) {
+          if(clanId != KnightStorage.layout().knightClan[heirId]) {
           //revert KnightFacet_HeirIsNotInTheSameClan(clanId, heirId);
             revert("KnightFacet: Heir is not in the same clan");
           }

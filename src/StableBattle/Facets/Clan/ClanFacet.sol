@@ -12,6 +12,7 @@ import { MetaModifiers } from "../../Meta/MetaModifiers.sol";
 import { ClanGettersExternal } from "../Clan/ClanGetters.sol";
 import { ExternalCalls } from "../../Meta/ExternalCalls.sol";
 import { EnumerableMap } from "openzeppelin-contracts/utils/structs/EnumerableMap.sol";
+import { ClanSetupLib } from "../Clan/ClanSetupLib.sol";
 
 /**
  * @title A facet of the StableBattle game contract that manages clan functionality.
@@ -71,11 +72,11 @@ contract ClanFacet is
   */
   function setClanRole(uint256 clanId, uint256 knightId, ClanRole newRole, uint256 callerId)
     external
-    ifOwnsItem(_clanLeader(clanId))
+    ifOwnsItem(ClanStorage.layout().clanLeader[clanId])
     ifIsInClan(knightId, clanId)
   {
-    ClanRole callerRole = _roleInClan(callerId);
-    ClanRole knightRole = _roleInClan(knightId);
+    ClanRole callerRole = ClanStorage.layout().roleInClan[callerId];
+    ClanRole knightRole = ClanStorage.layout().roleInClan[knightId];
     if (newRole == ClanRole.OWNER && callerRole == ClanRole.OWNER) {
       _setClanRole(clanId, callerId, ClanRole.ADMIN);
       _setClanRole(clanId, knightId, ClanRole.OWNER);
@@ -93,7 +94,7 @@ contract ClanFacet is
    */
   function setClanName(uint256 clanId, string calldata newClanName)
     external
-    ifOwnsItem(_clanLeader(clanId))
+    ifOwnsItem(ClanStorage.layout().clanLeader[clanId])
     ifNotClanNameTaken(newClanName)
     ifIsClanNameCorrectLength(newClanName)
   {
@@ -147,7 +148,7 @@ contract ClanFacet is
       //revert ClanModifiers_WithdrawalAmountAboveStake(clanId, user, amount);
         revert("Withdrawal amount above stake");
       } else {
-        ClanStorage.layout().pendingWithdrawal[clanId].set(user, _stakeOf(clanId, user));
+        ClanStorage.layout().pendingWithdrawal[clanId].set(user, ClanStorage.layout().stake[user][clanId]);
       }
     }
     _clanWithdraw(clanId, amount);
@@ -178,9 +179,9 @@ contract ClanFacet is
         revert("Clan does not exist");
       }
     } else {
-      if(_clanJoinProposal(knightId) != 0)
+      if(ClanStorage.layout().joinProposal[knightId] != 0)
       {
-        _withdrawJoin(knightId, _clanJoinProposal(knightId));
+        _withdrawJoin(knightId, ClanStorage.layout().joinProposal[knightId]);
       } else {
       //revert ClanFacet_NoJoinProposal(knightId, clanId);
         revert("No join proposal");
@@ -198,7 +199,7 @@ contract ClanFacet is
     ifIsKnight(knightId)
     ifOwnsItem(knightId)
   {
-    if(_clanJoinProposal(knightId) == clanId)
+    if(ClanStorage.layout().joinProposal[knightId] == clanId)
     {
       _withdrawJoin(knightId, clanId);
     } else {
@@ -239,8 +240,8 @@ contract ClanFacet is
     ifIsInClan(callerId, clanId)
     ifNotOnClanKickCooldown(callerId)
   {
-    ClanRole callerRole = _roleInClan(callerId);
-    ClanRole knightRole = _roleInClan(knightId);
+    ClanRole callerRole = ClanStorage.layout().roleInClan[callerId];
+    ClanRole knightRole = ClanStorage.layout().roleInClan[knightId];
 
     if(
       //Owner can kick anyone besides himself
@@ -253,7 +254,7 @@ contract ClanFacet is
       _kick(knightId, clanId);
       //Moderators go on one hour cooldown after kick
       if (callerRole == ClanRole.MOD) {
-        ClanStorage.layout().clanKickCooldown[callerId] = _clanKickCoolDownConst();
+        ClanStorage.layout().clanKickCooldown[callerId] = ClanSetupLib.clanKickCoolDownConst;
       }
     } else { 
     //revert ClanFacet_CantKickThisMember(knightId, clanId, callerId);
@@ -275,8 +276,8 @@ contract ClanFacet is
     ifIsInClan(callerId, clanId)
   //ifIsBelowMaxMembers(clanId)
   {
-    ClanRole callerRole = _roleInClan(callerId);
-    if(_clanJoinProposal(knightId) != clanId) {
+    ClanRole callerRole = ClanStorage.layout().roleInClan[callerId];
+    if(ClanStorage.layout().joinProposal[knightId] != clanId) {
     //revert ClanFacet_NoJoinProposal(knightId, clanId);
       revert("No join proposal");
     }
@@ -300,8 +301,8 @@ contract ClanFacet is
     ifIsKnight(knightId)
     ifOwnsItem(callerId)
   {
-    ClanRole callerRole = _roleInClan(callerId);
-    if(_clanJoinProposal(knightId) != clanId) {
+    ClanRole callerRole = ClanStorage.layout().roleInClan[callerId];
+    if(ClanStorage.layout().joinProposal[knightId] != clanId) {
     //revert ClanFacet_NoJoinProposal(knightId, clanId);
       revert("No join proposal");
     }

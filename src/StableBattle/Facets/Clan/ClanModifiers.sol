@@ -5,9 +5,8 @@ pragma solidity ^0.8.0;
 import { Clan, ClanRole } from "../../Meta/DataStructures.sol";
 import { ClanStorage } from "../Clan/ClanStorage.sol";
 import { IClanErrors } from "../Clan/IClan.sol";
-import { ClanGetters } from "../Clan/ClanGetters.sol";
 
-abstract contract ClanModifiers is IClanErrors, ClanGetters {
+abstract contract ClanModifiers is IClanErrors {
   function clanExists(uint256 clanId) internal view returns(bool) {
     return ClanStorage.layout().clanLeader[clanId] != 0;
   }
@@ -45,7 +44,7 @@ abstract contract ClanModifiers is IClanErrors, ClanGetters {
   }
 
   function isOnClanActivityCooldown(uint256 knightId) internal view returns(bool) {
-    return _clanActivityCooldown(knightId) > block.timestamp;
+    return ClanStorage.layout().clanActivityCooldown[knightId] > block.timestamp;
   }
 
   modifier ifIsNotOnClanActivityCooldown(uint256 knightId) {
@@ -57,11 +56,11 @@ abstract contract ClanModifiers is IClanErrors, ClanGetters {
   }
 
   function isJoinProposalPending(uint256 knightId) internal view returns(bool) {
-    return _clanJoinProposal(knightId) != 0;
+    return ClanStorage.layout().joinProposal[knightId] != 0;
   }
 
   modifier ifNoJoinProposalPending(uint256 knightId) {
-    uint clanId = _clanJoinProposal(knightId);
+    uint clanId = ClanStorage.layout().joinProposal[knightId];
     if (clanId != 0) {
     //revert ClanModifiers_JoinProposalToSomeClanExists(knightId, clanId);
       revert("Clan Modifiers: Join Proposal To Some Clan Exists");
@@ -70,7 +69,7 @@ abstract contract ClanModifiers is IClanErrors, ClanGetters {
   }
 
   function isClanOwner(uint256 knightId) internal view returns(bool) {
-    return _roleInClan(knightId) == ClanRole.OWNER;
+    return ClanStorage.layout().roleInClan[knightId] == ClanRole.OWNER;
   }
 
   modifier ifNotClanOwner(uint knightId) {
@@ -90,15 +89,15 @@ abstract contract ClanModifiers is IClanErrors, ClanGetters {
   }
 
   function isClanAdmin(uint256 knightId) internal view returns(bool) {
-    return _roleInClan(knightId) == ClanRole.ADMIN;
+    return ClanStorage.layout().roleInClan[knightId] == ClanRole.ADMIN;
   }
 
   function isClanMod(uint256 knightId) internal view returns(bool) {
-    return _roleInClan(knightId) == ClanRole.MOD;
+    return ClanStorage.layout().roleInClan[knightId] == ClanRole.MOD;
   }
 
   function isBelowMaxMembers(uint256 clanId) internal view returns(bool) {
-    return _clanTotalMembers(clanId) < _clanMaxMembers(clanId);
+    return ClanStorage.layout().clanTotalMembers[clanId] < ClanStorage.clanMaxMembers(clanId);
   }
 
   modifier ifIsBelowMaxMembers(uint256 clanId) {
@@ -110,7 +109,7 @@ abstract contract ClanModifiers is IClanErrors, ClanGetters {
   }
 
   function isOnClanKickCooldown(uint knightId) internal view returns(bool) {
-    return _clanKickCooldown(knightId) > block.timestamp;
+    return ClanStorage.layout().clanKickCooldown[knightId] > block.timestamp;
   }
 
   modifier ifNotOnClanKickCooldown(uint knightId) {
@@ -122,7 +121,7 @@ abstract contract ClanModifiers is IClanErrors, ClanGetters {
   }
 
   modifier ifNotClanNameTaken(string calldata clanName) {
-    if(_clanNameTaken(clanName)) {
+    if(ClanStorage.layout().clanNameTaken[clanName]) {
     //revert ClanModifiers_ClanNameTaken(clanName);
       revert("Clan Modifiers: Clan Name Taken");
     }
@@ -139,7 +138,7 @@ abstract contract ClanModifiers is IClanErrors, ClanGetters {
   }
 
   function isOnWithdrawalCooldown(uint256 clanId, address user) internal view returns(bool) {
-    return _withdrawalCooldown(clanId, user) > block.timestamp;
+    return ClanStorage.layout().withdrawalCooldown[clanId][user] > block.timestamp;
   }
 
   modifier ifNotOnWithdrawalCooldown(uint256 clanId, address user) {
@@ -151,7 +150,7 @@ abstract contract ClanModifiers is IClanErrors, ClanGetters {
   }
 
   function isBelowPendingWithdrawal(uint256 clanId, address user, uint256 amount) internal view returns(bool) {
-    return _pendingWithdrawal(clanId, user) >= amount;
+    return ClanStorage.pendingWithdrawal(clanId, user) >= amount;
   }
 
   modifier ifIsBelowPendingWithdrawal(uint256 clanId, address user, uint256 amount) {
@@ -163,7 +162,7 @@ abstract contract ClanModifiers is IClanErrors, ClanGetters {
   }
 
   function isBelowStake(uint256 clanId, address user, uint256 amount) internal view returns(bool) {
-    return _stakeOf(clanId, user) >= amount;
+    return ClanStorage.layout().stake[user][clanId] >= amount;
   }
 
   modifier ifIsBelowStake(uint256 clanId, address user, uint256 amount) {

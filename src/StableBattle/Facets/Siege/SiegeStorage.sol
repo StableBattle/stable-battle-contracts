@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
+import { Coin, Pool } from "../../Meta/DataStructures.sol";
+import { KnightStorage } from "../Knight/KnightStorage.sol";
+import { SetupAddressLib } from "../../Init&Updates/SetupAddressLib.sol";
+import { IERC20 } from "solidstate-solidity/interfaces/IERC20.sol";
+
 library SiegeStorage {
   struct Layout {
     //Id of a last clan that won the siege
@@ -23,24 +28,14 @@ library SiegeStorage {
       l.slot := slot
     }
   }
-
-  function _siegeRewardTotal() internal view returns(uint256) {
-    return layout().rewardTotal;
-  }
-
-  function _siegeReward(address user) internal view returns(uint256) {
-    return layout().reward[user];
-  }
-
-  function _siegeWinnerClan() internal view returns(uint256) {
-    return layout().siegeWinnerClan;
-  }
-
-  function _siegeWinnerKnight() internal view returns(uint256) {
-    return layout().siegeWinnerKnight;
-  }
-
-  function _siegeWinnerAddress() internal view returns(address) {
-    return layout().siegeWinnerAddress;
+  
+  function siegeYield() internal view returns(uint256) {
+    uint256 stakeTotal = IERC20(SetupAddressLib.AUSDT).balanceOf(address(this));
+    uint256 knightStake = 
+      (
+        KnightStorage.layout().knightsMinted[Pool.AAVE][Coin.USDT] - 
+        KnightStorage.layout().knightsBurned[Pool.AAVE][Coin.USDT]
+      ) * 1e9;
+    return stakeTotal - knightStake - SiegeStorage.layout().rewardTotal;
   }
 }

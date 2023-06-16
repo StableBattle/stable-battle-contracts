@@ -2,14 +2,12 @@
 pragma solidity ^0.8.10;
 
 import { ITreasury } from "../Treasury/ITreasury.sol";
-import { TreasuryModifiers } from "../Treasury/TreasuryModifiers.sol";
-import { TreasuryGetters, TreasuryGettersExternal } from "../Treasury/TreasuryGetters.sol";
+import { TreasuryGettersExternal } from "../Treasury/TreasuryGetters.sol";
 import { TreasuryInternal } from "../Treasury/TreasuryInternal.sol";
+import { SiegeStorage } from "../Siege/SiegeStorage.sol";
 
 contract TreasuryFacet is 
   ITreasury,
-  TreasuryModifiers,
-  TreasuryGetters,
   TreasuryGettersExternal,
   TreasuryInternal
 {
@@ -17,7 +15,11 @@ contract TreasuryFacet is
     _claimRewards();
   }
 
-  function setTax(uint8 tax) external ifIsFromAddress(_siegeWinnerAddress()) {
+  function setTax(uint8 tax) external {
+    if(msg.sender != SiegeStorage.layout().siegeWinnerAddress) {
+    //revert TreasuryModifiers_OnlyCallableByCastleHolder();
+      revert("Treasury Facet: Only Callable By Castle Holder");
+    }
     _setTax(tax);
   }
 }

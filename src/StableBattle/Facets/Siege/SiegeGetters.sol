@@ -7,65 +7,33 @@ import { ISiegeGetters } from "../Siege/ISiege.sol";
 import { ExternalCalls } from "../../Meta/ExternalCalls.sol";
 import { Pool, Coin } from "../../Meta/DataStructures.sol";
 
-abstract contract SiegeGetters is ExternalCalls {
-  function _siegeRewardTotal() internal view returns(uint256) {
-    return SiegeStorage._siegeRewardTotal();
-  }
-
-  function _siegeReward(address user) internal view returns(uint256) {
-    return SiegeStorage._siegeReward(user);
-  }
-
-  function _siegeWinnerClan() internal view returns(uint256) {
-    return SiegeStorage._siegeWinnerClan();
-  }
-
-  function _siegeWinnerKnight() internal view returns(uint256) {
-    return SiegeStorage._siegeWinnerKnight();
-  }
-
-  function _siegeWinnerAddress() internal view returns(address) {
-    return SiegeStorage._siegeWinnerAddress();
-  }
-
-  function _siegeYield() internal view returns(uint256) {
-    uint256 stakeTotal = ACOIN(Coin.USDT).balanceOf(address(this));
-    uint256 knightStake = 
-      (
-        KnightStorage.layout().knightsMinted[Pool.AAVE][Coin.USDT] - 
-        KnightStorage.layout().knightsBurned[Pool.AAVE][Coin.USDT]
-      ) * 1e9;
-    return stakeTotal - knightStake - _siegeRewardTotal();
-  }
-} 
-
-abstract contract SiegeGettersExternal is ISiegeGetters, SiegeGetters {
+abstract contract SiegeGettersExternal is ISiegeGetters, ExternalCalls {
   function getSiegeRewardTotal() external view returns(uint256) {
-    return _siegeRewardTotal();
+    return SiegeStorage.layout().rewardTotal;
   }
 
   function getSiegeReward(address user) external view returns(uint256) {
-    return _siegeReward(user);
+    return SiegeStorage.layout().reward[user];
   }
 
   function getSiegeWinnerClanId() external view returns(uint256) {
-    return _siegeWinnerClan();
+    return SiegeStorage.layout().siegeWinnerClan;
   }
 
   function getSiegeWinnerKnightId() external view returns(uint256) {
-    return _siegeWinnerKnight();
+    return SiegeStorage.layout().siegeWinnerKnight;
   }
 
   function getSiegeWinnerAddress() external view returns(address) {
-    return _siegeWinnerAddress();
+    return SiegeStorage.layout().siegeWinnerAddress;
   }
 
   function getSiegeWinnerInfo() external view returns(uint256, uint256) {
-    return (_siegeWinnerClan(), _siegeWinnerKnight());
+    return (SiegeStorage.layout().siegeWinnerClan, SiegeStorage.layout().siegeWinnerKnight);
   }
 
   function getSiegeYield() external view returns(uint256) {
-    return _siegeYield();
+    return SiegeStorage.siegeYield();
   }
 
   function getYieldTotal() external view returns(uint256) {

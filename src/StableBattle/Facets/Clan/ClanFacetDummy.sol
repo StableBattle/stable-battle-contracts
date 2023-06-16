@@ -47,9 +47,11 @@ contract ClanFacetDummy is IClan {
 
   function getStakeOf(uint clanId, address user) external view returns(uint256) {}
 
-  function getClanLevelThreshold(uint level) external view returns(uint) {}
+  function getClanLevelThreshold(uint level) external pure returns(uint) {}
+  
+  function getClanLevelThresholds() external pure returns(uint[] memory) {}
 
-  function getClanMaxLevel() external view returns(uint) {}
+  function getClanMaxLevel() external pure returns(uint) {}
 
   function getClanJoinProposal(uint256 knightId) external view returns(uint256) {}
 
@@ -57,7 +59,7 @@ contract ClanFacetDummy is IClan {
 
   function getClanConfig() 
     external
-    view
+    pure
     returns(
       uint256[] memory,
       uint256[] memory,

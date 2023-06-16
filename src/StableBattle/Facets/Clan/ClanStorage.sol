@@ -4,11 +4,14 @@ pragma solidity ^0.8.0;
 
 import { Clan, ClanRole } from "../../Meta/DataStructures.sol";
 import { EnumerableMap } from "openzeppelin-contracts/utils/structs/EnumerableMap.sol";
+import { ClanSetupLib } from "../Clan/ClanSetupLib.sol";
 
 library ClanStorage {
   struct Layout {
+    //!!!DEPRECATED TO BE REMOVED ON NEXT WIPE!!!
     uint[] levelThresholds;
-    uint[] maxMembers;
+    //!!!DEPRECATED TO BE REMOVED ON NEXT WIPE!!!
+    uint[] maxMembersPerLevel;
     uint256 clansInTotal;
 
     //Clan => clan leader id
@@ -43,8 +46,11 @@ library ClanStorage {
     mapping (uint256 => EnumerableMap.AddressToUintMap) pendingWithdrawal;
 
     //Cooldowns
+    //!!!DEPRECATED TO BE REMOVED ON NEXT WIPE!!!
     uint256 clanActivityCooldownConst;
+    //!!!DEPRECATED TO BE REMOVED ON NEXT WIPE!!!
     uint256 clanKickCoolDownConst;
+    //!!!DEPRECATED TO BE REMOVED ON NEXT WIPE!!!
     uint256 clanStakeWithdrawCooldownConst;
   }
 
@@ -55,5 +61,42 @@ library ClanStorage {
     assembly {
       l.slot := slot
     }
+  }
+
+  using EnumerableMap for EnumerableMap.AddressToUintMap;
+
+  // Returns the total clan stake, minus any pending withdrawals
+  function clanStake(uint clanId) internal view returns(uint256) {
+    uint256 stake = layout().clanStake[clanId];
+    uint256 withdrawed = 0;
+    uint256 numOfPendingWithdrawals = layout().pendingWithdrawal[clanId].length();
+    for(uint256 i; i < numOfPendingWithdrawals; ++i) {
+      (address user, uint256 pendingWithdraw) = layout().pendingWithdrawal[clanId].at(i);
+      if(layout().withdrawalCooldown[clanId][user] <= block.timestamp) {
+        withdrawed += pendingWithdraw;
+      }
+    }
+    return stake - withdrawed;
+  }
+
+  function clanLevel(uint256 clanId) internal view returns(uint) {
+    uint256 stake = clanStake(clanId);
+    uint[] memory thresholds = ClanSetupLib.clanStakeLevelThresholds();
+    uint maxLevel = thresholds.length;
+    for(uint newLevel = 1; newLevel < maxLevel; newLevel++) {
+      if(stake < thresholds[newLevel]) {
+        return newLevel;
+      }
+    }
+    return maxLevel;
+  }
+
+  function clanMaxMembers(uint256 clanId) internal view returns(uint256) {
+    return ClanSetupLib.maxMembersPerLevel()[clanLevel(clanId) - 1];
+  }
+
+  function pendingWithdrawal(uint256 clanId, address user) internal view returns(uint256) {
+    (bool exists, uint256 amount) = layout().pendingWithdrawal[clanId].tryGet(user);
+    return exists ? amount : 0;
   }
 }
