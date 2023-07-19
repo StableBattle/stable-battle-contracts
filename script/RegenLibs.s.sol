@@ -14,6 +14,7 @@ import { Strings } from "openzeppelin-contracts/utils/Strings.sol";
 import { console2 } from  "forge-std/console2.sol";
 
 contract RegenLibs is Script {
+  bytes32 constant salt = bytes32(uint(155));
   using strings for *;
 
   function run() public {
@@ -22,14 +23,14 @@ contract RegenLibs is Script {
 
     vm.startBroadcast(deployerPrivateKey);
     //Precalc StableBattle Diamond address
-    DiamondCutFacet diamondCutFacet = new DiamondCutFacet{salt: 0}();
-    Diamond StableBattle = new Diamond{salt: 0}(deployerAddress, address(diamondCutFacet));
+    DiamondCutFacet diamondCutFacet = new DiamondCutFacet{salt: salt}();
+    Diamond StableBattle = new Diamond{salt: salt}(deployerAddress, address(diamondCutFacet));
     updateAddressLib(address(StableBattle), "Diamond");
     //Precalc BEER address
-    BEERProxy BEER = new BEERProxy{salt: 0}(address(deployerAddress));
+    BEERProxy BEER = new BEERProxy{salt: salt}(address(deployerAddress));
     updateAddressLib(address(BEER), "BEER");
     //Precalc SBV address
-    SBVProxy SBV = new SBVProxy{salt: 0}(address(deployerAddress));
+    SBVProxy SBV = new SBVProxy{salt: salt}(address(deployerAddress));
     updateAddressLib(address(SBV), "SBV");
 
     console2.log("StableBattle address: ", address(StableBattle));

@@ -8,6 +8,8 @@ import { IBEER } from "../src/BEER/IBEER.sol";
 import { ISBV } from "../src/SBV/ISBV.sol";
 
 contract DeploySBGoerli is Script, DeployStableBattle {
+  bytes32 constant salt = bytes32(uint(155));
+
   function run() external {
     //read env variables and choose EOA for transaction signing
     uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
@@ -15,7 +17,7 @@ contract DeploySBGoerli is Script, DeployStableBattle {
 
     vm.startBroadcast(deployerPrivateKey);
 
-    (IStableBattle StableBattle, IBEER BEER, ISBV SBV) = deployStableBattle(deployerAddress, 0);
+    (IStableBattle StableBattle, IBEER BEER, ISBV SBV) = deployStableBattle(deployerAddress, salt);
 
     vm.stopBroadcast();
 
