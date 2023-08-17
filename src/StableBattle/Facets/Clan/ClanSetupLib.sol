@@ -16,7 +16,7 @@ library ClanSetupLib {
     return thresholds;
   }
   function maxMembersPerLevel() internal pure returns(uint256[] memory) {
-    uint256[] memory maxMembers = new uint256[](6);
+    uint256[] memory maxMembers = new uint256[](7);
     maxMembers[0] = 10;
     maxMembers[1] = 20;
     maxMembers[2] = 22;
