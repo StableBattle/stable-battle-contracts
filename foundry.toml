@@ -8,9 +8,9 @@ remappings = [
   "openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
   "solidity-stringutils/=lib/solidity-stringutils/src/",
   "solidstate-solidity/=lib/solidstate-solidity/contracts/",
-  "ERC721A-Upgradeable/=lib/ERC721A-Upgradeable/contracts"
+  "ERC721A-Upgradeable/=lib/ERC721A-Upgradeable/contracts",
 ]
-fs_permissions = [{ access = "read-write", path = "./"}]
+fs_permissions = [{ access = "read-write", path = "./" }]
 ffi = true
 deny_warnings = false
 via_ir = true
@@ -20,9 +20,13 @@ optimizer_runs = 200
 [rpc_endpoints]
 goerli = "${GOERLI_URL}"
 bsc_testnet = "${BSCTESTNET_URL}"
+scroll = "${SCROLL_URL}"
+blast = "${BLAST_URL}"
+mode = "${MODE_URL}"
 
 [etherscan]
 goerli = { key = "${ETHERSCAN_API_KEY}" }
+# scroll = { key = "MPU3JU4PNIR5SM3H9IK83CDM2M5XGK6B2E", url = "https://api-sepolia.scrollscan.dev" }
 bsc_testnet = { key = "${BSCSCAN_API_KEY}" }
 
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config
